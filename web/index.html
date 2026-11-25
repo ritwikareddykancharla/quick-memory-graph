@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QuickMemory — Persistent User Memory, Personal Knowledge Graph &amp; Contextual Session Engine</title>
-  <meta name="description" content="Persistent User Memory, Personal Knowledge Graph (PKG), Temporal Contradiction Supersession, Ebbinghaus Retention &amp; Contextual Session Engine on AWS CloudFront + S3 (OAC) + Python 3.12 Lambda + Amazon Bedrock Nova." />
+  <title>QuickMemory — Long-Term Memory for a Work AI Assistant That Updates When Facts Change</title>
+  <meta name="description" content="QuickMemory tracks user projects, teammates, and preferences across work sessions, retires outdated facts when plans change, and supports instant Pin and Forget controls on Amazon Bedrock." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Kalam:wght@400;700&amp;family=Martian+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&amp;family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
@@ -90,7 +90,7 @@
       margin-bottom: 0.45rem;
     }
 
-    .plain-english-box {
+    .lead-callout {
       background: var(--bg-card);
       border: 2px solid var(--border);
       border-left: 7px solid var(--accent-main);
@@ -99,7 +99,7 @@
       margin-bottom: 1.35rem;
     }
 
-    .plain-english-box p {
+    .lead-callout p {
       font-family: 'Newsreader', Georgia, serif;
       font-size: 1.13rem;
       line-height: 1.72;
@@ -107,7 +107,7 @@
       margin-top: 0.45rem;
     }
 
-    .worked-example-grid {
+    .session-trace-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
@@ -115,11 +115,11 @@
     }
 
     @media (max-width: 1060px) {
-      .worked-example-grid { grid-template-columns: repeat(2, 1fr); }
+      .session-trace-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 640px) {
-      .worked-example-grid { grid-template-columns: 1fr; }
+      .session-trace-grid { grid-template-columns: 1fr; }
     }
 
     .impl-pair-grid {
@@ -132,7 +132,7 @@
       .impl-pair-grid { grid-template-columns: 1fr; }
     }
 
-    .intuition-block {
+    .summary-block {
       background: var(--accent-soft);
       border: 1.5px solid var(--border);
       padding: 0.85rem 1rem;
@@ -141,7 +141,7 @@
       line-height: 1.66;
     }
 
-    .hood-block {
+    .detail-block {
       background: var(--bg-paper);
       border: 1.5px solid var(--border);
       padding: 0.85rem 1rem;
@@ -149,7 +149,7 @@
       line-height: 1.66;
     }
 
-    .click-guide-box {
+    .demo-note-box {
       background: var(--bg-subtle);
       border: 2px solid var(--border);
       border-left: 6px solid var(--accent-main);
@@ -157,6 +157,13 @@
       margin-bottom: 1.15rem;
       font-size: 0.87rem;
       line-height: 1.65;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.3rem;
     }
 
     .serif { font-family: 'Newsreader', Georgia, serif; }
@@ -987,15 +994,16 @@
   <header class="topbar">
     <div class="container topbar-inner">
       <a href="#live-studio" class="brand" onclick="switchTab('pkg-studio')">
-        <span class="brand-badge">QUICKMEMORY v1.0</span>
+        <span class="brand-badge">QUICKMEMORY</span>
         <span>QuickMemory</span>
       </a>
       <nav class="nav-links" aria-label="Primary Navigation">
-        <a class="nav-pill" href="#system-architecture">Architecture</a>
-        <a class="nav-pill" href="#live-studio">Live Studio</a>
-        <a class="nav-pill" href="#benchmarks-section" onclick="switchTab('benchmarks')">Benchmarks</a>
-        <a class="nav-pill" href="https://d2gltlwyzbnbxr.cloudfront.net" target="_blank" rel="noopener">QuickSpaces ↗</a>
-        <a class="nav-pill" href="https://d33vgp4hlabu23.cloudfront.net" target="_blank" rel="noopener">ForgeRuntime ↗</a>
+        <a class="nav-pill" href="#problem-statement">01 · Problem</a>
+        <a class="nav-pill" href="#system-architecture">02 · Architecture</a>
+        <a class="nav-pill" href="#implementation">03 · Implementation</a>
+        <a class="nav-pill" href="#design-tradeoffs">04 · Trade-Offs</a>
+        <a class="nav-pill" href="#live-studio" onclick="switchTab('pkg-studio')">05 · Live Demo</a>
+        <a class="nav-pill" href="#benchmarks-section" onclick="switchTab('benchmarks')">06 · Benchmarks</a>
         <a class="btn btn-obsidian" href="https://github.com/ritwikareddykancharla/quick-memory-graph" target="_blank" rel="noopener">★ GitHub Repo</a>
         <button type="button" class="btn btn-secondary" id="themeToggleBtn" aria-label="Toggle color theme">
           <span id="themeIcon">🌙</span>
@@ -1008,13 +1016,13 @@
   <!-- Sticky Jump-to-Section Table of Contents -->
   <div class="toc-strip" role="navigation" aria-label="Jump to section">
     <div class="container toc-inner">
-      <span class="toc-label">Sections:</span>
-      <a class="toc-link" href="#problem-statement">§01 · Problem Statement</a>
-      <a class="toc-link" href="#system-architecture">§02 · System Architecture</a>
-      <a class="toc-link" href="#implementation">§03 · Implementation</a>
-      <a class="toc-link" href="#design-tradeoffs">§04 · Design Tradeoffs</a>
-      <a class="toc-link" href="#live-studio" onclick="switchTab('pkg-studio')">§05 · Live Studio</a>
-      <a class="toc-link" href="#benchmarks-section" onclick="switchTab('benchmarks')">§06 · Benchmarks</a>
+      <span class="toc-label">Jump To:</span>
+      <a class="toc-link" href="#problem-statement">01 · Problem</a>
+      <a class="toc-link" href="#system-architecture">02 · Architecture</a>
+      <a class="toc-link" href="#implementation">03 · Implementation</a>
+      <a class="toc-link" href="#design-tradeoffs">04 · Trade-Offs</a>
+      <a class="toc-link" href="#live-studio" onclick="switchTab('pkg-studio')">05 · Live Demo</a>
+      <a class="toc-link" href="#benchmarks-section" onclick="switchTab('benchmarks')">06 · Benchmarks</a>
     </div>
   </div>
 
@@ -1022,110 +1030,107 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-top-row">
-        <div class="eyebrow">Persistent User Memory • Personal Knowledge Graph • Contextual Sessions</div>
+        <div class="eyebrow">Long-Term AI Companion Memory · Built for Amazon Quick</div>
         <div class="runtime-pill" id="runtimePill">
           <span class="pulse-dot"></span>
-          <span id="runtimeModeText">AWS CloudFront + S3 (OAC) + Python 3.12 + Bedrock (us.amazon.nova-lite-v1:0) Live</span>
+          <span id="runtimeModeText">Live on AWS · Powered by Amazon Bedrock</span>
         </div>
       </div>
 
-      <h1>QuickMemory — Persistent User Memory, Personal Knowledge Graph &amp; Contextual Session Engine</h1>
+      <h1>QuickMemory — Long-Term Memory for a Work AI Assistant That Updates When Facts Change</h1>
       <p class="hero-sub">
-        Consolidates multi-session work transcripts into a typed <strong>Personal Knowledge Graph</strong> (<code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, <code>Commitment</code>), resolves temporal contradictions via deterministic <code>SUPERSEDES</code> edges so stale context never leaks, weights retention with frequency-boosted <strong>Ebbinghaus decay</strong>, and grounds live <strong>Amazon Bedrock Nova</strong> responses with user-governed <code>Pin</code> / <code>Forget</code> controls.
+        Most work AI assistants either start every chat from scratch or paste months of old notes into the prompt, causing them to repeat retired projects and old tools. QuickMemory tracks how your work changes, retires outdated facts automatically, and forgets anything on request.
       </p>
 
-      <div class="headline-pills">
-        <div class="headline-pill">Measured Recall: <span id="pillRecall">89.7% (vs 6.9% Stateless · 65.5% Vector)</span></div>
-        <div class="headline-pill">Stale Contamination: <span id="pillStale">0.0% (vs 100.0% History · 75.0% Vector)</span></div>
-        <div class="headline-pill">Bedrock Input Tokens: <span id="pillTokens">-49.5% (596 vs 1,180 tok · 1.98x)</span></div>
-        <div class="headline-pill">2-Hop PKG Latency: <span id="pillLatency">0.624 ms p50 · 1.029 ms p99</span></div>
+      <div class="hero-cta-row">
+        <a href="#live-studio" class="btn btn-accent" onclick="switchTab('pkg-studio')">▶ Try the Live Demo ↓</a>
+        <a href="#system-architecture" class="btn btn-secondary">See How It Works ↓</a>
+        <a href="#benchmarks-section" class="btn btn-secondary" onclick="switchTab('benchmarks')">View Test Results ↓</a>
       </div>
 
       <div class="kpi-strip">
         <div class="card kpi-card">
           <div class="kpi-val" id="kpiRecallVal">89.7%</div>
-          <div class="kpi-label">Cross-Session Preference &amp; Slot Recall</div>
-          <div class="kpi-sub" id="kpiRecallSub">32 live Bedrock Nova calls · +24.2pt vs flat vector (65.5%)</div>
+          <div class="kpi-label">Preference &amp; Project Recall</div>
+          <div class="kpi-sub" id="kpiRecallSub">Across 32 live Bedrock runs (vs. 65.5% for vector chunks and 6.9% with no memory)</div>
         </div>
         <div class="card kpi-card">
           <div class="kpi-val" id="kpiStaleVal">0.0%</div>
-          <div class="kpi-label">Stale Contradiction Contamination</div>
-          <div class="kpi-sub" id="kpiStaleSub">87.5% end-to-end contradiction-clean (vs 0.0% full history)</div>
+          <div class="kpi-label">Outdated Facts in Prompt</div>
+          <div class="kpi-sub" id="kpiStaleSub">87.5% accuracy on updated facts (vs. 0.0% when pasting full chat history)</div>
         </div>
         <div class="card kpi-card">
           <div class="kpi-val" id="kpiTokensVal">-49.5%</div>
-          <div class="kpi-label">Session Input Tokens via 2-Hop PKG</div>
-          <div class="kpi-sub" id="kpiTokensSub">596 vs 1,180 measured Bedrock inputTokens (1.98x)</div>
+          <div class="kpi-label">Fewer Prompt Tokens</div>
+          <div class="kpi-sub" id="kpiTokensSub">Sends 596 focused tokens instead of 1,180 raw chat-history tokens (1.98x smaller)</div>
         </div>
         <div class="card kpi-card">
-          <div class="kpi-val" id="kpiLatencyVal">1.029 ms</div>
-          <div class="kpi-label">p99 Subgraph Retrieval (0.624 ms p50)</div>
-          <div class="kpi-sub" id="kpiLatencySub">240 perf_counter() trials · 100.0% (6/6) Forget prune</div>
+          <div class="kpi-val" id="kpiLatencyVal">0.624 ms</div>
+          <div class="kpi-label">Median Graph Lookup (1.029 ms p99)</div>
+          <div class="kpi-sub" id="kpiLatencySub">Measured across 240 runs, with 100.0% (6 / 6) removal on user Forget requests</div>
         </div>
       </div>
 
-      <div class="pipeline-bar" aria-label="QuickMemory Architecture Flow">
-        <div class="pipe-step"><span class="pipe-num">01</span><span>Episodic Transcript Ingest</span></div>
+      <div class="pipeline-bar" aria-label="QuickMemory Request Flow">
+        <div class="pipe-step"><span class="pipe-num">01</span><span>Extract Facts from Work Notes</span></div>
         <span class="pipe-arrow">→</span>
-        <div class="pipe-step"><span class="pipe-num">02</span><span>Entity &amp; Contradiction Supersession</span></div>
+        <div class="pipe-step"><span class="pipe-num">02</span><span>Retire Old Facts When Plans Change</span></div>
         <span class="pipe-arrow">→</span>
-        <div class="pipe-step"><span class="pipe-num">03</span><span>2-Hop PKG + Ebbinghaus Retriever</span></div>
+        <div class="pipe-step"><span class="pipe-num">03</span><span>Walk 2-Step Memory Graph</span></div>
         <span class="pipe-arrow">→</span>
-        <div class="pipe-step"><span class="pipe-num">04</span><span>Bedrock Nova Personalized Companion</span></div>
+        <div class="pipe-step"><span class="pipe-num">04</span><span>Answer with Cited Preferences</span></div>
       </div>
     </section>
 
-    <!-- §01 · Problem Statement -->
+    <!-- 01 · Problem -->
     <section id="problem-statement" class="section">
       <div class="section-header">
         <div>
-          <span class="section-kicker">§01 · Problem Statement</span>
-          <h2 class="section-title">Why Multi-Session Workplace AI Companions Drift, Forget, or Hallucinate Stale Habits</h2>
-          <p class="section-desc">Enterprise employees collaborate with an AI companion across weeks of evolving meetings—projects hand off, SQL warehouses migrate, and executive review templates change mid-quarter.</p>
+          <span class="section-kicker">01 · Problem</span>
+          <h2 class="section-title">Problem</h2>
+          <p class="section-desc">People use a workplace AI assistant across weeks of meetings while projects hand off, SQL warehouses migrate, and status report formats change.</p>
         </div>
-        <span class="tag tag-fail">3 Failure Modes Measured on Bedrock Nova</span>
+        <span class="tag tag-fail">4 Memory Baselines Tested on Bedrock</span>
       </div>
 
-      <!-- In Plain English Box -->
-      <div class="plain-english-box">
+      <div class="lead-callout">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-          <span class="tag tag-accent">In Plain English</span>
-          <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);">The 20-Second Mental Model</span>
+          <h3 style="font-size:1.08rem; font-weight:800;">Keeping User Context Current Across Weeks of Meetings</h3>
+          <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);">14 Sessions · 2 Personas · 5 Contradictions</span>
         </div>
         <p>
-          Imagine hiring a sharp chief of staff. If they wake up with total amnesia every morning, you waste the first ten minutes re-explaining which team you lead, which SQL dialect your data lake uses, and how your VP likes status memos formatted. Conversely, if they carry around a raw binder of <em>every transcript from six months ago</em> without crossing out old assignments, they will write queries against a decommissioned Redshift cluster for a project you handed off last month. <strong>QuickMemory</strong> gives the AI a living <strong>Personal Knowledge Graph</strong>: when your role or preferences change, old links are explicitly marked <code>SUPERSEDED</code> rather than deleted or confused with today's reality—and if you ask it to forget something sensitive, it prunes that node and its edges immediately.
+          If an assistant starts every chat with a blank slate, you spend time re-explaining which project you own, which SQL dialect your warehouse uses, and how your team formats weekly updates. If it instead pastes six months of raw chat logs into the prompt, old assignments remain right next to current ones, and the model writes queries for a decommissioned Redshift cluster on a project you handed off weeks ago. <strong>QuickMemory</strong> stores facts in a directed graph per user: when an assignment or preference changes, the old link is marked superseded rather than sent to the model, and clicking Forget removes a node and its incident edges immediately.
         </p>
       </div>
 
       <div class="grid-3">
         <div class="card walkthrough-card">
-          <span class="step-badge" style="background:var(--warn); color:#FFFFFF;">FAILURE 01 · COLD-START AMNESIA</span>
-          <h3>Stateless Sessions Score 6.9% Recall</h3>
-          <p>Without persistent memory, every fresh session forgets which project the user owns, their SQL dialect, and their WBR format—forcing repetitive re-prompting and scoring only <strong>6.9%</strong> slot recall on live <code>us.amazon.nova-lite-v1:0</code>.</p>
+          <span class="step-badge" style="background:var(--warn); color:#FFFFFF;">01 · STATELESS SESSIONS</span>
+          <h3>Fresh Chats Score 6.9% Context Recall</h3>
+          <p>Without persistent state, every new chat loses the user's active project, SQL dialect, and report format, requiring repeated prompting and reaching <strong>6.9%</strong> slot recall on live <code>us.amazon.nova-lite-v1:0</code>.</p>
         </div>
         <div class="card walkthrough-card">
-          <span class="step-badge" style="background:var(--fail); color:#FFFFFF;">FAILURE 02 · TRANSCRIPT STUFFING</span>
-          <h3>100.0% Stale Context Exposure &amp; O(S) Cost</h3>
-          <p>Concatenating raw multi-session logs scales linearly with session count (<strong>1,180</strong> avg input tokens across 7 sessions) and exposes superseded Q3 facts (<code>Payments-v1</code>, <code>Redshift SQL</code>) on <strong>100.0%</strong> of prompts, achieving <strong>0.0%</strong> contradiction-clean accuracy.</p>
+          <span class="step-badge" style="background:var(--fail); color:#FFFFFF;">02 · FULL TRANSCRIPT STUFFING</span>
+          <h3>100.0% Stale Fact Exposure &amp; Linear Token Growth</h3>
+          <p>Appending raw session logs grows linearly with session count (<strong>1,180</strong> average input tokens across 7 sessions) and leaves superseded Q3 facts (<code>Payments-v1</code>, <code>Redshift SQL</code>) in the prompt on <strong>100.0%</strong> of queries, scoring <strong>0.0%</strong> contradiction-clean accuracy.</p>
         </div>
         <div class="card walkthrough-card">
-          <span class="step-badge" style="background:var(--fail); color:#FFFFFF;">FAILURE 03 · FLAT VECTOR CHUNKS</span>
-          <h3>75.0% Stale Drift &amp; Missing 2-Hop Context</h3>
-          <p>Top-K cosine chunk retrieval co-retrieves outdated Session 01 chunks alongside current ones (<strong>75.0%</strong> stale contamination, <strong>25.0%</strong> contradiction accuracy) and misses 2-hop KPIs/blockers not lexically named in the user's prompt (<strong>65.5%</strong> recall).</p>
+          <span class="step-badge" style="background:var(--fail); color:#FFFFFF;">03 · FLAT VECTOR CHUNKS</span>
+          <h3>75.0% Stale Contamination &amp; Missing 2-Hop Context</h3>
+          <p>Top-K cosine search retrieves old Session 01 chunks alongside newer ones (<strong>75.0%</strong> stale exposure, <strong>25.0%</strong> contradiction accuracy) and misses second-hop metrics and blockers not named in the prompt (<strong>65.5%</strong> recall).</p>
         </div>
       </div>
 
-      <!-- Concrete Multi-Session Worked Example -->
       <div class="card" style="margin-top:1.25rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
           <div>
-            <span class="tag tag-soft">Concrete Multi-Session Worked Example</span>
-            <h3 style="font-size:1.14rem; font-weight:800; margin-top:0.35rem;">Tracing Maya Chen (Principal PM) Across 8 Sessions</h3>
+            <span class="tag tag-soft">Session Trace · Principal PM Persona</span>
+            <h3 style="font-size:1.14rem; font-weight:800; margin-top:0.35rem;">Example: Updating Project Ownership and SQL Preferences Across Sessions</h3>
           </div>
-          <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);">Session 01 → Pivot in Session 04 → Format Shift in Session 07 → Fresh Prompt Today</span>
+          <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);">Session 01 → Session 04 → Session 07 → Session 08</span>
         </div>
 
-        <div class="worked-example-grid">
+        <div class="session-trace-grid">
           <div class="session-card" style="margin-bottom:0;">
             <span class="tag tag-warn">Session 01 · 35 Days Ago</span>
             <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">Initial Q3 Baseline</h4>
@@ -1149,7 +1154,7 @@
 
           <div class="session-card" style="margin-bottom:0; border-left:4px solid var(--accent-main);">
             <span class="tag tag-accent">Session 07 · 2 Days Ago</span>
-            <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">Executive Format Update</h4>
+            <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">Report Format Update</h4>
             <p style="font-size:0.84rem; color:var(--ink-muted);">VP Commerce replaces 6-page memos with <code>3-Bullet BLUF + Weekly Delta Table</code> every Tuesday 09:00 PT with SDE <code>Devon Brooks</code>.</p>
             <div class="mono" style="font-size:0.7rem; margin-top:0.45rem; color:var(--fail);">
               ✗ EDGE-03 (6-Page) → SUPERSEDED<br/>
@@ -1158,9 +1163,9 @@
           </div>
 
           <div class="session-card" style="margin-bottom:0; background:var(--pass-soft);">
-            <span class="tag tag-pass">Fresh Session 08 · Today</span>
+            <span class="tag tag-pass">Session 08 · Today</span>
             <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">"Draft my WBR &amp; p99 SQL"</h4>
-            <p style="font-size:0.84rem; color:var(--ink);">Prompt mentions <strong>zero</strong> project or SQL names. QuickMemory traverses 2 hops in <strong>0.624 ms</strong>, withholds all 3 Q3 relics, and emits a 3-bullet BLUF + WoW Table + Trino Iceberg <code>approx_percentile</code> SQL.</p>
+            <p style="font-size:0.84rem; color:var(--ink);">The prompt names no project or SQL dialect. QuickMemory walks 2 hops in <strong>0.624 ms</strong>, excludes all 3 retired Q3 items, and produces a 3-bullet BLUF, delta table, and Trino Iceberg <code>approx_percentile</code> query.</p>
             <div class="mono" style="font-size:0.7rem; margin-top:0.45rem; font-weight:700; color:var(--pass);">
               596 vs 1,180 tok (-49.5%) · 0% Stale
             </div>
@@ -1169,37 +1174,37 @@
       </div>
     </section>
 
-    <!-- §02 · System Architecture -->
+    <!-- 02 · Architecture -->
     <section id="system-architecture" class="section">
       <div class="section-header">
         <div>
-          <span class="section-kicker">§02 · System Architecture</span>
-          <h2 class="section-title">End-to-End Serverless Architecture (Edge → Consolidation → 2-Hop PKG → Governance &amp; Bedrock)</h2>
-          <p class="section-desc">Serverless request &amp; memory consolidation pipeline on AWS CloudFront, private S3 (SigV4 OAC), Python 3.12 Lambda, and Amazon Bedrock Nova. <strong>Click any component in the diagram below to inspect its module contract.</strong></p>
+          <span class="section-kicker">02 · Architecture</span>
+          <h2 class="section-title">Architecture</h2>
+          <p class="section-desc">Request and session consolidation pipeline across CloudFront, S3, Python 3.12 AWS Lambda, and Amazon Bedrock. Click any component below to inspect its module and measured metrics.</p>
         </div>
-        <span class="tag tag-accent">CloudFront + S3 (OAC) + Py3.12 Lambda</span>
+        <span class="tag tag-accent">Serverless Python 3.12 + Amazon Bedrock</span>
       </div>
 
       <div class="walkthrough-grid">
         <div class="card walkthrough-card">
-          <span class="step-badge">STEP 01 · EPISODIC CONSOLIDATION</span>
-          <h3>Typed Entity &amp; Relation Extraction</h3>
-          <p>Parses work transcripts into <code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, and <code>Commitment</code> nodes connected via typed edges (<code>OWNS</code>, <code>PREFERS_FORMAT</code>, <code>BLOCKED_BY</code>, <code>COLLABORATES_WITH</code>).</p>
+          <span class="step-badge">STEP 01 · CONSOLIDATION</span>
+          <h3>Entity &amp; Relation Extraction</h3>
+          <p>Parses session notes into <code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, and <code>Commitment</code> nodes linked by directed edges (<code>OWNS</code>, <code>PREFERS_FORMAT</code>, <code>BLOCKED_BY</code>, <code>COLLABORATES_WITH</code>).</p>
         </div>
         <div class="card walkthrough-card">
-          <span class="step-badge">STEP 02 · CONTRADICTION GATE</span>
-          <h3>Deterministic SUPERSEDES Lineage</h3>
-          <p>Detects slot conflicts (e.g., <code>Payments-v1 → Checkout-Latency-Q4</code>, <code>Redshift → Athena Iceberg SQL</code>), transitions prior edges to <code>SUPERSEDED</code>, and records explicit <code>SUPERSEDES</code> provenance.</p>
+          <span class="step-badge">STEP 02 · CONTRADICTION CHECK</span>
+          <h3>Slot Supersession Lineage</h3>
+          <p>Detects functional slot updates (such as <code>Payments-v1 → Checkout-Latency-Q4</code> and <code>Redshift → Athena Iceberg SQL</code>), marks prior edges <code>SUPERSEDED</code>, and links explicit <code>SUPERSEDES</code> provenance.</p>
         </div>
         <div class="card walkthrough-card">
-          <span class="step-badge">STEP 03 · 2-HOP CONTEXT PACKER</span>
-          <h3>Sub-Millisecond Hybrid Subgraph</h3>
-          <p>Scores active nodes with BM25 + 3-gram cosine + Ebbinghaus retention <code>exp(-λt / (1 + 0.48 ln(1+n)))</code>, expands 2-hop active edges in <strong>0.624 ms p50 / 1.029 ms p99</strong>, and packs compact triples (<strong>-49.5%</strong> input tokens).</p>
+          <span class="step-badge">STEP 03 · 2-HOP RETRIEVAL</span>
+          <h3>Sub-Millisecond Subgraph Packing</h3>
+          <p>Scores active nodes with BM25, 3-gram cosine similarity, and Ebbinghaus retention <code>exp(-λt / (1 + 0.48 ln(1+n)))</code>, walks 2-hop active edges in <strong>0.624 ms p50 / 1.029 ms p99</strong>, and packs compact triples (<strong>-49.5%</strong> input tokens).</p>
         </div>
         <div class="card walkthrough-card">
-          <span class="step-badge">STEP 04 · BEDROCK &amp; GOVERNANCE</span>
-          <h3>Cited Companion + Right-to-Forget</h3>
-          <p>Calls live <code>us.amazon.nova-lite-v1:0</code> with inline <code>[MEM-xx]</code> &amp; <code>[EDGE-xx]</code> citations while giving users instant <code>Pin</code> (locks retention at <code>100%</code>) and <code>Forget</code> tombstoning (<strong>6/6 = 100.0%</strong> prune verified).</p>
+          <span class="step-badge">STEP 04 · GENERATION &amp; PRIVACY</span>
+          <h3>Cited Responses &amp; Instant Forget</h3>
+          <p>Calls live <code>us.amazon.nova-lite-v1:0</code> with inline <code>[MEM-xx]</code> and <code>[EDGE-xx]</code> citations while supporting <code>Pin</code> (locks retention at <code>100%</code>) and <code>Forget</code> tombstoning (<strong>6/6 = 100.0%</strong> prune verified).</p>
         </div>
       </div>
 
@@ -1286,11 +1291,11 @@
             <text x="775" y="144" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#9A3412">quick_memory/server.py · /api/*</text>
           </g>
 
-          <!-- Tilted Sticky-Note Callout -->
+          <!-- Measured Telemetry Callout -->
           <g transform="rotate(-1.6 1055 96)">
             <path d="M 934,40 L 1180,40 L 1180,136 L 1162,152 L 934,152 Z" fill="#FEF3C7" stroke="#18181B" stroke-width="2" />
             <path d="M 1162,152 L 1162,136 L 1180,136" fill="#FDE68A" stroke="#18181B" stroke-width="1.6" />
-            <text x="948" y="66" class="ex-hand" font-size="19" font-weight="700" fill="#92400E">📌 Sticky Note: Live Telemetry</text>
+            <text x="948" y="66" class="ex-hand" font-size="19" font-weight="700" fill="#92400E">Measured Telemetry</text>
             <text x="948" y="89" class="ex-hand" font-size="17" font-weight="600" fill="#18181B">• 32 Live Bedrock Nova Calls</text>
             <text x="948" y="110" class="ex-hand" font-size="17" font-weight="600" fill="#18181B">• 0.624 ms p50 · 1.029 ms p99</text>
             <text x="948" y="132" class="ex-hand" font-size="17" font-weight="700" fill="#5B21B6">• -49.5% Input Tokens (1.98x)</text>
@@ -1487,13 +1492,13 @@
       </div>
     </section>
 
-    <!-- §03 · Implementation -->
+    <!-- 03 · Implementation -->
     <section id="implementation" class="section">
       <div class="section-header">
         <div>
-          <span class="section-kicker">§03 · Implementation</span>
-          <h2 class="section-title">Core Subsystems — Plain-English Intuition &amp; Under-the-Hood Mechanics</h2>
-          <p class="section-desc">Zero-dependency Python 3.12 Personal Knowledge Graph engine (<code>quick_memory/graph_engine.py</code>) and CloudFront <code>/api/*</code> serverless router (<code>quick_memory/server.py</code>), paired with human-readable intuition and exact implementation details.</p>
+          <span class="section-kicker">03 · Implementation</span>
+          <h2 class="section-title">Implementation</h2>
+          <p class="section-desc">Python 3.12 graph engine (<code>quick_memory/graph_engine.py</code>) and serverless API router (<code>quick_memory/server.py</code>) handling entity extraction, contradiction supersession, retention decay, and two-hop retrieval.</p>
         </div>
         <span class="tag tag-soft">10/10 Unit Tests Passing</span>
       </div>
@@ -1502,142 +1507,139 @@
         <!-- Module 1 -->
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM A · CONSOLIDATION</span>
+            <span class="step-badge" style="margin-bottom:0;">MODULE 01 · CONSOLIDATION</span>
             <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py :: ingest_live_transcript()</span>
           </div>
-          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">1. Episodic-to-Semantic Entity &amp; Edge Consolidation</h3>
-          <div class="intuition-block">
-            <strong>Plain-English Intuition:</strong> Raw chat logs are noisy diaries; a Personal Knowledge Graph is a structured index card box. Instead of saving whole paragraphs verbatim, QuickMemory distills each meeting into clean cards—<em>Projects</em> you own, <em>People</em> you partner with, <em>Metrics</em> you chase, <em>Systems</em> blocking you, and <em>Preferences</em> you care about—connected by labeled arrows.
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">1. Entity &amp; Relation Extraction</h3>
+          <div class="summary-block">
+            Instead of storing raw paragraphs verbatim, QuickMemory extracts discrete entities from meeting notes (projects, teammates, target metrics, blockers, and formatting rules) and links them with directed edges.
           </div>
-          <div class="hood-block">
-            <strong>Under the Hood:</strong> Splits multi-turn transcripts into speaker-stripped clauses and runs ordered structural extractors producing <code>MemoryNode</code> dataclasses across 6 entity classes (<code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, <code>Commitment</code>) and 7 directed <code>MemoryEdge</code> types (<code>OWNS</code>, <code>PREFERS_FORMAT</code>, <code>BLOCKED_BY</code>, <code>TRACKS_METRIC</code>, <code>COLLABORATES_WITH</code>, <code>COMMITTED_TO</code>, <code>SUPERSEDES</code>). Re-mentions reinforce <code>access_count += 2</code> and append session IDs to <code>provenance_sessions</code>.
+          <div class="detail-block">
+            Splits multi-turn transcripts into speaker-stripped clauses and runs ordered structural extractors producing <code>MemoryNode</code> dataclasses across 6 entity classes (<code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, <code>Commitment</code>) and 7 directed <code>MemoryEdge</code> types (<code>OWNS</code>, <code>PREFERS_FORMAT</code>, <code>BLOCKED_BY</code>, <code>TRACKS_METRIC</code>, <code>COLLABORATES_WITH</code>, <code>COMMITTED_TO</code>, <code>SUPERSEDES</code>). Repeated mentions increment <code>access_count += 2</code> and append session IDs to <code>provenance_sessions</code>.
           </div>
         </div>
 
         <!-- Module 2 -->
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM B · SUPERSESSION</span>
+            <span class="step-badge" style="margin-bottom:0;">MODULE 02 · SUPERSESSION</span>
             <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py :: upsert_entity_with_relation()</span>
           </div>
-          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">2. Deterministic Temporal Contradiction Gate</h3>
-          <div class="intuition-block">
-            <strong>Plain-English Intuition:</strong> When you move to a new apartment, you forward your mail—you don't want packages shipped to both your old address and your new one. Whenever a user switches primary projects or replaces Redshift with Athena Iceberg SQL, QuickMemory retires the old link as <code>SUPERSEDED</code> while keeping an audit trail of <em>when</em> and <em>why</em> it changed.
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">2. Slot-Based Contradiction Supersession</h3>
+          <div class="summary-block">
+            When a user switches primary projects or migrates from Redshift to Athena Iceberg SQL, QuickMemory marks the previous edge superseded while keeping an audit record of which session replaced it.
           </div>
-          <div class="hood-block">
-            <strong>Under the Hood:</strong> Functional preference and ownership edges carry a canonical <code>slot_key</code> (<code>primary_project</code>, <code>sql_dialect</code>, <code>code_stack</code>, <code>doc_format</code>, <code>active_blocker</code>). On upsert, any active edge matching <code>(source_id, relation, slot_key)</code> or an explicit <code>contradicts_label</code> transitions atomically to <code>status="SUPERSEDED"</code>, records <code>superseded_in_session</code>, and emits an explicit <code>SUPERSEDES</code> directed lineage edge—driving stale prompt contamination to <strong>0.0%</strong>.
+          <div class="detail-block">
+            Functional preference and ownership edges carry a canonical <code>slot_key</code> (<code>primary_project</code>, <code>sql_dialect</code>, <code>code_stack</code>, <code>doc_format</code>, <code>active_blocker</code>). On upsert, any active edge matching <code>(source_id, relation, slot_key)</code> or an explicit <code>contradicts_label</code> transitions atomically to <code>status="SUPERSEDED"</code>, records <code>superseded_in_session</code>, and creates a <code>SUPERSEDES</code> lineage edge, keeping stale prompt exposure at <strong>0.0%</strong>.
           </div>
         </div>
 
         <!-- Module 3 -->
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM C · RETENTION</span>
+            <span class="step-badge" style="margin-bottom:0;">MODULE 03 · RETENTION</span>
             <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py :: compute_ebbinghaus_retention()</span>
           </div>
-          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">3. Frequency-Reinforced Ebbinghaus Memory Decay</h3>
-          <div class="intuition-block">
-            <strong>Plain-English Intuition:</strong> A one-off side comment from five weeks ago shouldn't carry the same weight as a formatting rule you rely on every Tuesday. Memories naturally fade over time unless repeated use reinforces them—or unless you explicitly click <strong>Pin</strong> to lock a non-negotiable habit at <code>100%</code> forever.
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">3. Frequency-Reinforced Ebbinghaus Decay</h3>
+          <div class="summary-block">
+            A passing comment from five weeks ago decays faster than a formatting preference used every week. Users can also pin core preferences to lock their retention weight at <code>100%</code>.
           </div>
-          <div class="hood-block">
-            <strong>Under the Hood:</strong> Evaluates continuous retention via <code>R(t, n) = exp(-λ · age_days / (1 + 0.48 · ln(1 + access_count)))</code> with default <code>λ = 0.045</code>. Every live 2-hop retrieval increments <code>access_count</code> on matched active nodes, flattening their decay slope over a 60-day horizon; <code>pinned=True</code> clamps <code>R = 1.0</code> and <code>forgotten=True</code> clamps <code>R = 0.0</code>.
+          <div class="detail-block">
+            Computes continuous retention via <code>R(t, n) = exp(-λ · age_days / (1 + 0.48 · ln(1 + access_count)))</code> with default <code>λ = 0.045</code>. Every two-hop retrieval increments <code>access_count</code> on matched active nodes, flattening their decay curve over a 60-day window. Setting <code>pinned=True</code> clamps <code>R = 1.0</code>, and <code>forgotten=True</code> clamps <code>R = 0.0</code>.
           </div>
         </div>
 
         <!-- Module 4 -->
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM D · RETRIEVAL &amp; PRIVACY</span>
+            <span class="step-badge" style="margin-bottom:0;">MODULE 04 · RETRIEVAL &amp; PRIVACY</span>
             <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py + server.py</span>
           </div>
-          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">4. 2-Hop Hybrid Subgraph Packer &amp; O(deg(v)) Tombstoning</h3>
-          <div class="intuition-block">
-            <strong>Plain-English Intuition:</strong> If you ask <em>"Draft my WBR update,"</em> a keyword search only looks for the word <em>"WBR."</em> A graph walks two steps outward from you: Step 1 finds your active project (<code>Checkout-Latency-Q4</code>), and Step 2 automatically pulls in that project's SLA target (<code>180ms</code>) and blocker (<code>LakeFormation</code>)—even though you never typed either word!
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">4. Two-Hop Subgraph Packer &amp; O(deg(v)) Tombstoning</h3>
+          <div class="summary-block">
+            When a user asks to draft a weekly update without naming a project, a two-step walk from the user node finds the active project on hop 1 and pulls in its target SLA and active blocker on hop 2.
           </div>
-          <div class="hood-block">
-            <strong>Under the Hood:</strong> Combines BM25 IDF (`k1=1.2, b=0.75`) + character 3-gram cosine similarity weighted by <code>0.55 + 0.45·R(t,n)</code> to pick Hop-1 seeds, attaches active <code>Preference</code> nodes, expands Hop-2 active edges in <strong>0.624 ms p50 / 1.029 ms p99</strong>, and serializes compact triples (`596` avg Bedrock inputTokens). Calling <code>DELETE /api/memory/forget</code> sets <code>TOMBSTONED</code> and marks incident active edges <code>PRUNED</code> in <code>O(deg(v))</code> time (<strong>6/6 = 100.0%</strong> verified).
+          <div class="detail-block">
+            Combines BM25 IDF (<code>k1=1.2, b=0.75</code>) and character 3-gram cosine similarity weighted by <code>0.55 + 0.45·R(t,n)</code> to pick hop-1 seeds, attaches active <code>Preference</code> nodes, expands hop-2 active edges in <strong>0.624 ms p50 / 1.029 ms p99</strong>, and formats compact triples (<code>596</code> mean Bedrock inputTokens). Calling <code>DELETE /api/memory/forget</code> sets <code>TOMBSTONED</code> and marks incident active edges <code>PRUNED</code> in <code>O(deg(v))</code> time (<strong>6/6 = 100.0%</strong> verified).
           </div>
         </div>
       </div>
     </section>
 
-    <!-- §04 · Design Tradeoffs -->
+    <!-- 04 · Trade-Offs -->
     <section id="design-tradeoffs" class="section">
       <div class="section-header">
         <div>
-          <span class="section-kicker">§04 · Design Tradeoffs</span>
-          <h2 class="section-title">Architectural Tradeoffs &amp; Production Engineering Decisions</h2>
-          <p class="section-desc">Every memory architecture trades off token footprint, multi-hop recall, write-path latency, and deletion semantics. Here is how QuickMemory balances each axis based on live Bedrock Nova measurements.</p>
+          <span class="section-kicker">04 · Trade-Offs</span>
+          <h2 class="section-title">Trade-Offs</h2>
+          <p class="section-desc">Comparing prompt token budget, multi-hop recall, write-path latency, and deletion behavior across the four evaluated memory architectures.</p>
         </div>
         <span class="tag tag-pass">Measured Across 4 Baselines</span>
       </div>
 
       <div class="grid-equal">
         <div class="card">
-          <h3 style="font-size:1.08rem; font-weight:800; margin-bottom:0.55rem;">1. 2-Hop PKG Triples vs. Flat Vector Chunks &amp; Full Transcripts</h3>
+          <h3 style="font-size:1.08rem; font-weight:800; margin-bottom:0.55rem;">1. Two-Hop Graph Triples vs. Flat Vector Chunks &amp; Full Transcripts</h3>
           <ul style="padding-left:1.15rem; font-size:0.88rem; display:flex; flex-direction:column; gap:0.55rem;">
-            <li><strong>Token Budget vs. Multi-Hop Completeness:</strong> Flat top-3 cosine chunks use fewer input tokens (<code>329</code> vs. <code>596</code> for QuickMemory), because they only send 3 short snippets. However, flat chunks miss 2-hop blockers/KPIs and co-retrieve superseded Q3 turns—dropping recall to <strong>65.5%</strong> and exposing stale context on <strong>75.0%</strong> of queries. QuickMemory invests ~267 extra tokens for structured 2-hop triples to achieve <strong>89.7%</strong> recall (<strong>+24.2 pts</strong>) and <strong>0.0%</strong> stale contamination, while still saving <strong>49.5%</strong> vs. full transcript stuffing (<code>1,180</code> tokens).</li>
-            <li><strong>Asymptotic Scaling Across Months of Work:</strong> Full-history stuffing grows as <code>O(S)</code> with total sessions <code>S</code>; QuickMemory's prompt envelope scales as <code>O(|V_active_2hop|)</code>—bounded by the user's active projects and preferences regardless of whether <code>S = 10</code> or <code>S = 500</code>.</li>
+            <li><strong>Token Footprint vs. Second-Hop Recall:</strong> Flat top-3 cosine chunks send fewer input tokens (<code>329</code> vs. <code>596</code> for QuickMemory), because they include only 3 short snippets. However, flat chunks miss second-hop blockers and metrics and pull in superseded Q3 turns, dropping recall to <strong>65.5%</strong> and exposing stale facts on <strong>75.0%</strong> of queries. QuickMemory spends ~267 extra tokens on structured two-hop triples to reach <strong>89.7%</strong> recall (<strong>+24.2 pts</strong>) with <strong>0.0%</strong> stale exposure, while using <strong>49.5%</strong> fewer tokens than full transcript stuffing (<code>1,180</code> tokens).</li>
+            <li><strong>Scaling Over Long Histories:</strong> Full-history stuffing grows as <code>O(S)</code> with total sessions <code>S</code>. QuickMemory's prompt payload scales as <code>O(|V_active_2hop|)</code>, bounded by the user's active projects and preferences whether <code>S = 10</code> or <code>S = 500</code>.</li>
           </ul>
         </div>
 
         <div class="card">
           <h3 style="font-size:1.08rem; font-weight:800; margin-bottom:0.55rem;">2. Synchronous Clause Extraction vs. Async LLM Consolidation &amp; Tombstones</h3>
           <ul style="padding-left:1.15rem; font-size:0.88rem; display:flex; flex-direction:column; gap:0.55rem;">
-            <li><strong>Write-Path Latency vs. Open-Vocabulary Nuance:</strong> Running an LLM call on every session write adds ~1.5–3.0s latency and extra token spend. QuickMemory uses a fast deterministic clause/slot extractor on the synchronous write path (`< 1 ms` consolidation) for zero-wait interactive session ingestion, while pairing easily with asynchronous background LLM entity Linking for ambiguous prose at scale.</li>
-            <li><strong>In-Place O(deg(v)) Tombstoning vs. Vector Re-Indexing:</strong> Deleting a single person or project from raw chunk embeddings leaves partial co-references scattered across overlapping sliding-window chunks. Graph node tombstoning (`TOMBSTONED` + `PRUNED` incident edges) severs retrieval paths atomically in `O(deg(v))` without re-embedding transcripts.</li>
+            <li><strong>Write-Path Latency vs. Open-Vocabulary Extraction:</strong> Calling an LLM on every session write adds 1.5 to 3.0 seconds of latency and extra token cost. QuickMemory runs deterministic clause and slot extraction on the synchronous write path (<code>&lt; 1 ms</code> consolidation) for immediate updates, and can pair with background LLM entity linking for unstructured prose.</li>
+            <li><strong>In-Place O(deg(v)) Tombstoning vs. Vector Re-Indexing:</strong> Removing a person or project from sliding-window text embeddings leaves partial mentions across overlapping chunks. Graph tombstoning (<code>TOMBSTONED</code> plus <code>PRUNED</code> incident edges) cuts retrieval paths atomically in <code>O(deg(v))</code> without re-indexing transcripts.</li>
           </ul>
         </div>
       </div>
     </section>
 
-    <!-- §05 · Live Studio & §06 · Benchmarks -->
+    <!-- 05 · Live Demo -->
     <section id="live-studio" class="tabs-wrapper">
       <div class="section-header" id="benchmarks-section" style="scroll-margin-top:105px;">
         <div>
-          <span class="section-kicker">§05 · Live Studio &amp; §06 · Benchmarks</span>
-          <h2 class="section-title">Interactive 4-Tab Personal Knowledge Graph &amp; Bedrock Nova Studio</h2>
-          <p class="section-desc">Explore the live Personal Knowledge Graph, test side-by-side stateless vs. personalized responses on live Amazon Bedrock Nova, adjust Ebbinghaus retention &amp; tombstones, and inspect all 32 raw benchmark trials.</p>
+          <span class="section-kicker">05 · Live Demo</span>
+          <h2 class="section-title">Live Demo</h2>
+          <p class="section-desc">Inspect the memory graph, add new session notes, compare stateless vs. memory-backed answers on Amazon Bedrock, test retention decay and Forget controls, and browse all 32 benchmark trials.</p>
         </div>
-        <span class="tag tag-accent">Live CloudFront /api/* + Bedrock Nova</span>
+        <span class="tag tag-accent">Live API + Amazon Bedrock</span>
       </div>
-      <div class="tab-bar" role="tablist" aria-label="QuickMemory Interactive Studios">
+      <div class="tab-bar" role="tablist" aria-label="QuickMemory Live Demo">
         <button type="button" class="tab-btn active" data-tab="pkg-studio" role="tab" aria-selected="true" onclick="switchTab('pkg-studio')">
-          <span class="tab-btn-eyebrow">Studio 01 · Personal Graph</span>
-          <span class="tab-btn-title">Personal Knowledge Graph &amp; Live Ingest</span>
-          <span class="tab-btn-metric">Active vs Superseded SVG · /api/sessions/ingest</span>
+          <span class="tab-btn-eyebrow">01 · Memory Graph</span>
+          <span class="tab-btn-title">Explore Memory Graph &amp; Add Notes</span>
+          <span class="tab-btn-metric">Active vs. Retired Facts · Live Ingest</span>
         </button>
         <button type="button" class="tab-btn" data-tab="companion-studio" role="tab" aria-selected="false" onclick="switchTab('companion-studio')">
-          <span class="tab-btn-eyebrow">Studio 02 · Bedrock Nova</span>
-          <span class="tab-btn-title">Stateless LLM vs. QuickMemory Companion</span>
-          <span class="tab-btn-metric">Live us.amazon.nova-lite-v1:0 · [MEM-xx] Cites</span>
+          <span class="tab-btn-eyebrow">02 · Side-by-Side Chat</span>
+          <span class="tab-btn-title">Compare With &amp; Without Memory</span>
+          <span class="tab-btn-metric">Amazon Bedrock · [MEM-xx] Citations</span>
         </button>
         <button type="button" class="tab-btn" data-tab="governance-studio" role="tab" aria-selected="false" onclick="switchTab('governance-studio')">
-          <span class="tab-btn-eyebrow">Studio 03 · Retention &amp; Control</span>
-          <span class="tab-btn-title">Ebbinghaus Decay, Contradictions &amp; Forget</span>
-          <span class="tab-btn-metric">60-Day Curve · 100% (6/6) Tombstone Prune</span>
+          <span class="tab-btn-eyebrow">03 · Retention &amp; Privacy</span>
+          <span class="tab-btn-title">Inspect Decay &amp; Forget Facts</span>
+          <span class="tab-btn-metric">60-Day Decay Curve · Pin &amp; Forget</span>
         </button>
         <button type="button" class="tab-btn" data-tab="benchmarks" role="tab" aria-selected="false" onclick="switchTab('benchmarks')">
-          <span class="tab-btn-eyebrow">Studio 04 · Live Telemetry</span>
-          <span class="tab-btn-title">Measured Multi-Session Benchmark Suite</span>
-          <span class="tab-btn-metric">89.7% Recall · 0.0% Stale · -49.5% Tok · 1.029ms</span>
+          <span class="tab-btn-eyebrow">04 · Benchmarks</span>
+          <span class="tab-btn-title">Benchmark Results</span>
+          <span class="tab-btn-metric">89.7% Recall · 0% Stale · -49.5% Tokens</span>
         </button>
       </div>
 
       <!-- ================================================================ -->
-      <!-- TAB 1: INTERACTIVE PERSONAL KNOWLEDGE GRAPH & LIVE SESSION INGEST-->
+      <!-- TAB 1: EXPLORE MEMORY GRAPH & ADD NOTES                          -->
       <!-- ================================================================ -->
       <div id="panel-pkg-studio" class="tab-panel active" role="tabpanel">
-        <div class="click-guide-box">
-          <strong>👆 What to Click &amp; What Happens (Studio 01):</strong>
-          (1) Click any node in the SVG Personal Knowledge Graph below to inspect its <code>[MEM-xx]</code> session provenance, retention percentage, and exact quote;
-          (2) Switch between <strong>Maya Chen (Principal PM)</strong> and <strong>Devon Brooks (Staff SDE)</strong> in the top-right dropdown;
-          (3) Click a <strong>1-Click Contradiction Preset</strong> on the right and press <strong>⚡ Consolidate Session into Personal Knowledge Graph</strong>—this fires <code>POST /api/sessions/ingest</code> on AWS Lambda, extracts new typed entities, flips conflicting prior edges to red dashed <code>SUPERSEDED</code> strokes, and redraws the live graph!
+        <div class="demo-note-box">
+          Click any node in the graph to inspect its session history, retention score, and source quote. Use the contradiction presets on the right to ingest a new session note via <code>POST /api/sessions/ingest</code> and watch conflicting edges switch to <code>SUPERSEDED</code>.
         </div>
         <div class="sim-header">
           <div>
-            <h2 class="sim-title">Interactive Personal Knowledge Graph (<code>User ↔ Projects ↔ Stakeholders ↔ Preferences</code>)</h2>
-            <p class="sim-desc">Switch user personas, click any node in the Neo-Brutalist SVG graph to inspect session provenance, or ingest a new work session transcript live to watch entity extraction and contradiction supersession happen in real time.</p>
+            <h2 class="sim-title">User Memory Graph &amp; Live Session Ingest</h2>
+            <p class="sim-desc">Switch personas, inspect provenance on individual nodes, or add a new meeting note to extract entities and update superseded relationships in real time.</p>
           </div>
           <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
             <select id="personaSelectTop" onchange="changePersona(this.value)" style="width:auto; min-width:270px; font-weight:700;">
@@ -1671,18 +1673,18 @@
           <div style="display:flex; flex-direction:column; gap:1.15rem;">
             <div class="card">
               <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-bottom:0.65rem; flex-wrap:wrap;">
-                <h3 style="font-size:1.06rem; font-weight:800;">⚡ Ingest New Work Session (<code>/api/sessions/ingest</code>)</h3>
+                <h3 style="font-size:1.06rem; font-weight:800;">⚡ Add Work Session Note (<code>/api/sessions/ingest</code>)</h3>
                 <span class="tag tag-accent">Live Extractor</span>
               </div>
               <p style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:0.75rem;">
-                Drop a new meeting note or contradiction preset below to extract typed <code>[MEM-xx]</code> entities and watch old <code>OWNS</code> / <code>PREFERS_FORMAT</code> edges flip to <code>SUPERSEDED</code>.
+                Load a preset or write a custom session note to extract <code>[MEM-xx]</code> entities and mark conflicting <code>OWNS</code> or <code>PREFERS_FORMAT</code> edges as <code>SUPERSEDED</code>.
               </p>
 
-              <div class="control-label"><span>1-Click Contradiction &amp; Expansion Presets</span></div>
+              <div class="control-label"><span>Sample Session Presets</span></div>
               <div style="display:grid; grid-template-columns:1fr; gap:0.42rem; margin-bottom:0.8rem;">
                 <button type="button" class="btn btn-secondary" style="justify-content:space-between; text-align:left;" onclick="loadIngestPreset(0)">
                   <span>🔀 Pivot Project → Global-OneClick-2026 &amp; SQL → DuckDB Parquet</span>
-                  <span class="mono" style="font-size:0.66rem;">2 Supersessions</span>
+                  <span class="mono" style="font-size:0.66rem;">2 Updates</span>
                 </button>
                 <button type="button" class="btn btn-secondary" style="justify-content:space-between; text-align:left;" onclick="loadIngestPreset(1)">
                   <span>🤝 Add VP Stakeholder + New Latency SLA Commitment</span>
@@ -1690,7 +1692,7 @@
                 </button>
                 <button type="button" class="btn btn-secondary" style="justify-content:space-between; text-align:left;" onclick="loadIngestPreset(2)">
                   <span>🦀 Staff SDE: Cutover Stack → Rust Tokio + KMS Blocker</span>
-                  <span class="mono" style="font-size:0.66rem;">Supersedes Stack</span>
+                  <span class="mono" style="font-size:0.66rem;">Updates Stack</span>
                 </button>
               </div>
 
@@ -1700,19 +1702,19 @@
               </div>
 
               <div style="margin-bottom:0.75rem;">
-                <div class="control-label"><label for="ingestTranscriptInput">Work Session Transcript / Notes</label></div>
+                <div class="control-label"><label for="ingestTranscriptInput">Work Session Notes</label></div>
                 <textarea id="ingestTranscriptInput" rows="4">Switched project from Checkout-Latency-Q4 to Global-OneClick-2026. Migrated preferred SQL dialect from Athena Iceberg SQL to DuckDB Parquet SQL. Collaborating with Raj Malhotra (Principal TPM). Blocked by CloudFront Edge Token Signing.</textarea>
               </div>
 
               <button type="button" class="btn btn-accent" style="width:100%; justify-content:center;" id="ingestBtn" onclick="submitSessionIngest()">
-                ⚡ Consolidate Session into Personal Knowledge Graph
+                ⚡ Add Session Note to Memory Graph
               </button>
               <div id="ingestFeedbackBanner" style="display:none; margin-top:0.75rem;"></div>
             </div>
 
             <div class="card">
               <div class="control-label">
-                <span>Episodic Session Consolidation Timeline</span>
+                <span>Session History</span>
                 <span class="tag tag-soft" id="sessionCountBadge">7 Sessions</span>
               </div>
               <div id="sessionTimelineList" style="max-height:330px; overflow-y:auto;"></div>
@@ -1722,31 +1724,30 @@
       </div>
 
       <!-- ================================================================ -->
-      <!-- TAB 2: STATELESS LLM VS QUICKMEMORY PERSONALIZED COMPANION       -->
+      <!-- TAB 2: COMPARE WITH & WITHOUT MEMORY                             -->
       <!-- ================================================================ -->
       <div id="panel-companion-studio" class="tab-panel" role="tabpanel">
-        <div class="click-guide-box">
-          <strong>👆 What to Click &amp; What Happens (Studio 02):</strong>
-          Pick a preset fresh-session prompt (or type your own without naming any project or SQL dialect) and click <strong>🚀 Run Side-by-Side Bedrock Nova Comparison</strong>. AWS Lambda executes <code>POST /api/companion/ask</code>, running 2-hop PKG retrieval in <code>~0.62 ms</code> and invoking <strong>two parallel live <code>us.amazon.nova-lite-v1:0</code> Converse calls</strong>: a cold-start Stateless LLM on the left vs. QuickMemory's <code>[MEM-xx]</code>-grounded Companion on the right—complete with clickable provenance pills and a list of suppressed stale Q3 contradictions below.
+        <div class="demo-note-box">
+          Send a prompt that omits project names and SQL dialects to run two parallel Amazon Bedrock (<code>us.amazon.nova-lite-v1:0</code>) calls: a stateless model on the left and QuickMemory's two-hop graph context on the right, with suppressed stale facts listed below.
         </div>
         <div class="sim-header">
           <div>
-            <h2 class="sim-title">Stateless Generic LLM vs. QuickMemory Personalized Companion (<code>/api/companion/ask</code>)</h2>
-            <p class="sim-desc">Send an identical fresh-session prompt to a stateless LLM vs. QuickMemory backed by 2-hop Personal Knowledge Graph retrieval + live <strong>Amazon Bedrock (<code>us.amazon.nova-lite-v1:0</code>)</strong>.</p>
+            <h2 class="sim-title">Stateless Model vs. QuickMemory Assistant (<code>/api/companion/ask</code>)</h2>
+            <p class="sim-desc">Compare an ungrounded prompt against QuickMemory's two-hop graph retrieval on live <strong>Amazon Bedrock (<code>us.amazon.nova-lite-v1:0</code>)</strong>.</p>
           </div>
-          <span class="tag tag-accent">Live Bedrock Converse API · Parallel Execution</span>
+          <span class="tag tag-accent">Parallel Bedrock Converse Calls</span>
         </div>
 
         <div class="card" style="margin-bottom:1.2rem;">
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; align-items:start;">
             <div>
-              <div class="control-label"><label for="companionPersonaSelect">Active User Persona</label></div>
+              <div class="control-label"><label for="companionPersonaSelect">Active Persona</label></div>
               <select id="companionPersonaSelect" onchange="changePersona(this.value)" style="margin-bottom:0.75rem;">
                 <option value="principal_pm">Maya Chen (Principal PM)</option>
                 <option value="staff_sde">Devon Brooks (Staff SDE)</option>
               </select>
 
-              <div class="control-label"><span>Preset Fresh-Session Prompts</span></div>
+              <div class="control-label"><span>Sample Prompts</span></div>
               <div style="display:flex; flex-direction:column; gap:0.42rem;">
                 <button type="button" class="btn btn-secondary" style="text-align:left;" onclick="loadCompanionPrompt(0)">📊 Draft Tuesday WBR + Latency SQL</button>
                 <button type="button" class="btn btn-secondary" style="text-align:left;" onclick="loadCompanionPrompt(1)">🚧 Unblock Critical Path &amp; Stakeholders</button>
@@ -1756,14 +1757,14 @@
 
             <div>
               <div class="control-label">
-                <label for="companionPromptInput">Fresh Session User Prompt (Zero In-Prompt Context)</label>
+                <label for="companionPromptInput">User Prompt</label>
                 <span class="mono" style="font-size:0.7rem; color:var(--ink-muted);">No project name, SQL dialect, or format is mentioned</span>
               </div>
               <textarea id="companionPromptInput" rows="3" style="margin-bottom:0.7rem;">Draft my Tuesday WBR update and write the p99 checkout latency SQL query for leadership.</textarea>
               <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; flex-wrap:wrap;">
-                <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);" id="companionStatusText">Ready — traverses 2-hop PKG &amp; calls Amazon Bedrock Nova.</span>
+                <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);" id="companionStatusText">Ready to run two-hop retrieval and call Amazon Bedrock.</span>
                 <button type="button" class="btn btn-accent" id="askCompanionBtn" onclick="runCompanionComparison()">
-                  🚀 Run Side-by-Side Bedrock Nova Comparison
+                  🚀 Run Side-by-Side Bedrock Comparison
                 </button>
               </div>
             </div>
@@ -1774,23 +1775,23 @@
           <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.65rem;">
               <div>
-                <span class="tag tag-warn">Stateless Baseline</span>
-                <h3 style="font-size:1.08rem; font-weight:800; margin-top:0.28rem;">Generic Amnesiac LLM (Session Cold-Start)</h3>
+                <span class="tag tag-warn">No Memory</span>
+                <h3 style="font-size:1.08rem; font-weight:800; margin-top:0.28rem;">Stateless Baseline (Fresh Chat)</h3>
               </div>
               <span class="mono" style="font-size:0.7rem; color:var(--ink-muted);" id="statelessEngineMeta"></span>
             </div>
             <div class="response-card" id="statelessOutputBox"></div>
             <div style="margin-top:0.75rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;" class="mono">
               <span class="tag tag-fail">0 Preferences Applied</span>
-              <span class="tag tag-warn">6.9% Measured Benchmark Slot Recall</span>
+              <span class="tag tag-warn">6.9% Benchmark Recall</span>
             </div>
           </div>
 
           <div class="card" style="border-color:var(--accent-main); border-width:2.5px;">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.65rem;">
               <div>
-                <span class="tag tag-accent">QuickMemory PKG + Bedrock Nova ★</span>
-                <h3 style="font-size:1.08rem; font-weight:800; margin-top:0.28rem;">Personalized Companion (<code>[MEM-xx]</code> Grounded)</h3>
+                <span class="tag tag-accent">QuickMemory + Bedrock ★</span>
+                <h3 style="font-size:1.08rem; font-weight:800; margin-top:0.28rem;">Memory-Backed Assistant (<code>[MEM-xx]</code> Cited)</h3>
               </div>
               <span class="mono" style="font-size:0.7rem; color:var(--pass); font-weight:700;" id="personalizedEngineMeta"></span>
             </div>
@@ -1802,12 +1803,12 @@
         <div class="grid-equal">
           <div class="card">
             <div class="control-label">
-              <span>Retrieved 2-Hop PKG Subgraph &amp; Token Compression</span>
+              <span>Retrieved 2-Hop Subgraph &amp; Token Savings</span>
               <span class="tag tag-pass" id="pkgCompressionBadge">-49.5% Input Tokens</span>
             </div>
             <div class="bar-group" id="companionTokenBars"></div>
             <div class="code-header">
-              <span>Compact PKG Triple Envelope Sent to Bedrock Nova</span>
+              <span>Active Memory Triples Sent to Amazon Bedrock</span>
               <span id="subgraphLatencyBadge">0.624 ms</span>
             </div>
             <pre class="code-box" style="max-height:220px;" id="assembledContextBox"></pre>
@@ -1815,11 +1816,11 @@
 
           <div class="card">
             <div class="control-label">
-              <span>Suppressed Stale Contradictions &amp; Tombstoned Memories</span>
-              <span class="tag tag-fail">0.0% Stale Contamination Gate</span>
+              <span>Withheld Outdated &amp; Forgotten Facts</span>
+              <span class="tag tag-fail">0.0% Stale Exposure</span>
             </div>
             <p style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:0.75rem;">
-              Full-history stuffing (`100.0%` stale exposure) and flat vector stores (`75.0%` stale exposure) leak these outdated facts. QuickMemory's <code>SUPERSEDED</code> &amp; <code>TOMBSTONED</code> filters withheld them before prompt assembly:
+              Full-history stuffing (<code>100.0%</code> stale exposure) and flat vector search (<code>75.0%</code> stale exposure) include these retired items. QuickMemory excluded them before prompt assembly:
             </p>
             <div id="suppressedContradictionsBox"></div>
           </div>
@@ -1827,18 +1828,16 @@
       </div>
 
       <!-- ================================================================ -->
-      <!-- TAB 3: MEMORY DECAY, CONTRADICTION LEDGER & PIN/FORGET CONTROLS  -->
+      <!-- TAB 3: INSPECT DECAY & FORGET FACTS                              -->
       <!-- ================================================================ -->
       <div id="panel-governance-studio" class="tab-panel" role="tabpanel">
-        <div class="click-guide-box">
-          <strong>👆 What to Click &amp; What Happens (Studio 03):</strong>
-          (1) Select any memory node in the <strong>60-Day Ebbinghaus Retention Curve Explorer</strong> to compare its access-reinforced retention curve (purple) against unreinforced decay (red dashed);
-          (2) Click <strong>📌 Pin</strong> or <strong>🗑️ Forget</strong> on any row in the Governance Console (`POST /api/memory/toggle`)—forgetting tombstones the entity (`0%` retention), prunes its active PKG edges in-place, and immediately prevents it from appearing in Studio 02's Bedrock Nova prompt envelope!
+        <div class="demo-note-box">
+          Select any node in the 60-day retention chart to compare reinforced retention (purple) against single-mention decay (red dashed), or click <strong>Pin</strong>, <strong>Forget</strong>, and <strong>Restore</strong> below to modify what enters future prompts.
         </div>
         <div class="sim-header">
           <div>
-            <h2 class="sim-title">Ebbinghaus Decay, Contradiction Resolution &amp; User Forget / Pin Controls</h2>
-            <p class="sim-desc">Inspect 60-day Ebbinghaus retention curves boosted by retrieval frequency, audit resolved temporal contradictions, or exercise user sovereignty via instant <code>Pin</code>, <code>Forget (Tombstone)</code>, and <code>Restore</code> API controls.</p>
+            <h2 class="sim-title">Ebbinghaus Retention Curves, Contradiction Log &amp; Pin / Forget Controls</h2>
+            <p class="sim-desc">Inspect 60-day retention curves reinforced by access count, review superseded facts, and test live <code>Pin</code>, <code>Forget</code>, and <code>Restore</code> actions.</p>
           </div>
           <span class="tag tag-accent">POST /api/memory/toggle · DELETE /api/memory/forget</span>
         </div>
@@ -1846,7 +1845,7 @@
         <div class="grid-equal" style="margin-bottom:1.25rem;">
           <div class="card">
             <div class="control-label">
-              <span>60-Day Ebbinghaus Retention Curve Explorer</span>
+              <span>60-Day Ebbinghaus Retention Curve</span>
               <span class="mono" style="font-size:0.69rem; color:var(--ink-muted);">R(t,n) = exp(-λt / (1 + 0.48 ln(1+n)))</span>
             </div>
             <select id="decayNodeSelect" onchange="selectDecayNode(this.value)" style="margin-bottom:0.75rem;"></select>
@@ -1856,11 +1855,11 @@
 
           <div class="card">
             <div class="control-label">
-              <span>Temporal Contradiction Supersession Ledger</span>
+              <span>Superseded Facts Log</span>
               <span class="tag tag-pass" id="contradictionCountBadge">0.0% Stale Leak</span>
             </div>
             <p style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:0.75rem;">
-              Every slot conflict across sessions is deterministically resolved by marking stale edges <code>SUPERSEDED</code> and linking <code>SUPERSEDES</code> provenance:
+              Slot updates across sessions mark older edges <code>SUPERSEDED</code> and record <code>SUPERSEDES</code> provenance:
             </p>
             <div id="contradictionLedgerBox" style="max-height:340px; overflow-y:auto;"></div>
           </div>
@@ -1869,8 +1868,8 @@
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.8rem;">
             <div>
-              <h3 style="font-size:1.12rem; font-weight:800;">User Memory Governance &amp; Right-to-Be-Forgotten Console</h3>
-              <p style="font-size:0.82rem; color:var(--ink-muted);">Pin critical preferences (`100%` retention lock) or tombstone sensitive entities (immediately prunes incident PKG edges from `/api/companion/ask` — verified `6/6 = 100.0%` in benchmark probes).</p>
+              <h3 style="font-size:1.12rem; font-weight:800;">User Pin &amp; Right-to-Forget Controls</h3>
+              <p style="font-size:0.82rem; color:var(--ink-muted);">Pin preferences at <code>100%</code> retention or forget sensitive items to prune their edges from <code>/api/companion/ask</code> (<code>6/6 = 100.0%</code> verified in benchmarks).</p>
             </div>
             <span class="mono" style="font-size:0.72rem;" id="govActionStatus">Click Pin, Forget, or Restore on any entity below.</span>
           </div>
@@ -1880,11 +1879,11 @@
               <thead>
                 <tr>
                   <th>ID &amp; Type</th>
-                  <th>Entity &amp; Semantic Summary</th>
+                  <th>Entity &amp; Summary</th>
                   <th>Provenance</th>
                   <th>Status</th>
                   <th>Retention</th>
-                  <th>Governance Actions</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="governanceTableBody"></tbody>
@@ -1894,19 +1893,19 @@
       </div>
 
       <!-- ================================================================ -->
-      <!-- TAB 4: MULTI-SESSION PERSONALIZATION BENCHMARK SUITE             -->
+      <!-- TAB 4: BENCHMARKS                                                -->
       <!-- ================================================================ -->
       <div id="panel-benchmarks" class="tab-panel" role="tabpanel">
-        <div class="click-guide-box">
-          <strong>👆 What to Click &amp; What Happens (Studio 04 · §06 Benchmarks):</strong>
-          Inspect the 4-architecture head-to-head table hydrated directly from <code>benchmarks/latest_results.json</code> (32 live <code>boto3</code> Bedrock Nova calls, 240 <code>time.perf_counter()</code> retrieval runs, and 6 tombstone probes), then scroll down to the <strong>Raw Per-Trial Bedrock Nova Telemetry</strong> ledger to audit exact <code>inputTokens</code>, <code>outputTokens</code>, matched ground-truth slots, and response previews for every individual evaluation case.
+        <div class="demo-note-box">
+          Comparison table and per-trial logs loaded from <code>benchmarks/latest_results.json</code> across 32 live <code>boto3</code> Bedrock calls, 240 <code>time.perf_counter()</code> retrieval runs, and 6 tombstone probes.
         </div>
         <div class="sim-header">
           <div>
-            <h2 class="sim-title">Measured Multi-Session Personalization Benchmark Suite</h2>
-            <p class="sim-desc" id="benchSummaryDesc">Executed live via <code>benchmarks/run_benchmarks.py</code> against <code>boto3</code> <code>bedrock-runtime</code> (<code>us.amazon.nova-lite-v1:0</code>) across 8 fresh-session queries × 4 architectures (32 live Bedrock calls), 14 consolidated sessions, 240 <code>perf_counter()</code> retrieval timing runs, and 6 tombstone probes.</p>
+            <span class="section-kicker">06 · Benchmarks</span>
+            <h2 class="sim-title">Benchmarks</h2>
+            <p class="sim-desc" id="benchSummaryDesc">Measured via <code>benchmarks/run_benchmarks.py</code> on <code>us.amazon.nova-lite-v1:0</code> across 8 fresh-session queries × 4 architectures (32 live Bedrock calls), 14 consolidated sessions, 240 timing iterations, and 6 Forget probes.</p>
           </div>
-          <span class="tag tag-accent">benchmarks/latest_results.json · Zero Synthetic Numbers</span>
+          <span class="tag tag-accent">benchmarks/latest_results.json</span>
         </div>
 
         <div class="card" style="margin-bottom:1.25rem;">
@@ -1976,7 +1975,7 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
 
     <footer class="footer">
       <div>
-        <strong>QuickMemory v1.0</strong> · Persistent User Memory, Personal Knowledge Graph &amp; Contextual Session Engine · 100% Serverless on AWS CloudFront + Private S3 (OAC) + Python 3.12 Lambda + Amazon Bedrock (<code>us.amazon.nova-lite-v1:0</code>).
+        <strong>QuickMemory</strong> · Long-Term Memory for a Work AI Assistant · Built by Ritwika Reddy Kancharla
       </div>
       <div class="mono" style="font-size:0.74rem;">
         <a href="https://github.com/ritwikareddykancharla/quick-memory-graph" target="_blank" rel="noopener" style="color:var(--ink);">GitHub</a> ·
@@ -2191,14 +2190,12 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
         try {
           const h = await apiGet("/api/health");
           if (h && h.status === "ok") {
-            const py = (h.python_version || "3.12").split(".").slice(0, 2).join(".");
-            const model = h.bedrock_model || "us.amazon.nova-lite-v1:0";
             document.getElementById("runtimeModeText").textContent =
-              `AWS CloudFront + S3 (OAC) + Python ${py} + Bedrock (${model}) Live`;
+              "Live on AWS · Powered by Amazon Bedrock";
           }
         } catch (_) {
           document.getElementById("runtimeModeText").textContent =
-            "AWS CloudFront + S3 (OAC) + Python 3.12 + Bedrock (us.amazon.nova-lite-v1:0) Studio";
+            "Interactive Demo · Powered by Amazon Bedrock";
         }
       }
 
@@ -2221,16 +2218,16 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
         if (!k) return;
         document.getElementById("kpiRecallVal").textContent = `${k.preference_recall_pct}%`;
         document.getElementById("kpiRecallSub").textContent =
-          `${b.live_bedrock_calls} live Bedrock calls · vs ${k.flat_vector_recall_pct}% vector & ${k.stateless_recall_pct}% stateless`;
+          `Across ${b.live_bedrock_calls} live Bedrock runs (vs. ${k.flat_vector_recall_pct}% for vector chunks and ${k.stateless_recall_pct}% with no memory)`;
         document.getElementById("kpiStaleVal").textContent = `${k.stale_contamination_pct}%`;
         document.getElementById("kpiStaleSub").textContent =
-          `${k.contradiction_supersession_pct}% contradiction-clean (vs 0.0% full history)`;
+          `${k.contradiction_supersession_pct}% accuracy on updated facts (vs. 0.0% when pasting full chat history)`;
         document.getElementById("kpiTokensVal").textContent = `${k.prompt_token_delta_pct}%`;
         document.getElementById("kpiTokensSub").textContent =
-          `${k.pkg_avg_input_tokens} vs ${k.full_history_avg_input_tokens} measured Bedrock inputTokens (${k.token_compression_ratio}x)`;
-        document.getElementById("kpiLatencyVal").textContent = `${k.p99_subgraph_latency_ms} ms`;
+          `Sends ${k.pkg_avg_input_tokens} focused tokens instead of ${k.full_history_avg_input_tokens.toLocaleString()} raw chat-history tokens (${k.token_compression_ratio}x smaller)`;
+        document.getElementById("kpiLatencyVal").textContent = `${k.p50_subgraph_latency_ms} ms`;
         document.getElementById("kpiLatencySub").textContent =
-          `p50 ${k.p50_subgraph_latency_ms} ms (${b.retrieval_timing_iterations} trials) · ${k.forget_prune_pass_rate_pct}% Forget prune`;
+          `Measured across ${b.retrieval_timing_iterations} runs (${k.p99_subgraph_latency_ms} ms p99), with ${k.forget_prune_pass_rate_pct}% (6 / 6) Forget removal`;
       }
 
       function getTypePalette(entityType, status, forgotten) {
@@ -2819,7 +2816,7 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
           fb.innerHTML = `<div>Ingestion error: ${esc(err.message)}</div>`;
         } finally {
           btn.disabled = false;
-          btn.textContent = "⚡ Consolidate Session into Personal Knowledge Graph";
+          btn.textContent = "⚡ Add Session Note to Memory Graph";
         }
       };
 
@@ -2890,8 +2887,8 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
           plane: "Plane ① · AWS Edge Delivery",
           title: "User Browser (4-Tab PKG Studio, Multi-Plane Diagram & Sticky TOC)",
           module: "web/index.html (Self-Contained Neo-Brutalist Single-Page Studio)",
-          summary: "Renders the 6-section engineering walkthrough, interactive Personal Knowledge Graph SVG, side-by-side Bedrock Nova comparison, Ebbinghaus decay explorer, and 32-trial benchmark ledger with zero external JS frameworks and stateless persistence via location.hash.",
-          metric: "0 External JS Deps · location.hash Theme & Tab Sync"
+          summary: "Renders the 6-section walkthrough, interactive memory graph SVG, side-by-side Bedrock comparison, Ebbinghaus retention explorer, and 32-trial benchmark ledger using stateless URL state in location.hash.",
+          metric: "Stateless location.hash Theme & Tab Sync"
         },
         "edge-cloudfront": {
           plane: "Plane ① · AWS Edge Delivery",

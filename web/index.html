@@ -1180,9 +1180,9 @@
         <div>
           <span class="section-kicker">02 · Architecture</span>
           <h2 class="section-title">Architecture</h2>
-          <p class="section-desc">Request and session consolidation pipeline across CloudFront, S3, Python 3.12 AWS Lambda, and Amazon Bedrock. Click any component below to inspect its module and measured metrics.</p>
+          <p class="section-desc">Request and session consolidation pipeline across CloudFront, S3, AWS Lambda, and Amazon Bedrock. Click any component below to inspect its module and measured metrics.</p>
         </div>
-        <span class="tag tag-accent">Serverless Python 3.12 + Amazon Bedrock</span>
+        <span class="tag tag-accent">Serverless AWS Lambda + Amazon Bedrock</span>
       </div>
 
       <div class="walkthrough-grid">
@@ -1282,12 +1282,12 @@
             <text x="775" y="81" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#065F46">quickmemory-web · BlockPublicAccess</text>
           </g>
 
-          <!-- Node 3b: AWS Lambda (Python 3.12) -->
+          <!-- Node 3b: AWS Lambda -->
           <g class="ex-node" data-arch-node="edge-lambda" tabindex="0">
             <path d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="#FFE8D6" />
             <path class="ex-stroke-main" d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="none" stroke="#18181B" stroke-width="2" />
             <path d="M 642,104 Q 776,102 908,105 Q 910,130 907,154 Q 773,156 643,153 Z" fill="none" stroke="#18181B" stroke-width="1" opacity="0.6" />
-            <text x="775" y="125" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">AWS Lambda (Python 3.12)</text>
+            <text x="775" y="125" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">AWS Lambda</text>
             <text x="775" y="144" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#9A3412">quick_memory/server.py · /api/*</text>
           </g>
 
@@ -1498,7 +1498,7 @@
         <div>
           <span class="section-kicker">03 · Implementation</span>
           <h2 class="section-title">Implementation</h2>
-          <p class="section-desc">Python 3.12 graph engine (<code>quick_memory/graph_engine.py</code>) and serverless API router (<code>quick_memory/server.py</code>) handling entity extraction, contradiction supersession, retention decay, and two-hop retrieval.</p>
+          <p class="section-desc">In-memory graph engine (<code>quick_memory/graph_engine.py</code>) and serverless API router (<code>quick_memory/server.py</code>) handling entity extraction, contradiction supersession, retention decay, and two-hop retrieval.</p>
         </div>
         <span class="tag tag-soft">10/10 Unit Tests Passing</span>
       </div>
@@ -1939,7 +1939,7 @@
             <div class="bar-group" id="benchTokenBars"></div>
             <div class="code-header" style="margin-top:0.85rem;">
               <span>Re-Run Live Bedrock Benchmark &amp; Unit Tests Locally</span>
-              <span>Python 3.12 + boto3</span>
+              <span>AWS Lambda + Amazon Bedrock</span>
             </div>
             <pre class="code-box" style="max-height:140px;">git clone https://github.com/ritwikareddykancharla/quick-memory-graph.git
 cd quick-memory-graph
@@ -2008,7 +2008,7 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
           persona: "staff_sde",
           title: "Session 08 · Rust Tokio Cutover & KMS Quorum Blocker",
           transcript:
-            "Switched preferred runtime stack from Python 3.12 + Rust PyO3 to Rust Tokio + RoaringBitmap. Blocked by KMS Multi-Region Grant Quorum. Committed to sub-1.0ms p99 tail latency."
+            "Switched preferred runtime stack from PyO3 bindings to native Rust Tokio + RoaringBitmap. Blocked by KMS Multi-Region Grant Quorum. Committed to sub-1.0ms p99 tail latency."
         }
       ];
 
@@ -2894,7 +2894,7 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
           plane: "Plane ① · AWS Edge Delivery",
           title: "Amazon CloudFront Global Edge Distribution (E1I3BMCLY8AF1W)",
           module: "infra/deploy_cloudfront.sh · HTTPS TLS 1.3 + SigV4 Origin Access Control",
-          summary: "Terminates HTTPS at the AWS edge (https://d1eslmpwuei23h.cloudfront.net), serves static assets from the private S3 bucket via Origin Access Control (OAC), and forwards /api/* dynamic requests to the serverless Python 3.12 Lambda Function URL with CachingDisabled.",
+          summary: "Terminates HTTPS at the AWS edge (https://d1eslmpwuei23h.cloudfront.net), serves static assets from the private S3 bucket via Origin Access Control (OAC), and forwards /api/* dynamic requests to the AWS Lambda Function URL with CachingDisabled.",
           metric: "Distribution E1I3BMCLY8AF1W · HTTP/2 + HTTP/3"
         },
         "edge-s3": {
@@ -2906,10 +2906,10 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
         },
         "edge-lambda": {
           plane: "Plane ① · AWS Edge Delivery",
-          title: "AWS Lambda Serverless API Origin (Python 3.12)",
+          title: "AWS Lambda Serverless API Origin",
           module: "quick_memory/server.py :: lambda_handler & route_api_request",
           summary: "Serves GET /api/health, GET /api/state, POST /api/sessions/ingest, POST /api/companion/ask, POST /api/memory/toggle, DELETE /api/memory/forget, and POST /api/reset with zero EC2 or RDS instances.",
-          metric: "Python 3.12 · 512 MB · 0 Idle Servers"
+          metric: "AWS Lambda · 512 MB · 0 Idle Servers"
         },
         "pkg-extractor": {
           plane: "Plane ② · Episodic-to-Semantic Consolidation",

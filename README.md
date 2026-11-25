@@ -1,8 +1,8 @@
 # QuickMemory — Persistent User Memory, Personal Knowledge Graph & Contextual Session Engine
 
-**Live Production App (AWS CloudFront + Private S3 OAC + Python 3.12 Lambda + Amazon Bedrock Nova):** https://d1eslmpwuei23h.cloudfront.net
+**Live Production App (AWS CloudFront + Private S3 OAC + AWS Lambda + Amazon Bedrock Nova):** https://d1eslmpwuei23h.cloudfront.net
 
-**QuickMemory** is a persistent user memory, **Personal Knowledge Graph (PKG)**, and contextual session engine built on **AWS CloudFront + Private S3 (SigV4 OAC) + Python 3.12 Serverless Lambda + Amazon Bedrock (`us.amazon.nova-lite-v1:0`)** (`0` EC2, `0` RDS, `0` idle GPU):
+**QuickMemory** is a persistent user memory, **Personal Knowledge Graph (PKG)**, and contextual session engine built on **AWS CloudFront + Private S3 (SigV4 OAC) + AWS Lambda Serverless Lambda + Amazon Bedrock (`us.amazon.nova-lite-v1:0`)** (`0` EC2, `0` RDS, `0` idle GPU):
 
 1. **Episodic-to-Semantic Consolidation (`quick_memory/graph_engine.py`)**: Distills multi-session work transcripts (`Session 01..N`) into typed `Person`, `Project`, `Metric`, `System`, `Preference`, and `Commitment` nodes linked by directed edges (`OWNS`, `PREFERS_FORMAT`, `BLOCKED_BY`, `TRACKS_METRIC`, `COLLABORATES_WITH`, `COMMITTED_TO`, `SUPERSEDES`).
 2. **Deterministic Temporal Contradiction Supersession**: Resolves cross-session pivots (e.g., `Payments-v1` &rarr; `Checkout-Latency-Q4`, `Redshift Warehouse SQL` &rarr; `Athena Iceberg SQL`, `6-Page Narrative Memo` &rarr; `3-Bullet BLUF + Weekly Delta Table`) by marking conflicting prior edges `SUPERSEDED` and recording explicit `SUPERSEDES` lineage so stale habits never contaminate prompt assembly.
@@ -38,7 +38,7 @@ All figures below were measured live via `benchmarks/run_benchmarks.py` across *
 ## Run Unit Tests, Live Bedrock Benchmarks & Deploy
 
 ```bash
-# 1. Run zero-dependency unit tests (10/10 tests)
+# 1. Run unit tests (10/10 tests)
 PYTHONPATH=. python3 -m unittest discover -s tests -v
 
 # 2. Re-run the 32-call live Amazon Bedrock Nova benchmark suite
@@ -49,6 +49,6 @@ PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" python3 benchmarks/run_b
 # 3. Start local server (http://localhost:3096)
 PYTHONPATH=. python3 -m quick_memory.server
 
-# 4. Deploy to AWS CloudFront + Private S3 (OAC) + Python 3.12 Lambda + Bedrock Nova
+# 4. Deploy to AWS CloudFront + Private S3 (OAC) + AWS Lambda + Bedrock Nova
 ./infra/deploy_cloudfront.sh
 ```

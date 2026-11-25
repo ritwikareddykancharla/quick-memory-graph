@@ -64,12 +64,12 @@
             <text x="775" y="81" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#065F46">quickmemory-web · BlockPublicAccess</text>
           </g>
 
-          <!-- Node 3b: AWS Lambda (Python 3.12) -->
+          <!-- Node 3b: AWS Lambda -->
           <g class="ex-node" data-arch-node="edge-lambda" tabindex="0">
             <path d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="#FFE8D6" />
             <path class="ex-stroke-main" d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="none" stroke="#18181B" stroke-width="2" />
             <path d="M 642,104 Q 776,102 908,105 Q 910,130 907,154 Q 773,156 643,153 Z" fill="none" stroke="#18181B" stroke-width="1" opacity="0.6" />
-            <text x="775" y="125" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">AWS Lambda (Python 3.12)</text>
+            <text x="775" y="125" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">AWS Lambda</text>
             <text x="775" y="144" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#9A3412">quick_memory/server.py · /api/*</text>
           </g>
 

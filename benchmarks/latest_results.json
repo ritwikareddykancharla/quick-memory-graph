@@ -1,0 +1,933 @@
+{
+  "generated_at_utc": "2026-11-25T05:44:16.930498+00:00",
+  "bedrock_model": "us.amazon.nova-lite-v1:0",
+  "aws_region": "us-west-2",
+  "evaluated_queries": 8,
+  "live_bedrock_calls": 32,
+  "retrieval_timing_iterations": 240,
+  "personas_tested": 2,
+  "sessions_consolidated": 14,
+  "contradiction_pairs_seeded": 5,
+  "forget_governance_probes": {
+    "tested": 6,
+    "passed": 6,
+    "pass_rate_pct": 100.0
+  },
+  "headline_kpis": {
+    "preference_recall_pct": 89.7,
+    "stateless_recall_pct": 6.9,
+    "flat_vector_recall_pct": 65.5,
+    "contradiction_supersession_pct": 87.5,
+    "stale_contamination_pct": 0.0,
+    "prompt_token_delta_pct": -49.5,
+    "token_compression_ratio": 1.98,
+    "pkg_avg_input_tokens": 596,
+    "full_history_avg_input_tokens": 1180,
+    "p50_subgraph_latency_ms": 0.624,
+    "p99_subgraph_latency_ms": 1.029,
+    "forget_prune_pass_rate_pct": 100.0
+  },
+  "comparison_rows": [
+    {
+      "architecture_key": "stateless",
+      "architecture": "1. Stateless Fresh Session (No Memory)",
+      "preference_recall_pct": 6.9,
+      "contradiction_accuracy_pct": 0.0,
+      "stale_hallucination_rate_pct": 0.0,
+      "avg_prompt_tokens": 45,
+      "avg_bedrock_latency_ms": 2133.6,
+      "p50_retrieval_ms": 0.004,
+      "p99_retrieval_ms": 0.01,
+      "user_forget_governance": "N/A (amnesiac session)",
+      "verdict": "Cold-starts every session; misses user project, stack & format"
+    },
+    {
+      "architecture_key": "full_history",
+      "architecture": "2. Full Multi-Session Transcript Stuffing",
+      "preference_recall_pct": 86.2,
+      "contradiction_accuracy_pct": 0.0,
+      "stale_hallucination_rate_pct": 100.0,
+      "avg_prompt_tokens": 1180,
+      "avg_bedrock_latency_ms": 2661.6,
+      "p50_retrieval_ms": 0.004,
+      "p99_retrieval_ms": 0.012,
+      "user_forget_governance": "Manual raw log editing only",
+      "verdict": "High input token cost; exposes stale Session 01\u201302 facts to prompt"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "architecture": "3. Flat Vector-Only Memory (Top-3 Cosine Chunks)",
+      "preference_recall_pct": 65.5,
+      "contradiction_accuracy_pct": 25.0,
+      "stale_hallucination_rate_pct": 75.0,
+      "avg_prompt_tokens": 329,
+      "avg_bedrock_latency_ms": 2390.4,
+      "p50_retrieval_ms": 0.266,
+      "p99_retrieval_ms": 0.455,
+      "user_forget_governance": "Orphaned chunk embeddings",
+      "verdict": "Misses 2-hop KPIs/habits & co-retrieves superseded chunks"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "architecture": "4. QuickMemory (2-Hop PKG + Temporal Supersession \u2605)",
+      "preference_recall_pct": 89.7,
+      "contradiction_accuracy_pct": 87.5,
+      "stale_hallucination_rate_pct": 0.0,
+      "avg_prompt_tokens": 596,
+      "avg_bedrock_latency_ms": 2652.4,
+      "p50_retrieval_ms": 0.624,
+      "p99_retrieval_ms": 1.029,
+      "user_forget_governance": "Instant Pin / Tombstone (100.0% prune verified)",
+      "verdict": "2-hop active PKG + SUPERSEDES lineage eliminates stale drift"
+    }
+  ],
+  "raw_trials": [
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q1_PM_WBR_SQL",
+      "persona_id": "principal_pm",
+      "prompt": "Draft my weekly leadership status update and write the 7-day p99 latency SQL query.",
+      "input_tokens": 47,
+      "output_tokens": 170,
+      "total_tokens": 217,
+      "bedrock_latency_ms": 2120.65,
+      "matched_slots": [],
+      "missed_slots": [
+        "active_project",
+        "sql_dialect",
+        "doc_format",
+        "metric_2hop"
+      ],
+      "slot_hit_count": 0,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "**Weekly Leadership Status Update:**\n\nThis week, our team achieved a 95% project completion rate, surpassing our target by 5%. Key highlights include the successful launch of the new software feature and the onboarding of three new team members. We're on track for our Q3 goals, with minor delays in the supply chain addressed. Next week, we'll focus on finali"
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q2_PM_BLOCKER_COLLAB",
+      "persona_id": "principal_pm",
+      "prompt": "What is blocking our EU rollout right now, which SLA target is at risk, and who am I partnering with?",
+      "input_tokens": 50,
+      "output_tokens": 64,
+      "total_tokens": 114,
+      "bedrock_latency_ms": 1665.86,
+      "matched_slots": [],
+      "missed_slots": [
+        "active_project",
+        "blocker_2hop",
+        "metric_2hop",
+        "collaborator"
+      ],
+      "slot_hit_count": 0,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "Currently, our EU rollout is blocked due to regulatory compliance issues specific to data protection laws. The SLA target at risk is the Q3 deadline for full EU market availability. You are partnering with the Regulatory Compliance Team, the Legal Department, and the EU Market Entry Task Force to address these challenges and ensure timely resolution."
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q3_PM_EXEC_CADENCE",
+      "persona_id": "principal_pm",
+      "prompt": "Prepare a quick readiness checklist for my upcoming weekly executive readout.",
+      "input_tokens": 39,
+      "output_tokens": 216,
+      "total_tokens": 255,
+      "bedrock_latency_ms": 1993.16,
+      "matched_slots": [],
+      "missed_slots": [
+        "active_project",
+        "commitment",
+        "doc_format"
+      ],
+      "slot_hit_count": 0,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "**Weekly Executive Readout Readiness Checklist:**\n\n1. **Agenda Preparation:**\n   - Confirm topics to cover.\n   - Assign time slots for each item.\n\n2. **Data and Reports:**\n   - Gather latest performance metrics.\n   - Prepare relevant charts and graphs.\n   - Review financial summaries and forecasts.\n\n3. **Stakeholder Updates:**\n   - Collect updates from team "
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q4_PM_WAREHOUSE_QUERY",
+      "persona_id": "principal_pm",
+      "prompt": "Write a diagnostic SQL query counting SLA breaches over the past 7 days for my active program.",
+      "input_tokens": 46,
+      "output_tokens": 143,
+      "total_tokens": 189,
+      "bedrock_latency_ms": 1981.1,
+      "matched_slots": [],
+      "missed_slots": [
+        "active_project",
+        "sql_dialect",
+        "sla_threshold"
+      ],
+      "slot_hit_count": 0,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "Certainly! Here's a concise SQL query to count SLA breaches over the past 7 days for your active program:\n\n```sql\nSELECT COUNT(*) AS SLA_Breach_Count\nFROM program_logs\nWHERE status = 'SLA_Breached'\nAND log_date >= CURRENT_DATE - INTERVAL '7 days'\nAND program_status = 'Active';\n```\n\nThis query assumes:\n- `program_logs` is your table.\n- `status` indicates if a"
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q5_SDE_ARCH_REVIEW",
+      "persona_id": "staff_sde",
+      "prompt": "Write a technical design note for fixing our cross-region read-after-write consistency blocker.",
+      "input_tokens": 46,
+      "output_tokens": 312,
+      "total_tokens": 358,
+      "bedrock_latency_ms": 3928.75,
+      "matched_slots": [
+        "blocker_2hop"
+      ],
+      "missed_slots": [
+        "active_project",
+        "code_stack",
+        "doc_format"
+      ],
+      "slot_hit_count": 1,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "**Technical Design Note: Cross-Region Read-After-Write Consistency**\n\n**Objective:** Resolve the cross-region read-after-write consistency issue to ensure data integrity.\n\n**Current Issue:** Data written in one region may not be immediately visible when read from another region, causing inconsistency.\n\n**Proposed Solution:**\n\n1. **Global Data Store:** Implem"
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q6_SDE_HOTPATH_CODE",
+      "persona_id": "staff_sde",
+      "prompt": "Show a reference implementation snippet for our subgraph traversal hot loop that meets our latency budget.",
+      "input_tokens": 44,
+      "output_tokens": 128,
+      "total_tokens": 172,
+      "bedrock_latency_ms": 1821.66,
+      "matched_slots": [
+        "code_stack"
+      ],
+      "missed_slots": [
+        "active_project",
+        "latency_metric_2hop",
+        "doc_format"
+      ],
+      "slot_hit_count": 1,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "```python\nfrom collections import deque\n\ndef subgraph_traversal(graph, start_node, latency_budget):\n    visited = set()\n    queue = deque([start_node])\n    latency_start = time.time()\n\n    while queue and (time.time() - latency_start) < latency_budget:\n        current_node = queue.popleft()\n        if current_node not in visited:\n            visited.add(curr"
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q7_SDE_PRR_CHECKLIST",
+      "persona_id": "staff_sde",
+      "prompt": "Summarize our upcoming readiness review gate, applied science partner, and retrieval SLA.",
+      "input_tokens": 44,
+      "output_tokens": 58,
+      "total_tokens": 102,
+      "bedrock_latency_ms": 1664.03,
+      "matched_slots": [],
+      "missed_slots": [
+        "active_project",
+        "commitment",
+        "collaborator",
+        "metric_2hop"
+      ],
+      "slot_hit_count": 0,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "The upcoming readiness review gate will assess project progress and readiness for the next phase. The applied science partner will collaborate on research and development, providing expertise and resources. The retrieval SLA guarantees a response time of [specific time] for data retrieval requests, ensuring timely access to necessary information."
+    },
+    {
+      "architecture_key": "stateless",
+      "case_id": "Q8_SDE_DECAY_CALIBRATION",
+      "persona_id": "staff_sde",
+      "prompt": "Propose a patch for calibrating memory retention decay in our active service.",
+      "input_tokens": 43,
+      "output_tokens": 128,
+      "total_tokens": 171,
+      "bedrock_latency_ms": 1893.34,
+      "matched_slots": [],
+      "missed_slots": [
+        "active_project",
+        "code_stack",
+        "doc_format"
+      ],
+      "slot_hit_count": 0,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "To calibrate memory retention decay in our active service, we can implement a patch that includes:\n\n1. **Data Collection**: Monitor and log memory usage over time.\n2. **Decay Analysis**: Analyze the decay patterns to identify trends.\n3. **Algorithm Adjustment**: Update the memory management algorithm to account for observed decay rates.\n4. **Dynamic Scaling*"
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q1_PM_WBR_SQL",
+      "persona_id": "principal_pm",
+      "prompt": "Draft my weekly leadership status update and write the 7-day p99 latency SQL query.",
+      "input_tokens": 1359,
+      "output_tokens": 227,
+      "total_tokens": 1586,
+      "bedrock_latency_ms": 2235.02,
+      "matched_slots": [
+        "active_project",
+        "sql_dialect",
+        "metric_2hop"
+      ],
+      "missed_slots": [
+        "doc_format"
+      ],
+      "slot_hit_count": 3,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "prod_finops_rs",
+        "dateadd",
+        "6-page narrative"
+      ],
+      "resp_stale_hits": [
+        "payments-v1"
+      ],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "**Weekly Leadership Status Update:**\n\n- **Project Update:** Transitioned from Payments-v1 to Checkout-Latency-Q4, focusing on reducing p99 Checkout Latency to \u2264 180ms.\n- **Key Metrics:** US-West-2 p99 latency improved to 194ms in the recent canary test, needing an additional 14ms reduction.\n- **Blockers:** EU-Central-1 partition access pending Security Engin"
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q2_PM_BLOCKER_COLLAB",
+      "persona_id": "principal_pm",
+      "prompt": "What is blocking our EU rollout right now, which SLA target is at risk, and who am I partnering with?",
+      "input_tokens": 1362,
+      "output_tokens": 88,
+      "total_tokens": 1450,
+      "bedrock_latency_ms": 1780.55,
+      "matched_slots": [
+        "active_project",
+        "blocker_2hop",
+        "metric_2hop",
+        "collaborator"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "6-page narrative"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "The EU rollout is currently blocked by LakeFormation Cross-Account Grants on the EU checkout Iceberg partitions, which is delaying telemetry joins in Athena Iceberg SQL. The SLA target at risk is the p99 Checkout Latency <= 180ms for Checkout-Latency-Q4. You are partnering with Devon Brooks (Staff SDE) to address edge cache pre-warming and LakeFormation IAM "
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q3_PM_EXEC_CADENCE",
+      "persona_id": "principal_pm",
+      "prompt": "Prepare a quick readiness checklist for my upcoming weekly executive readout.",
+      "input_tokens": 1351,
+      "output_tokens": 280,
+      "total_tokens": 1631,
+      "bedrock_latency_ms": 2669.29,
+      "matched_slots": [
+        "active_project",
+        "commitment",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 3,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "6-page narrative"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "**Weekly Executive Readout Checklist:**\n\n1. **Project Update:**\n   - Confirm current status of Checkout-Latency-Q4.\n   - Highlight any progress made towards the p99 Checkout Latency <= 180ms target.\n\n2. **Key Metrics:**\n   - Report the latest p99 Checkout Latency figures for US-West-2 and EU-Central-1.\n   - Update on the remaining 14ms to achieve the SLA tar"
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q4_PM_WAREHOUSE_QUERY",
+      "persona_id": "principal_pm",
+      "prompt": "Write a diagnostic SQL query counting SLA breaches over the past 7 days for my active program.",
+      "input_tokens": 1358,
+      "output_tokens": 63,
+      "total_tokens": 1421,
+      "bedrock_latency_ms": 2864.12,
+      "matched_slots": [
+        "sql_dialect",
+        "sla_threshold"
+      ],
+      "missed_slots": [
+        "active_project"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "prod_finops_rs",
+        "dateadd"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "```sql\nSELECT \n    COUNT(*) AS sla_breaches\nFROM \n    quick_lakehouse.checkout_telemetry_iceberg\nWHERE \n    event_ts >= current_timestamp - INTERVAL '7' DAY\n    AND checkout_latency > 180;\n```"
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q5_SDE_ARCH_REVIEW",
+      "persona_id": "staff_sde",
+      "prompt": "Write a technical design note for fixing our cross-region read-after-write consistency blocker.",
+      "input_tokens": 1004,
+      "output_tokens": 380,
+      "total_tokens": 1384,
+      "bedrock_latency_ms": 4777.21,
+      "matched_slots": [
+        "active_project",
+        "code_stack",
+        "blocker_2hop",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "**Technical Design Note: Fixing Cross-Region Read-After-Write Consistency Blocker**\n\n**Problem Statement:**\nWe are experiencing a 420ms read-after-write skew in the eu-central-1 region due to DynamoDB Global Table Replication Lag, blocking the multi-region active-active rollout of QuickMemory-Hybrid-PKG.\n\n**Proposed Solution:**\n1. **Hybrid Logical Clocks (HL"
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q6_SDE_HOTPATH_CODE",
+      "persona_id": "staff_sde",
+      "prompt": "Show a reference implementation snippet for our subgraph traversal hot loop that meets our latency budget.",
+      "input_tokens": 1002,
+      "output_tokens": 221,
+      "total_tokens": 1223,
+      "bedrock_latency_ms": 3058.85,
+      "matched_slots": [
+        "active_project",
+        "code_stack"
+      ],
+      "missed_slots": [
+        "latency_metric_2hop",
+        "doc_format"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "```python\n# QuickMemory-Hybrid-PKG Subgraph Traversal Hot Loop\n# This snippet demonstrates the traversal of a 2-hop neighborhood in sub-millisecond time.\n\nimport pyo3_adjacency_lib as pyo3\n\ndef traverse_subgraph(user_id: int, adjacency_array: pyo3.CSRArray) -> list:\n    # Initialize the traversal with the user's direct neighbors\n    neighbors = adjacency_arr"
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q7_SDE_PRR_CHECKLIST",
+      "persona_id": "staff_sde",
+      "prompt": "Summarize our upcoming readiness review gate, applied science partner, and retrieval SLA.",
+      "input_tokens": 1002,
+      "output_tokens": 94,
+      "total_tokens": 1096,
+      "bedrock_latency_ms": 1903.76,
+      "matched_slots": [
+        "active_project",
+        "commitment",
+        "collaborator",
+        "metric_2hop"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "The upcoming readiness review gate is the Production Readiness Review (PRR) for QuickMemory-Hybrid-PKG, scheduled for Friday. The applied science partner is Dr. Elena Rostova, who is collaborating on Ebbinghaus decay calibration. The retrieval SLA is p99 Subgraph Retrieval <= 2.0ms, which has been maintained through the transition to Python 3.12 + Rust PyO3 "
+    },
+    {
+      "architecture_key": "full_history",
+      "case_id": "Q8_SDE_DECAY_CALIBRATION",
+      "persona_id": "staff_sde",
+      "prompt": "Propose a patch for calibrating memory retention decay in our active service.",
+      "input_tokens": 1001,
+      "output_tokens": 175,
+      "total_tokens": 1176,
+      "bedrock_latency_ms": 2004.12,
+      "matched_slots": [
+        "active_project",
+        "code_stack",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 3,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "To calibrate memory retention decay in QuickMemory-Hybrid-PKG, propose a patch that integrates Ebbinghaus decay curves with frequency reinforcement. This can be implemented by:\n\n1. **Frequency Reinforcement**: Adjust the decay rate based on the frequency of document access, ensuring more frequently accessed documents retain memory longer.\n2. **Hybrid Logical"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q1_PM_WBR_SQL",
+      "persona_id": "principal_pm",
+      "prompt": "Draft my weekly leadership status update and write the 7-day p99 latency SQL query.",
+      "input_tokens": 316,
+      "output_tokens": 311,
+      "total_tokens": 627,
+      "bedrock_latency_ms": 3038.82,
+      "matched_slots": [
+        "active_project",
+        "doc_format"
+      ],
+      "missed_slots": [
+        "sql_dialect",
+        "metric_2hop"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "dateadd",
+        "6-page narrative"
+      ],
+      "resp_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "dateadd"
+      ],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "**Weekly Leadership Status Update:**\n\n**3-Bullet BLUF:**\n- Transitioned from Payments-v1 to Checkout-Latency-Q4 as the flagship program for Q4.\n- Partnering with Priya Nair to finalize interchange cost-per-order attribution by Q3 close.\n- Weekly progress includes optimizing Redshift queries and refining latency metrics.\n\n**Weekly Delta Table:**\n| Date       "
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q2_PM_BLOCKER_COLLAB",
+      "persona_id": "principal_pm",
+      "prompt": "What is blocking our EU rollout right now, which SLA target is at risk, and who am I partnering with?",
+      "input_tokens": 280,
+      "output_tokens": 89,
+      "total_tokens": 369,
+      "bedrock_latency_ms": 1799.28,
+      "matched_slots": [
+        "blocker_2hop",
+        "collaborator"
+      ],
+      "missed_slots": [
+        "active_project",
+        "metric_2hop"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift"
+      ],
+      "resp_stale_hits": [
+        "payments-v1",
+        "redshift"
+      ],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "Currently, the EU rollout is facing a delay due to the EU SEPA clearing batch being queued for 18 minutes inside the prod_finops_rs Redshift WLM slot group 2. This delay risks the week-9 merchant settlement batch SLAs on Payments-v1. Maya Chen is partnering with Devon Brooks (Staff SDE) to address edge cache pre-warming and LakeFormation IAM unblocking."
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q3_PM_EXEC_CADENCE",
+      "persona_id": "principal_pm",
+      "prompt": "Prepare a quick readiness checklist for my upcoming weekly executive readout.",
+      "input_tokens": 275,
+      "output_tokens": 238,
+      "total_tokens": 513,
+      "bedrock_latency_ms": 2490.43,
+      "matched_slots": [
+        "commitment",
+        "doc_format"
+      ],
+      "missed_slots": [
+        "active_project"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "6-page narrative"
+      ],
+      "resp_stale_hits": [
+        "payments-v1",
+        "redshift"
+      ],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "**Weekly Executive Readout Readiness Checklist:**\n\n1. **Status Brief Format:**\n   - Ensure each status brief includes a 3-Bullet BLUF (Bottom Line Up Front) summary.\n   - Include a Weekly Delta Table highlighting key changes and metrics.\n\n2. **Merchant Settlement Batch SLAs:**\n   - Review the week-9 merchant settlement batch SLAs, particularly focusing on Pa"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q4_PM_WAREHOUSE_QUERY",
+      "persona_id": "principal_pm",
+      "prompt": "Write a diagnostic SQL query counting SLA breaches over the past 7 days for my active program.",
+      "input_tokens": 383,
+      "output_tokens": 151,
+      "total_tokens": 534,
+      "bedrock_latency_ms": 2236.14,
+      "matched_slots": [
+        "active_project",
+        "sla_threshold"
+      ],
+      "missed_slots": [
+        "sql_dialect"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [
+        "payments-v1",
+        "redshift",
+        "dateadd"
+      ],
+      "resp_stale_hits": [
+        "redshift",
+        "dateadd"
+      ],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "To count SLA breaches for your active program, Checkout-Latency-Q4, over the past 7 days, you can use the following SQL query in Redshift Warehouse SQL:\n\n```sql\nSELECT \n    COUNT(*) AS sla_breaches\nFROM \n    checkout_latency_metrics\nWHERE \n    latency_ms > 180 \n    AND event_time >= DATEADD(day, -7, CURRENT_DATE);\n```\n\nThis query assumes you have a table nam"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q5_SDE_ARCH_REVIEW",
+      "persona_id": "staff_sde",
+      "prompt": "Write a technical design note for fixing our cross-region read-after-write consistency blocker.",
+      "input_tokens": 348,
+      "output_tokens": 316,
+      "total_tokens": 664,
+      "bedrock_latency_ms": 3080.66,
+      "matched_slots": [
+        "active_project",
+        "code_stack",
+        "blocker_2hop",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "**Technical Design Note: Cross-Region Read-After-Write Consistency**\n\n**Objective:** Address the 420ms read-after-write skew in eu-central-1 caused by DynamoDB Global Table Replication Lag, ensuring p99 Subgraph Retrieval <= 2.0ms.\n\n**Proposed Solution:**\n\n1. **Unified Diff:**\n   - Introduce Hybrid Logical Clocks (HLC) to session sticky tokens.\n   - Implemen"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q6_SDE_HOTPATH_CODE",
+      "persona_id": "staff_sde",
+      "prompt": "Show a reference implementation snippet for our subgraph traversal hot loop that meets our latency budget.",
+      "input_tokens": 349,
+      "output_tokens": 172,
+      "total_tokens": 521,
+      "bedrock_latency_ms": 2087.46,
+      "matched_slots": [
+        "code_stack",
+        "latency_metric_2hop"
+      ],
+      "missed_slots": [
+        "active_project",
+        "doc_format"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "```python\n# Reference implementation snippet for subgraph traversal hot loop\n\nimport pyo3_rust_bindings  # Assuming this is the Rust PyO3 binding module\n\ndef traverse_subgraph(adjacency_list, start_node):\n    \"\"\"\n    Traverses the adjacency list starting from the given node.\n    Ensures p99 latency <= 2.0ms.\n    \"\"\"\n    visited = set()\n    stack = [start_nod"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q7_SDE_PRR_CHECKLIST",
+      "persona_id": "staff_sde",
+      "prompt": "Summarize our upcoming readiness review gate, applied science partner, and retrieval SLA.",
+      "input_tokens": 346,
+      "output_tokens": 149,
+      "total_tokens": 495,
+      "bedrock_latency_ms": 2036.78,
+      "matched_slots": [
+        "active_project",
+        "commitment",
+        "collaborator",
+        "metric_2hop"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "Devon Brooks is preparing for the Friday Production Readiness Review (PRR) for QuickMemory-Hybrid-PKG, emphasizing structured technical design responses in Unified Diff, Big-O Complexity, and Failure Modes. Devon is collaborating with Dr. Elena Rostova, an Applied Scientist, on calibrating Ebbinghaus decay. Their work involves testing decay curves with frequ"
+    },
+    {
+      "architecture_key": "flat_vector",
+      "case_id": "Q8_SDE_DECAY_CALIBRATION",
+      "persona_id": "staff_sde",
+      "prompt": "Propose a patch for calibrating memory retention decay in our active service.",
+      "input_tokens": 335,
+      "output_tokens": 181,
+      "total_tokens": 516,
+      "bedrock_latency_ms": 2353.7,
+      "matched_slots": [
+        "doc_format"
+      ],
+      "missed_slots": [
+        "active_project",
+        "code_stack"
+      ],
+      "slot_hit_count": 1,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "resp_stale_hits": [
+        "opensearch-lexical-v2",
+        "java 17",
+        "gradle"
+      ],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": true,
+      "response_preview": "To propose a patch for calibrating memory retention decay in our active service, follow Devon Brooks' engineering communication preference by structuring your response as a Unified Diff, including Big-O Complexity analysis, and detailing potential failure modes. Given Devon's collaboration with Dr. Elena Rostova on Ebbinghaus decay calibration, ensure your p"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q1_PM_WBR_SQL",
+      "persona_id": "principal_pm",
+      "prompt": "Draft my weekly leadership status update and write the 7-day p99 latency SQL query.",
+      "input_tokens": 540,
+      "output_tokens": 240,
+      "total_tokens": 780,
+      "bedrock_latency_ms": 2288.34,
+      "matched_slots": [
+        "active_project",
+        "sql_dialect",
+        "doc_format"
+      ],
+      "missed_slots": [
+        "metric_2hop"
+      ],
+      "slot_hit_count": 3,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "**Weekly Leadership Status Update:**\n\n- **Checkout-Latency-Q4:** Achieved 95% of Q4 target, p99 latency at 190ms. [MEM-05]\n- **SQL Query:** \n  ```sql\n  SELECT approx_percentile(checkout_latency, 0.99) AS p99_latency\n  FROM checkout_events\n  WHERE event_date BETWEEN current_date - INTERVAL '7' DAY AND current_date;\n  ``` \n  This uses Athena Iceberg SQL with `"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q2_PM_BLOCKER_COLLAB",
+      "persona_id": "principal_pm",
+      "prompt": "What is blocking our EU rollout right now, which SLA target is at risk, and who am I partnering with?",
+      "input_tokens": 601,
+      "output_tokens": 158,
+      "total_tokens": 759,
+      "bedrock_latency_ms": 2027.96,
+      "matched_slots": [
+        "active_project",
+        "blocker_2hop",
+        "metric_2hop",
+        "collaborator"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "Maya, your active owned Project is **Checkout-Latency-Q4** [MEM-05][EDGE-05]. The EU rollout is blocked by **LakeFormation Cross-Account Grants** [MEM-08][EDGE-10], impacting your **p99 Checkout Latency <= 180ms** target [MEM-07][EDGE-09]. You prefer updates in **3-Bullet BLUF + Weekly Delta Table** format [MEM-09][EDGE-11] and are collaborating with **Devon"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q3_PM_EXEC_CADENCE",
+      "persona_id": "principal_pm",
+      "prompt": "Prepare a quick readiness checklist for my upcoming weekly executive readout.",
+      "input_tokens": 593,
+      "output_tokens": 225,
+      "total_tokens": 818,
+      "bedrock_latency_ms": 2640.78,
+      "matched_slots": [
+        "active_project",
+        "commitment",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 3,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "**Maya Chen's Weekly Executive Readout Checklist**\n\n- **Project:** Checkout-Latency-Q4 [MEM-05] [EDGE-05]  \n  - Ensure p99 checkout latency is <= 180ms by Cyber Week [MEM-07] [EDGE-09].  \n- **Format:**  \n  - Use Athena Iceberg SQL with `approx_percentile` and `INTERVAL '7' DAY` [MEM-06] [EDGE-07].  \n  - Provide a 3-Bullet BLUF followed by a compact WoW Delta"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q4_PM_WAREHOUSE_QUERY",
+      "persona_id": "principal_pm",
+      "prompt": "Write a diagnostic SQL query counting SLA breaches over the past 7 days for my active program.",
+      "input_tokens": 539,
+      "output_tokens": 261,
+      "total_tokens": 800,
+      "bedrock_latency_ms": 2866.48,
+      "matched_slots": [
+        "active_project",
+        "sql_dialect",
+        "sla_threshold"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 3,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "```sql\n-- [MEM-05] Checkout-Latency-Q4 active project\n-- [EDGE-09] Tracks p99 Checkout Latency <= 180ms metric\n\nSELECT \n    COUNT(*) AS sla_breaches\nFROM \n    checkout_events\nWHERE \n    latency_ms > 180 \n    AND event_date BETWEEN current_date - INTERVAL '7' DAY AND current_date;\n\n-- [MEM-06] Athena Iceberg SQL with approx_percentile\n-- [EDGE-07] User prefer"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q5_SDE_ARCH_REVIEW",
+      "persona_id": "staff_sde",
+      "prompt": "Write a technical design note for fixing our cross-region read-after-write consistency blocker.",
+      "input_tokens": 597,
+      "output_tokens": 305,
+      "total_tokens": 902,
+      "bedrock_latency_ms": 3029.86,
+      "matched_slots": [
+        "active_project",
+        "code_stack",
+        "blocker_2hop",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "To address the cross-region replication lag [EDGE-09], we'll implement a DynamoDB Global Table read-consistency strategy for QuickMemory-Hybrid-PKG [MEM-04]. \n\n**Design Note:**\n\n1. **Read Consistency Strategy:**\n   - Use `ConsistentRead=True` for critical read operations to ensure the latest data.\n   - Implement exponential backoff and retries for read reque"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q6_SDE_HOTPATH_CODE",
+      "persona_id": "staff_sde",
+      "prompt": "Show a reference implementation snippet for our subgraph traversal hot loop that meets our latency budget.",
+      "input_tokens": 595,
+      "output_tokens": 283,
+      "total_tokens": 878,
+      "bedrock_latency_ms": 3270.41,
+      "matched_slots": [
+        "code_stack",
+        "doc_format"
+      ],
+      "missed_slots": [
+        "active_project",
+        "latency_metric_2hop"
+      ],
+      "slot_hit_count": 2,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": false,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "```python\n# [MEM-05] Python 3.12 + Rust PyO3 snippet for subgraph traversal hot loop\n\nfrom pyo3_bindings import traverse_subgraph  # Import Rust hot loop via PyO3\n\ndef traverse_subgraph_hot_loop(graph, start_node, depth):\n    \"\"\"\n    Traverse the 2-hop personal knowledge graph.\n    \n    Args:\n        graph: The graph data structure.\n        start_node: The s"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q7_SDE_PRR_CHECKLIST",
+      "persona_id": "staff_sde",
+      "prompt": "Summarize our upcoming readiness review gate, applied science partner, and retrieval SLA.",
+      "input_tokens": 653,
+      "output_tokens": 201,
+      "total_tokens": 854,
+      "bedrock_latency_ms": 2457.9,
+      "matched_slots": [
+        "active_project",
+        "commitment",
+        "collaborator",
+        "metric_2hop"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 4,
+      "slot_total_count": 4,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "Devon, your upcoming Friday Production Readiness Review (PRR) [MEM-10] [EDGE-12] requires multi-region PKG rollout sign-off. Your QuickMemory-Hybrid-PKG [MEM-04] [EDGE-04] must meet the p99 Subgraph Retrieval <= 2.0ms [MEM-06] [EDGE-08], but is blocked by DynamoDB Global Table Replication Lag [MEM-07] [EDGE-09]. Collaborate with Dr. Elena Rostova [MEM-09] [E"
+    },
+    {
+      "architecture_key": "quick_memory_pkg",
+      "case_id": "Q8_SDE_DECAY_CALIBRATION",
+      "persona_id": "staff_sde",
+      "prompt": "Propose a patch for calibrating memory retention decay in our active service.",
+      "input_tokens": 652,
+      "output_tokens": 257,
+      "total_tokens": 909,
+      "bedrock_latency_ms": 2637.61,
+      "matched_slots": [
+        "active_project",
+        "code_stack",
+        "doc_format"
+      ],
+      "missed_slots": [],
+      "slot_hit_count": 3,
+      "slot_total_count": 3,
+      "ctx_stale_hits": [],
+      "resp_stale_hits": [],
+      "contradiction_clean": true,
+      "stale_exposed_or_leaked": false,
+      "response_preview": "To calibrate memory retention decay in QuickMemory-Hybrid-PKG [MEM-04], we'll implement Ebbinghaus curves with Dr. Elena Rostova [MEM-09]. Here's the plan:\n\n1. **Patch Implementation**:\n   ```python\n   # Unified Diff\n   from datetime import datetime, timedelta\n\n   def retention_decay(memory_node, last_accessed):\n       decay_factor = 0.95 ** ((datetime.now()"
+    }
+  ]
+}

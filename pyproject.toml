@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quick-memory-graph"
+version = "1.0.0"
+description = "QuickMemory — Persistent User Memory, Personal Knowledge Graph & Contextual Session Engine on AWS CloudFront + Bedrock Nova"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["quick_memory*"]

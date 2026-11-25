@@ -1,0 +1,3057 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickMemory — Persistent User Memory, Personal Knowledge Graph &amp; Contextual Session Engine</title>
+  <meta name="description" content="Persistent User Memory, Personal Knowledge Graph (PKG), Temporal Contradiction Supersession, Ebbinghaus Retention &amp; Contextual Session Engine on AWS CloudFront + S3 (OAC) + Python 3.12 Lambda + Amazon Bedrock Nova." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Kalam:wght@400;700&amp;family=Martian+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&amp;family=Schibsted+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-paper: #FAF7F2;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F2ECE1;
+      --bg-obsidian: #141413;
+      --bg-code: #121417;
+      --text-code: #F4F4F5;
+      --ink: #141413;
+      --ink-muted: #52514E;
+      --border: #18181B;
+      --shadow: 4px 4px 0px #18181B;
+      --shadow-sm: 2px 2px 0px #18181B;
+      --dot-color: rgba(24, 24, 27, 0.13);
+      --accent-main: #7C3AED;
+      --accent-ink: #FFFFFF;
+      --accent-soft: #EDE9FE;
+      --accent-deep: #4C1D95;
+      --blue: #1D4ED8;
+      --blue-soft: #DBEAFE;
+      --pass: #059669;
+      --pass-soft: #D1FAE5;
+      --fail: #DC2626;
+      --fail-soft: #FEE2E2;
+      --warn: #D97706;
+      --warn-soft: #FEF3C7;
+    }
+
+    [data-theme="dark"] {
+      --bg-paper: #0E1113;
+      --bg-card: #161A1E;
+      --bg-subtle: #1F252B;
+      --bg-obsidian: #090B0C;
+      --bg-code: #090B0D;
+      --text-code: #E4E4E7;
+      --ink: #F4F4F5;
+      --ink-muted: #A1A1AA;
+      --border: #52525B;
+      --shadow: 4px 4px 0px #000000;
+      --shadow-sm: 2px 2px 0px #000000;
+      --dot-color: rgba(255, 255, 255, 0.08);
+      --accent-main: #7C3AED;
+      --accent-ink: #FFFFFF;
+      --accent-soft: #2E1065;
+      --accent-deep: #DDD6FE;
+      --blue: #60A5FA;
+      --blue-soft: #1E293B;
+      --pass: #34D399;
+      --pass-soft: #064E3B;
+      --fail: #F87171;
+      --fail-soft: #450A0A;
+      --warn: #FBBF24;
+      --warn-soft: #451A03;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-paper);
+      background-image: radial-gradient(var(--dot-color) 1.25px, transparent 1.25px);
+      background-size: 20px 20px;
+      color: var(--ink);
+      line-height: 1.68;
+      padding-bottom: 4.5rem;
+    }
+
+    .section-kicker {
+      display: inline-block;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--accent-main);
+      background: var(--accent-soft);
+      border: 1.5px solid var(--border);
+      padding: 0.18rem 0.55rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .plain-english-box {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-left: 7px solid var(--accent-main);
+      box-shadow: var(--shadow);
+      padding: 1.35rem 1.5rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .plain-english-box p {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.13rem;
+      line-height: 1.72;
+      color: var(--ink);
+      margin-top: 0.45rem;
+    }
+
+    .worked-example-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 1060px) {
+      .worked-example-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .worked-example-grid { grid-template-columns: 1fr; }
+    }
+
+    .impl-pair-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 940px) {
+      .impl-pair-grid { grid-template-columns: 1fr; }
+    }
+
+    .intuition-block {
+      background: var(--accent-soft);
+      border: 1.5px solid var(--border);
+      padding: 0.85rem 1rem;
+      margin: 0.7rem 0;
+      font-size: 0.9rem;
+      line-height: 1.66;
+    }
+
+    .hood-block {
+      background: var(--bg-paper);
+      border: 1.5px solid var(--border);
+      padding: 0.85rem 1rem;
+      font-size: 0.87rem;
+      line-height: 1.66;
+    }
+
+    .click-guide-box {
+      background: var(--bg-subtle);
+      border: 2px solid var(--border);
+      border-left: 6px solid var(--accent-main);
+      padding: 0.85rem 1.05rem;
+      margin-bottom: 1.15rem;
+      font-size: 0.87rem;
+      line-height: 1.65;
+    }
+
+    .serif { font-family: 'Newsreader', Georgia, serif; }
+    .mono { font-family: 'Martian Mono', monospace; }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Sticky Top Navigation */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 120;
+      background: var(--bg-paper);
+      border-bottom: 2px solid var(--border);
+      padding: 0.72rem 0;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    /* Sticky Jump-to-Section TOC Strip */
+    .toc-strip {
+      position: sticky;
+      top: 56px;
+      z-index: 110;
+      background: var(--bg-subtle);
+      border-bottom: 2px solid var(--border);
+      padding: 0.45rem 0;
+    }
+
+    .toc-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .toc-label {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-right: 0.25rem;
+    }
+
+    .toc-link {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.22rem 0.58rem;
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      text-decoration: none;
+      transition: background 0.12s ease, transform 0.08s ease;
+    }
+
+    .toc-link:hover {
+      background: var(--accent-soft);
+      transform: translate(-1px, -1px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .brand-badge {
+      background: var(--accent-main);
+      color: var(--accent-ink);
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.22rem 0.58rem;
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn, .nav-pill {
+      font-family: 'Schibsted Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.44rem 0.82rem;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn:hover, .nav-pill:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn:active, .nav-pill:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px var(--border);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-accent { background: var(--accent-main); color: var(--accent-ink); }
+    .btn-obsidian { background: #18181B; color: #FAF7F2; }
+    [data-theme="dark"] .btn-obsidian { background: var(--accent-main); color: #FFFFFF; }
+    .btn-secondary { background: var(--bg-subtle); }
+    .btn-danger { background: var(--fail-soft); color: var(--fail); }
+    .btn-pass { background: var(--pass-soft); color: var(--pass); }
+
+    /* Hero */
+    .hero {
+      padding: 2.2rem 0 1.9rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .hero-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.95rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.28rem 0.68rem;
+      background: var(--accent-main);
+      color: var(--accent-ink);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .runtime-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.28rem 0.68rem;
+      background: var(--bg-card);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--pass);
+      display: inline-block;
+    }
+
+    h1 {
+      font-size: clamp(1.92rem, 3.6vw, 2.85rem);
+      font-weight: 800;
+      line-height: 1.09;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.85rem;
+    }
+
+    .hero-sub {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(1.12rem, 1.85vw, 1.32rem);
+      color: var(--ink-muted);
+      max-width: 1040px;
+      margin-bottom: 1.2rem;
+    }
+
+    .headline-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .headline-pill {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.73rem;
+      font-weight: 600;
+      padding: 0.32rem 0.65rem;
+      background: var(--bg-obsidian);
+      color: #FAF7F2;
+      border: 2px solid var(--border);
+    }
+
+    .headline-pill span {
+      color: #C4B5FD;
+      font-weight: 700;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.05rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 1.2rem;
+    }
+
+    .kpi-card {
+      padding: 1rem 1.15rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--accent-main);
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .kpi-val {
+      font-family: 'Martian Mono', monospace;
+      font-size: 1.44rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 0.25rem;
+    }
+
+    .kpi-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 0.2rem;
+    }
+
+    .kpi-sub {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--ink-muted);
+      margin-top: 0.25rem;
+    }
+
+    .pipeline-bar {
+      margin-top: 1.3rem;
+      background: var(--bg-obsidian);
+      color: #FAF7F2;
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 0.88rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .pipe-step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .pipe-num {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--accent-main);
+      color: #FFFFFF;
+      padding: 0.14rem 0.42rem;
+      border: 1.5px solid #FFFFFF;
+    }
+
+    .pipe-arrow {
+      color: #C4B5FD;
+      font-family: 'Martian Mono', monospace;
+      font-weight: 700;
+    }
+
+    /* Narrative & Walkthrough Sections */
+    .section {
+      padding: 2rem 0 0.5rem;
+      scroll-margin-top: 105px;
+    }
+
+    .section-header {
+      margin-bottom: 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 1.48rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .section-desc {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.08rem;
+      color: var(--ink-muted);
+      max-width: 880px;
+      margin-top: 0.2rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .walkthrough-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.15rem;
+    }
+
+    @media (max-width: 1024px) {
+      .walkthrough-grid, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .walkthrough-grid, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .step-badge {
+      display: inline-block;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.69rem;
+      font-weight: 700;
+      padding: 0.2rem 0.52rem;
+      background: var(--accent-main);
+      color: var(--accent-ink);
+      border: 1.5px solid var(--border);
+      margin-bottom: 0.6rem;
+    }
+
+    .walkthrough-card h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .walkthrough-card p {
+      font-size: 0.86rem;
+      color: var(--ink-muted);
+    }
+
+    /* Tabs */
+    .tabs-wrapper {
+      padding: 1.8rem 0 0.5rem;
+      scroll-margin-top: 105px;
+    }
+
+    .tab-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.35rem;
+    }
+
+    @media (max-width: 980px) {
+      .tab-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 580px) {
+      .tab-bar { grid-template-columns: 1fr; }
+    }
+
+    .tab-btn {
+      text-align: left;
+      padding: 0.88rem 0.98rem;
+      background: var(--bg-card);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.26rem;
+    }
+
+    .tab-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-btn.active {
+      background: var(--accent-main);
+      color: var(--accent-ink);
+      box-shadow: var(--shadow);
+      transform: translate(-1px, -1px);
+    }
+
+    .tab-btn-eyebrow {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      opacity: 0.88;
+    }
+
+    .tab-btn-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .tab-btn-metric {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.67rem;
+      font-weight: 600;
+      opacity: 0.92;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .sim-header {
+      margin-bottom: 1.15rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sim-title {
+      font-size: 1.42rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .sim-desc {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.06rem;
+      color: var(--ink-muted);
+      max-width: 860px;
+      margin-top: 0.22rem;
+    }
+
+    .grid-pkg {
+      display: grid;
+      grid-template-columns: 1.48fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    .grid-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .grid-pkg, .grid-equal {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.18rem 0.5rem;
+      border: 1.5px solid var(--border);
+      text-transform: uppercase;
+    }
+
+    .tag-accent { background: var(--accent-main); color: var(--accent-ink); }
+    .tag-soft { background: var(--accent-soft); color: var(--accent-deep); }
+    .tag-pass { background: var(--pass-soft); color: var(--pass); }
+    .tag-fail { background: var(--fail-soft); color: var(--fail); }
+    .tag-warn { background: var(--warn-soft); color: var(--warn); }
+    .tag-blue { background: var(--blue-soft); color: var(--blue); }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.81rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      gap: 0.5rem;
+    }
+
+    textarea, select, input[type="text"] {
+      width: 100%;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.62rem 0.75rem;
+      background: var(--bg-paper);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      line-height: 1.48;
+    }
+
+    textarea:focus, select:focus, input[type="text"]:focus {
+      outline: 2px solid var(--accent-main);
+      outline-offset: 1px;
+    }
+
+    .verdict-banner {
+      border: 2px solid var(--border);
+      padding: 0.8rem 0.95rem;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .verdict-allow { background: var(--pass-soft); }
+    .verdict-deny { background: var(--fail-soft); }
+    .verdict-warn { background: var(--warn-soft); }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-subtle);
+      border: 2px solid var(--border);
+      border-bottom: none;
+      padding: 0.45rem 0.8rem;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.71rem;
+      font-weight: 700;
+    }
+
+    .code-box {
+      background: var(--bg-code);
+      color: var(--text-code);
+      border: 2px solid var(--border);
+      padding: 0.9rem 1rem;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.73rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .pkg-svg-wrap {
+      border: 2px solid var(--border);
+      background: var(--bg-paper);
+      background-image: radial-gradient(var(--dot-color) 1.2px, transparent 1.2px);
+      background-size: 16px 16px;
+      overflow-x: auto;
+    }
+
+    .pkg-node-group { cursor: pointer; }
+    .pkg-node-group:hover rect.node-main-rect { stroke-width: 3px; }
+
+    /* Interactive Multi-Plane System Architecture Canvas (§02) */
+    .arch-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      padding: 0.7rem 0.95rem;
+      background: var(--bg-subtle);
+      border: 2px solid var(--border);
+      border-bottom: none;
+    }
+
+    .arch-viewport {
+      background-color: #FFFFFF;
+      background-image: radial-gradient(rgba(24, 24, 27, 0.14) 1px, transparent 1px);
+      background-size: 18px 18px;
+      border: 2px solid #18181B;
+      box-shadow: 4px 4px 0px #18181B;
+      overflow-x: auto;
+      padding: 0.9rem;
+    }
+
+    .arch-svg {
+      display: block;
+      width: 100%;
+      min-width: 980px;
+      height: auto;
+      transition: width 0.22s ease, min-width 0.22s ease;
+    }
+
+    .arch-svg.zoom-125 {
+      width: 125%;
+      min-width: 1225px;
+    }
+
+    .ex-hand { font-family: 'Caveat', 'Kalam', cursive; }
+    .ex-mono { font-family: 'Martian Mono', monospace; }
+
+    .ex-node {
+      cursor: pointer;
+      transition: filter 0.15s ease;
+    }
+
+    .ex-node:hover {
+      filter: drop-shadow(3px 3px 0px #7C3AED);
+    }
+
+    .ex-node.selected .ex-stroke-main {
+      stroke: #7C3AED !important;
+      stroke-width: 3.2px !important;
+    }
+
+    .arch-inspector {
+      margin-top: 1rem;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 1.05rem 1.2rem;
+    }
+
+    .arch-node-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .arch-node-pill {
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.69rem;
+      font-weight: 700;
+      padding: 0.26rem 0.58rem;
+      border: 1.5px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .arch-node-pill.active {
+      background: var(--accent-main);
+      color: #FFFFFF;
+    }
+
+    .session-card {
+      border: 1.5px solid var(--border);
+      background: var(--bg-paper);
+      padding: 0.7rem 0.85rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .response-card {
+      border: 2px solid var(--border);
+      background: var(--bg-paper);
+      padding: 1rem 1.05rem;
+      min-height: 270px;
+      font-size: 0.88rem;
+      line-height: 1.62;
+    }
+
+    .response-card pre {
+      background: var(--bg-code);
+      color: var(--text-code);
+      border: 1.5px solid var(--border);
+      padding: 0.65rem 0.8rem;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.72rem;
+      overflow-x: auto;
+      margin: 0.6rem 0;
+    }
+
+    .cite-mem {
+      display: inline-block;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.06rem 0.36rem;
+      background: var(--accent-main);
+      color: #FFFFFF;
+      border: 1.5px solid var(--border);
+      margin: 0 0.1rem;
+      cursor: pointer;
+    }
+
+    .cite-edge {
+      display: inline-block;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.06rem 0.36rem;
+      background: var(--pass-soft);
+      color: var(--pass);
+      border: 1.5px solid var(--border);
+      margin: 0 0.1rem;
+    }
+
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.62rem;
+      margin: 0.75rem 0;
+    }
+
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.22rem;
+    }
+
+    .bar-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      gap: 0.5rem;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 17px;
+      background: var(--bg-subtle);
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      transition: width 0.28s ease;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      padding: 0.62rem 0.75rem;
+      text-align: left;
+      border-bottom: 1.5px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      font-family: 'Martian Mono', monospace;
+      font-size: 0.69rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.6rem;
+      border-top: 2px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.83rem;
+      color: var(--ink-muted);
+    }
+  </style>
+</head>
+<body>
+  <!-- Sticky Topbar -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#live-studio" class="brand" onclick="switchTab('pkg-studio')">
+        <span class="brand-badge">QUICKMEMORY v1.0</span>
+        <span>QuickMemory</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a class="nav-pill" href="#system-architecture">Architecture</a>
+        <a class="nav-pill" href="#live-studio">Live Studio</a>
+        <a class="nav-pill" href="#benchmarks-section" onclick="switchTab('benchmarks')">Benchmarks</a>
+        <a class="nav-pill" href="https://d2gltlwyzbnbxr.cloudfront.net" target="_blank" rel="noopener">QuickSpaces ↗</a>
+        <a class="nav-pill" href="https://d33vgp4hlabu23.cloudfront.net" target="_blank" rel="noopener">ForgeRuntime ↗</a>
+        <a class="btn btn-obsidian" href="https://github.com/ritwikareddykancharla/quick-memory-graph" target="_blank" rel="noopener">★ GitHub Repo</a>
+        <button type="button" class="btn btn-secondary" id="themeToggleBtn" aria-label="Toggle color theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeLabel">Dark Mode</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Sticky Jump-to-Section Table of Contents -->
+  <div class="toc-strip" role="navigation" aria-label="Jump to section">
+    <div class="container toc-inner">
+      <span class="toc-label">Sections:</span>
+      <a class="toc-link" href="#problem-statement">§01 · Problem Statement</a>
+      <a class="toc-link" href="#system-architecture">§02 · System Architecture</a>
+      <a class="toc-link" href="#implementation">§03 · Implementation</a>
+      <a class="toc-link" href="#design-tradeoffs">§04 · Design Tradeoffs</a>
+      <a class="toc-link" href="#live-studio" onclick="switchTab('pkg-studio')">§05 · Live Studio</a>
+      <a class="toc-link" href="#benchmarks-section" onclick="switchTab('benchmarks')">§06 · Benchmarks</a>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-top-row">
+        <div class="eyebrow">Persistent User Memory • Personal Knowledge Graph • Contextual Sessions</div>
+        <div class="runtime-pill" id="runtimePill">
+          <span class="pulse-dot"></span>
+          <span id="runtimeModeText">AWS CloudFront + S3 (OAC) + Python 3.12 + Bedrock (us.amazon.nova-lite-v1:0) Live</span>
+        </div>
+      </div>
+
+      <h1>QuickMemory — Persistent User Memory, Personal Knowledge Graph &amp; Contextual Session Engine</h1>
+      <p class="hero-sub">
+        Consolidates multi-session work transcripts into a typed <strong>Personal Knowledge Graph</strong> (<code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, <code>Commitment</code>), resolves temporal contradictions via deterministic <code>SUPERSEDES</code> edges so stale context never leaks, weights retention with frequency-boosted <strong>Ebbinghaus decay</strong>, and grounds live <strong>Amazon Bedrock Nova</strong> responses with user-governed <code>Pin</code> / <code>Forget</code> controls.
+      </p>
+
+      <div class="headline-pills">
+        <div class="headline-pill">Measured Recall: <span id="pillRecall">89.7% (vs 6.9% Stateless · 65.5% Vector)</span></div>
+        <div class="headline-pill">Stale Contamination: <span id="pillStale">0.0% (vs 100.0% History · 75.0% Vector)</span></div>
+        <div class="headline-pill">Bedrock Input Tokens: <span id="pillTokens">-49.5% (596 vs 1,180 tok · 1.98x)</span></div>
+        <div class="headline-pill">2-Hop PKG Latency: <span id="pillLatency">0.624 ms p50 · 1.029 ms p99</span></div>
+      </div>
+
+      <div class="kpi-strip">
+        <div class="card kpi-card">
+          <div class="kpi-val" id="kpiRecallVal">89.7%</div>
+          <div class="kpi-label">Cross-Session Preference &amp; Slot Recall</div>
+          <div class="kpi-sub" id="kpiRecallSub">32 live Bedrock Nova calls · +24.2pt vs flat vector (65.5%)</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-val" id="kpiStaleVal">0.0%</div>
+          <div class="kpi-label">Stale Contradiction Contamination</div>
+          <div class="kpi-sub" id="kpiStaleSub">87.5% end-to-end contradiction-clean (vs 0.0% full history)</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-val" id="kpiTokensVal">-49.5%</div>
+          <div class="kpi-label">Session Input Tokens via 2-Hop PKG</div>
+          <div class="kpi-sub" id="kpiTokensSub">596 vs 1,180 measured Bedrock inputTokens (1.98x)</div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-val" id="kpiLatencyVal">1.029 ms</div>
+          <div class="kpi-label">p99 Subgraph Retrieval (0.624 ms p50)</div>
+          <div class="kpi-sub" id="kpiLatencySub">240 perf_counter() trials · 100.0% (6/6) Forget prune</div>
+        </div>
+      </div>
+
+      <div class="pipeline-bar" aria-label="QuickMemory Architecture Flow">
+        <div class="pipe-step"><span class="pipe-num">01</span><span>Episodic Transcript Ingest</span></div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step"><span class="pipe-num">02</span><span>Entity &amp; Contradiction Supersession</span></div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step"><span class="pipe-num">03</span><span>2-Hop PKG + Ebbinghaus Retriever</span></div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step"><span class="pipe-num">04</span><span>Bedrock Nova Personalized Companion</span></div>
+      </div>
+    </section>
+
+    <!-- §01 · Problem Statement -->
+    <section id="problem-statement" class="section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">§01 · Problem Statement</span>
+          <h2 class="section-title">Why Multi-Session Workplace AI Companions Drift, Forget, or Hallucinate Stale Habits</h2>
+          <p class="section-desc">Enterprise employees collaborate with an AI companion across weeks of evolving meetings—projects hand off, SQL warehouses migrate, and executive review templates change mid-quarter.</p>
+        </div>
+        <span class="tag tag-fail">3 Failure Modes Measured on Bedrock Nova</span>
+      </div>
+
+      <!-- In Plain English Box -->
+      <div class="plain-english-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <span class="tag tag-accent">In Plain English</span>
+          <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);">The 20-Second Mental Model</span>
+        </div>
+        <p>
+          Imagine hiring a sharp chief of staff. If they wake up with total amnesia every morning, you waste the first ten minutes re-explaining which team you lead, which SQL dialect your data lake uses, and how your VP likes status memos formatted. Conversely, if they carry around a raw binder of <em>every transcript from six months ago</em> without crossing out old assignments, they will write queries against a decommissioned Redshift cluster for a project you handed off last month. <strong>QuickMemory</strong> gives the AI a living <strong>Personal Knowledge Graph</strong>: when your role or preferences change, old links are explicitly marked <code>SUPERSEDED</code> rather than deleted or confused with today's reality—and if you ask it to forget something sensitive, it prunes that node and its edges immediately.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card walkthrough-card">
+          <span class="step-badge" style="background:var(--warn); color:#FFFFFF;">FAILURE 01 · COLD-START AMNESIA</span>
+          <h3>Stateless Sessions Score 6.9% Recall</h3>
+          <p>Without persistent memory, every fresh session forgets which project the user owns, their SQL dialect, and their WBR format—forcing repetitive re-prompting and scoring only <strong>6.9%</strong> slot recall on live <code>us.amazon.nova-lite-v1:0</code>.</p>
+        </div>
+        <div class="card walkthrough-card">
+          <span class="step-badge" style="background:var(--fail); color:#FFFFFF;">FAILURE 02 · TRANSCRIPT STUFFING</span>
+          <h3>100.0% Stale Context Exposure &amp; O(S) Cost</h3>
+          <p>Concatenating raw multi-session logs scales linearly with session count (<strong>1,180</strong> avg input tokens across 7 sessions) and exposes superseded Q3 facts (<code>Payments-v1</code>, <code>Redshift SQL</code>) on <strong>100.0%</strong> of prompts, achieving <strong>0.0%</strong> contradiction-clean accuracy.</p>
+        </div>
+        <div class="card walkthrough-card">
+          <span class="step-badge" style="background:var(--fail); color:#FFFFFF;">FAILURE 03 · FLAT VECTOR CHUNKS</span>
+          <h3>75.0% Stale Drift &amp; Missing 2-Hop Context</h3>
+          <p>Top-K cosine chunk retrieval co-retrieves outdated Session 01 chunks alongside current ones (<strong>75.0%</strong> stale contamination, <strong>25.0%</strong> contradiction accuracy) and misses 2-hop KPIs/blockers not lexically named in the user's prompt (<strong>65.5%</strong> recall).</p>
+        </div>
+      </div>
+
+      <!-- Concrete Multi-Session Worked Example -->
+      <div class="card" style="margin-top:1.25rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <span class="tag tag-soft">Concrete Multi-Session Worked Example</span>
+            <h3 style="font-size:1.14rem; font-weight:800; margin-top:0.35rem;">Tracing Maya Chen (Principal PM) Across 8 Sessions</h3>
+          </div>
+          <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);">Session 01 → Pivot in Session 04 → Format Shift in Session 07 → Fresh Prompt Today</span>
+        </div>
+
+        <div class="worked-example-grid">
+          <div class="session-card" style="margin-bottom:0;">
+            <span class="tag tag-warn">Session 01 · 35 Days Ago</span>
+            <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">Initial Q3 Baseline</h4>
+            <p style="font-size:0.84rem; color:var(--ink-muted);">Maya states she owns <code>Payments-v1</code>, queries <code>Redshift Warehouse SQL</code>, and writes <code>6-Page Narrative Memos</code>.</p>
+            <div class="mono" style="font-size:0.7rem; margin-top:0.45rem; color:var(--ink);">
+              + [MEM-01] Payments-v1 (ACTIVE)<br/>
+              + [MEM-02] Redshift SQL (ACTIVE)<br/>
+              + [MEM-03] 6-Page Memo (ACTIVE)
+            </div>
+          </div>
+
+          <div class="session-card" style="margin-bottom:0; border-left:4px solid var(--accent-main);">
+            <span class="tag tag-accent">Session 04 · 11 Days Ago</span>
+            <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">Charter &amp; Warehouse Cutover</h4>
+            <p style="font-size:0.84rem; color:var(--ink-muted);">Hands off <code>Payments-v1</code> for <code>Checkout-Latency-Q4</code> (<code>p99 &lt;= 180ms</code>, blocked by <code>LakeFormation Grants</code>) and migrates to <code>Athena Iceberg SQL</code>.</p>
+            <div class="mono" style="font-size:0.7rem; margin-top:0.45rem; color:var(--fail);">
+              ✗ EDGE-01 / EDGE-02 → SUPERSEDED<br/>
+              <span style="color:var(--pass);">✓ [MEM-05] SUPERSEDES [MEM-01]<br/>✓ [MEM-06] SUPERSEDES [MEM-02]</span>
+            </div>
+          </div>
+
+          <div class="session-card" style="margin-bottom:0; border-left:4px solid var(--accent-main);">
+            <span class="tag tag-accent">Session 07 · 2 Days Ago</span>
+            <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">Executive Format Update</h4>
+            <p style="font-size:0.84rem; color:var(--ink-muted);">VP Commerce replaces 6-page memos with <code>3-Bullet BLUF + Weekly Delta Table</code> every Tuesday 09:00 PT with SDE <code>Devon Brooks</code>.</p>
+            <div class="mono" style="font-size:0.7rem; margin-top:0.45rem; color:var(--fail);">
+              ✗ EDGE-03 (6-Page) → SUPERSEDED<br/>
+              <span style="color:var(--pass);">✓ [MEM-09] 3-Bullet BLUF + Table</span>
+            </div>
+          </div>
+
+          <div class="session-card" style="margin-bottom:0; background:var(--pass-soft);">
+            <span class="tag tag-pass">Fresh Session 08 · Today</span>
+            <h4 style="font-size:0.95rem; font-weight:800; margin:0.4rem 0 0.25rem;">"Draft my WBR &amp; p99 SQL"</h4>
+            <p style="font-size:0.84rem; color:var(--ink);">Prompt mentions <strong>zero</strong> project or SQL names. QuickMemory traverses 2 hops in <strong>0.624 ms</strong>, withholds all 3 Q3 relics, and emits a 3-bullet BLUF + WoW Table + Trino Iceberg <code>approx_percentile</code> SQL.</p>
+            <div class="mono" style="font-size:0.7rem; margin-top:0.45rem; font-weight:700; color:var(--pass);">
+              596 vs 1,180 tok (-49.5%) · 0% Stale
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §02 · System Architecture -->
+    <section id="system-architecture" class="section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">§02 · System Architecture</span>
+          <h2 class="section-title">End-to-End Serverless Architecture (Edge → Consolidation → 2-Hop PKG → Governance &amp; Bedrock)</h2>
+          <p class="section-desc">Serverless request &amp; memory consolidation pipeline on AWS CloudFront, private S3 (SigV4 OAC), Python 3.12 Lambda, and Amazon Bedrock Nova. <strong>Click any component in the diagram below to inspect its module contract.</strong></p>
+        </div>
+        <span class="tag tag-accent">CloudFront + S3 (OAC) + Py3.12 Lambda</span>
+      </div>
+
+      <div class="walkthrough-grid">
+        <div class="card walkthrough-card">
+          <span class="step-badge">STEP 01 · EPISODIC CONSOLIDATION</span>
+          <h3>Typed Entity &amp; Relation Extraction</h3>
+          <p>Parses work transcripts into <code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, and <code>Commitment</code> nodes connected via typed edges (<code>OWNS</code>, <code>PREFERS_FORMAT</code>, <code>BLOCKED_BY</code>, <code>COLLABORATES_WITH</code>).</p>
+        </div>
+        <div class="card walkthrough-card">
+          <span class="step-badge">STEP 02 · CONTRADICTION GATE</span>
+          <h3>Deterministic SUPERSEDES Lineage</h3>
+          <p>Detects slot conflicts (e.g., <code>Payments-v1 → Checkout-Latency-Q4</code>, <code>Redshift → Athena Iceberg SQL</code>), transitions prior edges to <code>SUPERSEDED</code>, and records explicit <code>SUPERSEDES</code> provenance.</p>
+        </div>
+        <div class="card walkthrough-card">
+          <span class="step-badge">STEP 03 · 2-HOP CONTEXT PACKER</span>
+          <h3>Sub-Millisecond Hybrid Subgraph</h3>
+          <p>Scores active nodes with BM25 + 3-gram cosine + Ebbinghaus retention <code>exp(-λt / (1 + 0.48 ln(1+n)))</code>, expands 2-hop active edges in <strong>0.624 ms p50 / 1.029 ms p99</strong>, and packs compact triples (<strong>-49.5%</strong> input tokens).</p>
+        </div>
+        <div class="card walkthrough-card">
+          <span class="step-badge">STEP 04 · BEDROCK &amp; GOVERNANCE</span>
+          <h3>Cited Companion + Right-to-Forget</h3>
+          <p>Calls live <code>us.amazon.nova-lite-v1:0</code> with inline <code>[MEM-xx]</code> &amp; <code>[EDGE-xx]</code> citations while giving users instant <code>Pin</code> (locks retention at <code>100%</code>) and <code>Forget</code> tombstoning (<strong>6/6 = 100.0%</strong> prune verified).</p>
+        </div>
+      </div>
+
+      <div class="arch-toolbar">
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span class="mono" style="font-size:0.72rem; font-weight:700;">SYSTEM ARCHITECTURE · CLICK ANY COMPONENT TO INSPECT CONTRACT</span>
+          <span class="tag tag-accent" id="archZoomLabel">Zoom: 100%</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+          <button type="button" class="btn btn-accent" id="zoom100Btn" style="padding:0.32rem 0.65rem; font-size:0.76rem;">100%</button>
+          <button type="button" class="btn btn-secondary" id="zoom125Btn" style="padding:0.32rem 0.65rem; font-size:0.76rem;">125%</button>
+          <button type="button" class="btn btn-secondary" id="zoomResetBtn" style="padding:0.32rem 0.65rem; font-size:0.76rem;">↺ Reset</button>
+          <button type="button" class="btn btn-secondary" id="downloadArchSvgBtn" style="padding:0.32rem 0.65rem; font-size:0.76rem;">⬇ Export SVG</button>
+        </div>
+      </div>
+
+      <div class="arch-viewport" id="archViewport">
+        <svg id="quickMemoryArchSvg" class="arch-svg" viewBox="0 0 1220 756" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QuickMemory System Architecture Diagram">
+          <defs>
+            <pattern id="exDotGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill="#D4D4D8" />
+            </pattern>
+          </defs>
+
+          <!-- Crisp Whiteboard Base -->
+          <rect x="0" y="0" width="1220" height="756" fill="#FFFFFF" />
+          <rect x="0" y="0" width="1220" height="756" fill="url(#exDotGrid)" opacity="0.65" />
+
+          <!-- ============================================================= -->
+          <!-- PLANE 1: AWS EDGE DELIVERY                                    -->
+          <!-- ============================================================= -->
+          <path d="M 22,18 Q 600,14 1196,19 Q 1201,94 1195,168 Q 610,172 24,167 Q 19,92 22,18 Z" fill="#FAFAFA" stroke="#71717A" stroke-width="1.6" stroke-dasharray="8 6" />
+          <text x="36" y="40" class="ex-hand" font-size="21" font-weight="700" fill="#7C3AED">① AWS Edge Delivery Plane (100% Serverless · 0 EC2 · 0 RDS · 0 Idle GPU)</text>
+
+          <!-- Node 1: User Browser -->
+          <g class="ex-node" data-arch-node="edge-browser" tabindex="0">
+            <path d="M 38,56 Q 136,53 234,57 Q 238,98 233,140 Q 135,143 39,139 Q 35,97 38,56 Z" fill="#DBEAFE" />
+            <path class="ex-stroke-main" d="M 38,56 Q 136,53 234,57 Q 238,98 233,140 Q 135,143 39,139 Q 35,97 38,56 Z" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linejoin="round" />
+            <path d="M 40,58 Q 138,56 232,59 Q 235,99 231,138 Q 134,140 41,137 Q 37,96 40,58 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="136" y="84" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">User Browser</text>
+            <text x="136" y="106" text-anchor="middle" class="ex-mono" font-size="10.2" font-weight="600" fill="#1E3A8A">4-Tab PKG Studio &amp; TOC</text>
+            <text x="136" y="124" text-anchor="middle" class="ex-mono" font-size="9.6" fill="#3F3F46">location.hash · Stateless UI</text>
+          </g>
+
+          <!-- Arrow: Browser -> CloudFront -->
+          <path d="M 237,98 Q 268,94 298,98" fill="none" stroke="#18181B" stroke-width="2.1" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 289,92 L 300,98 L 289,104" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="268" y="87" text-anchor="middle" class="ex-hand" font-size="16" font-weight="700" fill="#18181B">HTTPS</text>
+
+          <!-- Node 2: Amazon CloudFront -->
+          <g class="ex-node" data-arch-node="edge-cloudfront" tabindex="0">
+            <path d="M 304,56 Q 430,52 556,57 Q 560,98 555,140 Q 428,144 305,139 Q 301,97 304,56 Z" fill="#EDE9FE" />
+            <path class="ex-stroke-main" d="M 304,56 Q 430,52 556,57 Q 560,98 555,140 Q 428,144 305,139 Q 301,97 304,56 Z" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linejoin="round" />
+            <path d="M 306,59 Q 431,55 554,59 Q 557,99 553,138 Q 429,141 307,137 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="430" y="84" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">Amazon CloudFront (HTTPS)</text>
+            <text x="430" y="106" text-anchor="middle" class="ex-mono" font-size="10.2" font-weight="600" fill="#5B21B6">TLS 1.3 · E1I3BMCLY8AF1W</text>
+            <text x="430" y="124" text-anchor="middle" class="ex-mono" font-size="9.6" fill="#3F3F46">Routes /* static &amp; /api/*</text>
+          </g>
+
+          <!-- Branch Arrows from CloudFront to S3 and Lambda -->
+          <path d="M 559,80 Q 596,68 634,68" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 625,62 L 636,68 L 625,74" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="596" y="61" text-anchor="middle" class="ex-hand" font-size="15" font-weight="700" fill="#065F46">OAC GET</text>
+
+          <path d="M 559,116 Q 596,128 634,128" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 625,122 L 636,128 L 625,134" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="596" y="145" text-anchor="middle" class="ex-hand" font-size="15" font-weight="700" fill="#5B21B6">/api/*</text>
+
+          <!-- Node 3a: Private S3 Bucket (OAC) -->
+          <g class="ex-node" data-arch-node="edge-s3" tabindex="0">
+            <path d="M 640,40 Q 775,37 910,41 Q 913,67 909,92 Q 774,95 641,91 Q 637,66 640,40 Z" fill="#DCFCE7" />
+            <path class="ex-stroke-main" d="M 640,40 Q 775,37 910,41 Q 913,67 909,92 Q 774,95 641,91 Q 637,66 640,40 Z" fill="none" stroke="#18181B" stroke-width="2" />
+            <path d="M 642,42 Q 776,40 908,43 Q 910,67 907,90 Q 773,92 643,89 Z" fill="none" stroke="#18181B" stroke-width="1" opacity="0.6" />
+            <text x="775" y="63" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">Private S3 Bucket (OAC)</text>
+            <text x="775" y="81" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#065F46">quickmemory-web · BlockPublicAccess</text>
+          </g>
+
+          <!-- Node 3b: AWS Lambda (Python 3.12) -->
+          <g class="ex-node" data-arch-node="edge-lambda" tabindex="0">
+            <path d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="#FFE8D6" />
+            <path class="ex-stroke-main" d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="none" stroke="#18181B" stroke-width="2" />
+            <path d="M 642,104 Q 776,102 908,105 Q 910,130 907,154 Q 773,156 643,153 Z" fill="none" stroke="#18181B" stroke-width="1" opacity="0.6" />
+            <text x="775" y="125" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">AWS Lambda (Python 3.12)</text>
+            <text x="775" y="144" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#9A3412">quick_memory/server.py · /api/*</text>
+          </g>
+
+          <!-- Tilted Sticky-Note Callout -->
+          <g transform="rotate(-1.6 1055 96)">
+            <path d="M 934,40 L 1180,40 L 1180,136 L 1162,152 L 934,152 Z" fill="#FEF3C7" stroke="#18181B" stroke-width="2" />
+            <path d="M 1162,152 L 1162,136 L 1180,136" fill="#FDE68A" stroke="#18181B" stroke-width="1.6" />
+            <text x="948" y="66" class="ex-hand" font-size="19" font-weight="700" fill="#92400E">📌 Sticky Note: Live Telemetry</text>
+            <text x="948" y="89" class="ex-hand" font-size="17" font-weight="600" fill="#18181B">• 32 Live Bedrock Nova Calls</text>
+            <text x="948" y="110" class="ex-hand" font-size="17" font-weight="600" fill="#18181B">• 0.624 ms p50 · 1.029 ms p99</text>
+            <text x="948" y="132" class="ex-hand" font-size="17" font-weight="700" fill="#5B21B6">• -49.5% Input Tokens (1.98x)</text>
+          </g>
+
+          <!-- Dashed Arrow: Lambda -> Plane 2 Consolidation -->
+          <path d="M 775,157 Q 765,180 612,196" fill="none" stroke="#18181B" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 621,190 L 610,197 L 622,202" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="765" y="185" class="ex-hand" font-size="16" font-weight="700" fill="#18181B">Session Ingest &amp; Ask Dispatch</text>
+
+          <!-- ============================================================= -->
+          <!-- PLANE 2: EPISODIC-TO-SEMANTIC CONSOLIDATION & RETENTION       -->
+          <!-- ============================================================= -->
+          <path d="M 22,198 Q 610,194 1196,199 Q 1200,270 1195,340 Q 608,344 24,339 Q 19,268 22,198 Z" fill="#F8FAFC" stroke="#1E40AF" stroke-width="1.6" stroke-dasharray="8 6" />
+          <text x="36" y="221" class="ex-hand" font-size="21" font-weight="700" fill="#1D4ED8">② Episodic-to-Semantic Consolidation Plane (14 Multi-Session Logs → Typed Entities, SUPERSEDES &amp; Ebbinghaus)</text>
+
+          <!-- Consolidation 1: Entity & Relation Extractor -->
+          <g class="ex-node" data-arch-node="pkg-extractor" tabindex="0">
+            <path d="M 42,235 Q 218,231 394,236 Q 398,281 393,326 Q 216,330 43,325 Q 39,280 42,235 Z" fill="#DBEAFE" />
+            <path class="ex-stroke-main" d="M 42,235 Q 218,231 394,236 Q 398,281 393,326 Q 216,330 43,325 Q 39,280 42,235 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <path d="M 45,238 Q 219,235 391,239 Q 394,282 390,323 Q 217,327 46,322 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="218" y="263" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">Episodic Entity Extractor</text>
+            <text x="218" y="285" text-anchor="middle" class="ex-mono" font-size="9.8" font-weight="600" fill="#1E3A8A">ingest_live_transcript()</text>
+            <text x="218" y="304" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#3F3F46">Person · Project · Metric · System · Pref</text>
+          </g>
+
+          <!-- Consolidation 2: Temporal Contradiction Supersession -->
+          <g class="ex-node selected" data-arch-node="pkg-supersedes" tabindex="0">
+            <path d="M 432,235 Q 610,231 788,236 Q 792,281 787,326 Q 609,330 433,325 Q 429,280 432,235 Z" fill="#FEE2E2" />
+            <path class="ex-stroke-main" d="M 432,235 Q 610,231 788,236 Q 792,281 787,326 Q 609,330 433,325 Q 429,280 432,235 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <path d="M 435,238 Q 611,235 785,239 Q 788,282 784,323 Q 608,327 436,322 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="610" y="263" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#991B1B">Temporal Contradiction Gate</text>
+            <text x="610" y="285" text-anchor="middle" class="ex-mono" font-size="9.8" font-weight="600" fill="#991B1B">slot_key Conflict → SUPERSEDED</text>
+            <text x="610" y="304" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#7F1D1D">Redshift → Athena Iceberg · 0.0% Stale</text>
+          </g>
+
+          <!-- Consolidation 3: Ebbinghaus Retention Engine -->
+          <g class="ex-node" data-arch-node="pkg-ebbinghaus" tabindex="0">
+            <path d="M 824,235 Q 1001,231 1178,236 Q 1182,281 1177,326 Q 1000,330 825,325 Q 821,280 824,235 Z" fill="#EDE9FE" />
+            <path class="ex-stroke-main" d="M 824,235 Q 1001,231 1178,236 Q 1182,281 1177,326 Q 1000,330 825,325 Q 821,280 824,235 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <path d="M 827,238 Q 1002,235 1175,239 Q 1178,282 1174,323 Q 999,327 828,322 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="1001" y="263" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">Ebbinghaus Retention Curve</text>
+            <text x="1001" y="285" text-anchor="middle" class="ex-mono" font-size="9.6" font-weight="600" fill="#5B21B6">exp(-λt / (1 + 0.48 ln(1+n)))</text>
+            <text x="1001" y="304" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#3F3F46">Access Reinforcement · Pin = 100%</text>
+          </g>
+
+          <!-- Vertical Dashed Arrows: Consolidation -> 6-Stage Contextual Session Pipeline -->
+          <path d="M 218,328 Q 230,356 260,382" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 251,378 L 262,383 L 258,371" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="242" y="364" class="ex-hand" font-size="15.5" font-weight="700" fill="#1E40AF">Typed Adjacency</text>
+
+          <path d="M 610,328 Q 610,356 610,382" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 604,373 L 610,384 L 616,373" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="622" y="364" class="ex-hand" font-size="15.5" font-weight="700" fill="#991B1B">Active-Only Filter</text>
+
+          <path d="M 1001,328 Q 975,356 942,382" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 946,371 L 940,383 L 952,379" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="985" y="364" class="ex-hand" font-size="15.5" font-weight="700" fill="#5B21B6">Retention Weights</text>
+
+          <!-- ============================================================= -->
+          <!-- PLANE 3: 6-STAGE HYBRID 2-HOP CONTEXTUAL SESSION ASSEMBLER     -->
+          <!-- ============================================================= -->
+          <g class="ex-node" data-arch-node="pkg-retriever" tabindex="0">
+            <path d="M 22,384 Q 610,380 1196,385 Q 1200,458 1195,532 Q 608,536 24,531 Q 19,457 22,384 Z" fill="#F0FDF4" />
+            <path class="ex-stroke-main" d="M 22,384 Q 610,380 1196,385 Q 1200,458 1195,532 Q 608,536 24,531 Q 19,457 22,384 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <text x="36" y="408" class="ex-hand" font-size="21" font-weight="700" fill="#065F46">③ Contextual Session Assembler — 6-Stage Hybrid BM25 + 2-Hop PKG Pipeline (0.624 ms p50 · 1.029 ms p99 · -49.5% Tokens)</text>
+
+            <!-- Stage 1 -->
+            <path d="M 40,425 Q 128,422 216,426 Q 219,468 215,510 Q 127,513 41,509 Q 38,467 40,425 Z" fill="#DCFCE7" stroke="#18181B" stroke-width="1.9" />
+            <text x="128" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#18181B">01 · FRESH_PROMPT</text>
+            <text x="128" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#065F46">Zero In-Prompt</text>
+            <text x="128" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">Project / SQL Hints</text>
+
+            <path d="M 218,468 L 236,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 230,463 L 238,468 L 230,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 2 -->
+            <path d="M 240,425 Q 328,422 416,426 Q 419,468 415,510 Q 327,513 241,509 Q 238,467 240,425 Z" fill="#DCFCE7" stroke="#18181B" stroke-width="1.9" />
+            <text x="328" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#18181B">02 · BM25 + TRIGRAM</text>
+            <text x="328" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#065F46">Lexical + 3-Gram</text>
+            <text x="328" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">× Retention R(t,n)</text>
+
+            <path d="M 418,468 L 436,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 430,463 L 438,468 L 430,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 3 -->
+            <path d="M 440,425 Q 528,422 616,426 Q 619,468 615,510 Q 527,513 441,509 Q 438,467 440,425 Z" fill="#FEE2E2" stroke="#18181B" stroke-width="1.9" />
+            <text x="528" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#991B1B">03 · PRUNE_STALE</text>
+            <text x="528" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#991B1B">Drop SUPERSEDED</text>
+            <text x="528" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#7F1D1D">&amp; TOMBSTONED</text>
+
+            <path d="M 618,468 L 636,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 630,463 L 638,468 L 630,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 4 -->
+            <path d="M 640,425 Q 728,422 816,426 Q 819,468 815,510 Q 727,513 641,509 Q 638,467 640,425 Z" fill="#DCFCE7" stroke="#18181B" stroke-width="1.9" />
+            <text x="728" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#18181B">04 · HOP2_EXPAND</text>
+            <text x="728" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#065F46">Project → KPI</text>
+            <text x="728" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">&amp; System Blockers</text>
+
+            <path d="M 818,468 L 836,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 830,463 L 838,468 L 830,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 5 -->
+            <path d="M 840,425 Q 928,422 1016,426 Q 1019,468 1015,510 Q 927,513 841,509 Q 838,467 840,425 Z" fill="#EDE9FE" stroke="#18181B" stroke-width="1.9" />
+            <text x="928" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#5B21B6">05 · PINNED_PREFS</text>
+            <text x="928" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#5B21B6">SQL + Doc Format</text>
+            <text x="928" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">Always Attached</text>
+
+            <path d="M 1018,468 L 1036,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 1030,463 L 1038,468 L 1030,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 6 -->
+            <path d="M 1040,425 Q 1110,422 1180,426 Q 1183,468 1179,510 Q 1109,513 1041,509 Q 1038,467 1040,425 Z" fill="#FEF3C7" stroke="#18181B" stroke-width="1.9" />
+            <text x="1110" y="451" text-anchor="middle" class="ex-hand" font-size="16.5" font-weight="700" fill="#18181B">06 · TRIPLE_PACK</text>
+            <text x="1110" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#92400E">596 vs 1,180 tok</text>
+            <text x="1110" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">[MEM-xx] [EDGE-xx]</text>
+          </g>
+
+          <!-- Dashed Arrows from Plane 3 to Plane 4 & Plane 5 -->
+          <path d="M 528,532 Q 340,558 220,584" fill="none" stroke="#DC2626" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 228,577 L 218,585 L 230,589" fill="none" stroke="#DC2626" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="355" y="560" class="ex-hand" font-size="16" font-weight="700" fill="#DC2626">Pin / Tombstone Edge Prune</text>
+
+          <path d="M 928,532 Q 740,556 618,584" fill="none" stroke="#7C3AED" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 625,575 L 616,585 L 629,586" fill="none" stroke="#7C3AED" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="772" y="560" class="ex-hand" font-size="16" font-weight="700" fill="#7C3AED">Compact Active PKG Envelope</text>
+
+          <path d="M 1110,532 Q 1055,556 1010,584" fill="none" stroke="#B45309" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 1016,574 L 1008,585 L 1021,585" fill="none" stroke="#B45309" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="1095" y="560" class="ex-hand" font-size="16" font-weight="700" fill="#92400E">4-Baseline Telemetry</text>
+
+          <!-- ============================================================= -->
+          <!-- PLANE 4 & 5: GOVERNANCE GATE + BEDROCK NOVA + BENCHMARK SUITE -->
+          <!-- ============================================================= -->
+          <!-- Node 4: User Memory Governance & Right-to-Forget -->
+          <g class="ex-node" data-arch-node="pkg-governance" tabindex="0">
+            <path d="M 32,588 Q 214,583 396,589 Q 401,660 395,730 Q 212,735 34,729 Q 29,658 32,588 Z" fill="#FEE2E2" />
+            <path class="ex-stroke-main" d="M 32,588 Q 214,583 396,589 Q 401,660 395,730 Q 212,735 34,729 Q 29,658 32,588 Z" fill="none" stroke="#18181B" stroke-width="2.2" />
+            <path d="M 35,591 Q 215,587 393,592 Q 397,660 392,727 Q 213,731 37,726 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="214" y="618" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#991B1B">④ User Governance &amp; Tombstone</text>
+            <text x="214" y="643" text-anchor="middle" class="ex-mono" font-size="9.6" font-weight="700" fill="#18181B">/api/memory/toggle · /api/memory/forget</text>
+            <text x="214" y="666" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#7F1D1D">O(deg(v)) In-Place Active Edge Prune</text>
+            <rect x="58" y="684" width="312" height="28" fill="#FFFFFF" stroke="#18181B" stroke-width="1.6" />
+            <text x="214" y="702" text-anchor="middle" class="ex-mono" font-size="9.4" font-weight="700" fill="#DC2626">🗑️ 100.0% Tombstone Prune (6/6 Probes)</text>
+          </g>
+
+          <!-- Node 5a: Amazon Bedrock Nova Personalized Companion -->
+          <g class="ex-node" data-arch-node="bedrock-companion" tabindex="0">
+            <path d="M 428,588 Q 610,583 792,589 Q 797,660 791,730 Q 608,735 430,729 Q 425,658 428,588 Z" fill="#EDE9FE" />
+            <path class="ex-stroke-main" d="M 428,588 Q 610,583 792,589 Q 797,660 791,730 Q 608,735 430,729 Q 425,658 428,588 Z" fill="none" stroke="#18181B" stroke-width="2.2" />
+            <path d="M 431,591 Q 611,587 789,592 Q 793,660 788,727 Q 609,731 433,726 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="610" y="618" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#5B21B6">⑤ Amazon Bedrock Companion</text>
+            <text x="610" y="643" text-anchor="middle" class="ex-mono" font-size="9.8" font-weight="700" fill="#18181B">us.amazon.nova-lite-v1:0</text>
+            <text x="610" y="666" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#4C1D95">Parallel Stateless vs. PKG Converse</text>
+            <rect x="454" y="684" width="312" height="28" fill="#FFFFFF" stroke="#18181B" stroke-width="1.6" />
+            <text x="610" y="702" text-anchor="middle" class="ex-mono" font-size="9.4" font-weight="700" fill="#6D28D9">⚡ Live /api/companion/ask · [MEM-xx]</text>
+          </g>
+
+          <!-- Dashed Arrow: Bedrock -> Benchmark Suite -->
+          <path d="M 795,660 L 821,660" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="5 4" />
+          <path d="M 814,654 L 823,660 L 814,666" fill="none" stroke="#18181B" stroke-width="2" />
+
+          <!-- Node 5b: Multi-Session Benchmark Harness -->
+          <g class="ex-node" data-arch-node="eval-plane" tabindex="0">
+            <path d="M 826,588 Q 1010,583 1194,589 Q 1199,660 1193,730 Q 1008,735 828,729 Q 823,658 826,588 Z" fill="#FEF3C7" />
+            <path class="ex-stroke-main" d="M 826,588 Q 1010,583 1194,589 Q 1199,660 1193,730 Q 1008,735 828,729 Q 823,658 826,588 Z" fill="none" stroke="#18181B" stroke-width="2.2" />
+            <path d="M 829,591 Q 1011,587 1191,592 Q 1195,660 1190,727 Q 1009,731 831,726 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="1010" y="618" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#92400E">⑤ 4-Architecture Eval Harness</text>
+            <text x="1010" y="643" text-anchor="middle" class="ex-mono" font-size="9.6" font-weight="700" fill="#18181B">benchmarks/run_benchmarks.py</text>
+            <text x="1010" y="666" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#78350F">Stateless · Stuffing · Vector · 2-Hop PKG</text>
+            <rect x="850" y="684" width="320" height="28" fill="#DCFCE7" stroke="#18181B" stroke-width="1.6" />
+            <text x="1010" y="702" text-anchor="middle" class="ex-mono" font-size="9.3" font-weight="700" fill="#065F46">✓ 89.7% Recall · 87.5% Contradiction-Clean</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Interactive Architecture Node Inspector -->
+      <div class="arch-inspector" id="archInspector">
+        <div class="arch-node-pills" id="archNodePills">
+          <button type="button" class="arch-node-pill" data-arch-btn="edge-browser">1. User Browser</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="edge-cloudfront">2. CloudFront Edge</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="edge-s3">3. Private S3 (OAC)</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="edge-lambda">4. Lambda (/api/*)</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="pkg-extractor">5. Entity Extractor</button>
+          <button type="button" class="arch-node-pill active" data-arch-btn="pkg-supersedes">6. Contradiction Gate</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="pkg-ebbinghaus">7. Ebbinghaus Decay</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="pkg-retriever">8. 2-Hop PKG Assembler</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="pkg-governance">9. Forget / Tombstone</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="bedrock-companion">10. Bedrock Nova</button>
+          <button type="button" class="arch-node-pill" data-arch-btn="eval-plane">11. Benchmark Harness</button>
+        </div>
+        <div id="archInspectorDetail"></div>
+      </div>
+    </section>
+
+    <!-- §03 · Implementation -->
+    <section id="implementation" class="section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">§03 · Implementation</span>
+          <h2 class="section-title">Core Subsystems — Plain-English Intuition &amp; Under-the-Hood Mechanics</h2>
+          <p class="section-desc">Zero-dependency Python 3.12 Personal Knowledge Graph engine (<code>quick_memory/graph_engine.py</code>) and CloudFront <code>/api/*</code> serverless router (<code>quick_memory/server.py</code>), paired with human-readable intuition and exact implementation details.</p>
+        </div>
+        <span class="tag tag-soft">10/10 Unit Tests Passing</span>
+      </div>
+
+      <div class="impl-pair-grid">
+        <!-- Module 1 -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM A · CONSOLIDATION</span>
+            <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py :: ingest_live_transcript()</span>
+          </div>
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">1. Episodic-to-Semantic Entity &amp; Edge Consolidation</h3>
+          <div class="intuition-block">
+            <strong>Plain-English Intuition:</strong> Raw chat logs are noisy diaries; a Personal Knowledge Graph is a structured index card box. Instead of saving whole paragraphs verbatim, QuickMemory distills each meeting into clean cards—<em>Projects</em> you own, <em>People</em> you partner with, <em>Metrics</em> you chase, <em>Systems</em> blocking you, and <em>Preferences</em> you care about—connected by labeled arrows.
+          </div>
+          <div class="hood-block">
+            <strong>Under the Hood:</strong> Splits multi-turn transcripts into speaker-stripped clauses and runs ordered structural extractors producing <code>MemoryNode</code> dataclasses across 6 entity classes (<code>Person</code>, <code>Project</code>, <code>Metric</code>, <code>System</code>, <code>Preference</code>, <code>Commitment</code>) and 7 directed <code>MemoryEdge</code> types (<code>OWNS</code>, <code>PREFERS_FORMAT</code>, <code>BLOCKED_BY</code>, <code>TRACKS_METRIC</code>, <code>COLLABORATES_WITH</code>, <code>COMMITTED_TO</code>, <code>SUPERSEDES</code>). Re-mentions reinforce <code>access_count += 2</code> and append session IDs to <code>provenance_sessions</code>.
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM B · SUPERSESSION</span>
+            <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py :: upsert_entity_with_relation()</span>
+          </div>
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">2. Deterministic Temporal Contradiction Gate</h3>
+          <div class="intuition-block">
+            <strong>Plain-English Intuition:</strong> When you move to a new apartment, you forward your mail—you don't want packages shipped to both your old address and your new one. Whenever a user switches primary projects or replaces Redshift with Athena Iceberg SQL, QuickMemory retires the old link as <code>SUPERSEDED</code> while keeping an audit trail of <em>when</em> and <em>why</em> it changed.
+          </div>
+          <div class="hood-block">
+            <strong>Under the Hood:</strong> Functional preference and ownership edges carry a canonical <code>slot_key</code> (<code>primary_project</code>, <code>sql_dialect</code>, <code>code_stack</code>, <code>doc_format</code>, <code>active_blocker</code>). On upsert, any active edge matching <code>(source_id, relation, slot_key)</code> or an explicit <code>contradicts_label</code> transitions atomically to <code>status="SUPERSEDED"</code>, records <code>superseded_in_session</code>, and emits an explicit <code>SUPERSEDES</code> directed lineage edge—driving stale prompt contamination to <strong>0.0%</strong>.
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM C · RETENTION</span>
+            <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py :: compute_ebbinghaus_retention()</span>
+          </div>
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">3. Frequency-Reinforced Ebbinghaus Memory Decay</h3>
+          <div class="intuition-block">
+            <strong>Plain-English Intuition:</strong> A one-off side comment from five weeks ago shouldn't carry the same weight as a formatting rule you rely on every Tuesday. Memories naturally fade over time unless repeated use reinforces them—or unless you explicitly click <strong>Pin</strong> to lock a non-negotiable habit at <code>100%</code> forever.
+          </div>
+          <div class="hood-block">
+            <strong>Under the Hood:</strong> Evaluates continuous retention via <code>R(t, n) = exp(-λ · age_days / (1 + 0.48 · ln(1 + access_count)))</code> with default <code>λ = 0.045</code>. Every live 2-hop retrieval increments <code>access_count</code> on matched active nodes, flattening their decay slope over a 60-day horizon; <code>pinned=True</code> clamps <code>R = 1.0</code> and <code>forgotten=True</code> clamps <code>R = 0.0</code>.
+          </div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span class="step-badge" style="margin-bottom:0;">SUBSYSTEM D · RETRIEVAL &amp; PRIVACY</span>
+            <span class="mono" style="font-size:0.71rem; color:var(--ink-muted);">graph_engine.py + server.py</span>
+          </div>
+          <h3 style="font-size:1.12rem; font-weight:800; margin-top:0.55rem;">4. 2-Hop Hybrid Subgraph Packer &amp; O(deg(v)) Tombstoning</h3>
+          <div class="intuition-block">
+            <strong>Plain-English Intuition:</strong> If you ask <em>"Draft my WBR update,"</em> a keyword search only looks for the word <em>"WBR."</em> A graph walks two steps outward from you: Step 1 finds your active project (<code>Checkout-Latency-Q4</code>), and Step 2 automatically pulls in that project's SLA target (<code>180ms</code>) and blocker (<code>LakeFormation</code>)—even though you never typed either word!
+          </div>
+          <div class="hood-block">
+            <strong>Under the Hood:</strong> Combines BM25 IDF (`k1=1.2, b=0.75`) + character 3-gram cosine similarity weighted by <code>0.55 + 0.45·R(t,n)</code> to pick Hop-1 seeds, attaches active <code>Preference</code> nodes, expands Hop-2 active edges in <strong>0.624 ms p50 / 1.029 ms p99</strong>, and serializes compact triples (`596` avg Bedrock inputTokens). Calling <code>DELETE /api/memory/forget</code> sets <code>TOMBSTONED</code> and marks incident active edges <code>PRUNED</code> in <code>O(deg(v))</code> time (<strong>6/6 = 100.0%</strong> verified).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §04 · Design Tradeoffs -->
+    <section id="design-tradeoffs" class="section">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">§04 · Design Tradeoffs</span>
+          <h2 class="section-title">Architectural Tradeoffs &amp; Production Engineering Decisions</h2>
+          <p class="section-desc">Every memory architecture trades off token footprint, multi-hop recall, write-path latency, and deletion semantics. Here is how QuickMemory balances each axis based on live Bedrock Nova measurements.</p>
+        </div>
+        <span class="tag tag-pass">Measured Across 4 Baselines</span>
+      </div>
+
+      <div class="grid-equal">
+        <div class="card">
+          <h3 style="font-size:1.08rem; font-weight:800; margin-bottom:0.55rem;">1. 2-Hop PKG Triples vs. Flat Vector Chunks &amp; Full Transcripts</h3>
+          <ul style="padding-left:1.15rem; font-size:0.88rem; display:flex; flex-direction:column; gap:0.55rem;">
+            <li><strong>Token Budget vs. Multi-Hop Completeness:</strong> Flat top-3 cosine chunks use fewer input tokens (<code>329</code> vs. <code>596</code> for QuickMemory), because they only send 3 short snippets. However, flat chunks miss 2-hop blockers/KPIs and co-retrieve superseded Q3 turns—dropping recall to <strong>65.5%</strong> and exposing stale context on <strong>75.0%</strong> of queries. QuickMemory invests ~267 extra tokens for structured 2-hop triples to achieve <strong>89.7%</strong> recall (<strong>+24.2 pts</strong>) and <strong>0.0%</strong> stale contamination, while still saving <strong>49.5%</strong> vs. full transcript stuffing (<code>1,180</code> tokens).</li>
+            <li><strong>Asymptotic Scaling Across Months of Work:</strong> Full-history stuffing grows as <code>O(S)</code> with total sessions <code>S</code>; QuickMemory's prompt envelope scales as <code>O(|V_active_2hop|)</code>—bounded by the user's active projects and preferences regardless of whether <code>S = 10</code> or <code>S = 500</code>.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:1.08rem; font-weight:800; margin-bottom:0.55rem;">2. Synchronous Clause Extraction vs. Async LLM Consolidation &amp; Tombstones</h3>
+          <ul style="padding-left:1.15rem; font-size:0.88rem; display:flex; flex-direction:column; gap:0.55rem;">
+            <li><strong>Write-Path Latency vs. Open-Vocabulary Nuance:</strong> Running an LLM call on every session write adds ~1.5–3.0s latency and extra token spend. QuickMemory uses a fast deterministic clause/slot extractor on the synchronous write path (`< 1 ms` consolidation) for zero-wait interactive session ingestion, while pairing easily with asynchronous background LLM entity Linking for ambiguous prose at scale.</li>
+            <li><strong>In-Place O(deg(v)) Tombstoning vs. Vector Re-Indexing:</strong> Deleting a single person or project from raw chunk embeddings leaves partial co-references scattered across overlapping sliding-window chunks. Graph node tombstoning (`TOMBSTONED` + `PRUNED` incident edges) severs retrieval paths atomically in `O(deg(v))` without re-embedding transcripts.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- §05 · Live Studio & §06 · Benchmarks -->
+    <section id="live-studio" class="tabs-wrapper">
+      <div class="section-header" id="benchmarks-section" style="scroll-margin-top:105px;">
+        <div>
+          <span class="section-kicker">§05 · Live Studio &amp; §06 · Benchmarks</span>
+          <h2 class="section-title">Interactive 4-Tab Personal Knowledge Graph &amp; Bedrock Nova Studio</h2>
+          <p class="section-desc">Explore the live Personal Knowledge Graph, test side-by-side stateless vs. personalized responses on live Amazon Bedrock Nova, adjust Ebbinghaus retention &amp; tombstones, and inspect all 32 raw benchmark trials.</p>
+        </div>
+        <span class="tag tag-accent">Live CloudFront /api/* + Bedrock Nova</span>
+      </div>
+      <div class="tab-bar" role="tablist" aria-label="QuickMemory Interactive Studios">
+        <button type="button" class="tab-btn active" data-tab="pkg-studio" role="tab" aria-selected="true" onclick="switchTab('pkg-studio')">
+          <span class="tab-btn-eyebrow">Studio 01 · Personal Graph</span>
+          <span class="tab-btn-title">Personal Knowledge Graph &amp; Live Ingest</span>
+          <span class="tab-btn-metric">Active vs Superseded SVG · /api/sessions/ingest</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="companion-studio" role="tab" aria-selected="false" onclick="switchTab('companion-studio')">
+          <span class="tab-btn-eyebrow">Studio 02 · Bedrock Nova</span>
+          <span class="tab-btn-title">Stateless LLM vs. QuickMemory Companion</span>
+          <span class="tab-btn-metric">Live us.amazon.nova-lite-v1:0 · [MEM-xx] Cites</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="governance-studio" role="tab" aria-selected="false" onclick="switchTab('governance-studio')">
+          <span class="tab-btn-eyebrow">Studio 03 · Retention &amp; Control</span>
+          <span class="tab-btn-title">Ebbinghaus Decay, Contradictions &amp; Forget</span>
+          <span class="tab-btn-metric">60-Day Curve · 100% (6/6) Tombstone Prune</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="benchmarks" role="tab" aria-selected="false" onclick="switchTab('benchmarks')">
+          <span class="tab-btn-eyebrow">Studio 04 · Live Telemetry</span>
+          <span class="tab-btn-title">Measured Multi-Session Benchmark Suite</span>
+          <span class="tab-btn-metric">89.7% Recall · 0.0% Stale · -49.5% Tok · 1.029ms</span>
+        </button>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- TAB 1: INTERACTIVE PERSONAL KNOWLEDGE GRAPH & LIVE SESSION INGEST-->
+      <!-- ================================================================ -->
+      <div id="panel-pkg-studio" class="tab-panel active" role="tabpanel">
+        <div class="click-guide-box">
+          <strong>👆 What to Click &amp; What Happens (Studio 01):</strong>
+          (1) Click any node in the SVG Personal Knowledge Graph below to inspect its <code>[MEM-xx]</code> session provenance, retention percentage, and exact quote;
+          (2) Switch between <strong>Maya Chen (Principal PM)</strong> and <strong>Devon Brooks (Staff SDE)</strong> in the top-right dropdown;
+          (3) Click a <strong>1-Click Contradiction Preset</strong> on the right and press <strong>⚡ Consolidate Session into Personal Knowledge Graph</strong>—this fires <code>POST /api/sessions/ingest</code> on AWS Lambda, extracts new typed entities, flips conflicting prior edges to red dashed <code>SUPERSEDED</code> strokes, and redraws the live graph!
+        </div>
+        <div class="sim-header">
+          <div>
+            <h2 class="sim-title">Interactive Personal Knowledge Graph (<code>User ↔ Projects ↔ Stakeholders ↔ Preferences</code>)</h2>
+            <p class="sim-desc">Switch user personas, click any node in the Neo-Brutalist SVG graph to inspect session provenance, or ingest a new work session transcript live to watch entity extraction and contradiction supersession happen in real time.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+            <select id="personaSelectTop" onchange="changePersona(this.value)" style="width:auto; min-width:270px; font-weight:700;">
+              <option value="principal_pm">Persona: Maya Chen (Principal PM · Checkout)</option>
+              <option value="staff_sde">Persona: Devon Brooks (Staff SDE · Quick IR)</option>
+            </select>
+            <button type="button" class="btn btn-secondary" onclick="toggleSupersededEdges()" id="toggleSupersededBtn">👁️ Showing Superseded Lineage</button>
+            <button type="button" class="btn btn-secondary" onclick="resetEngineLive()">↺ Reset Graph</button>
+          </div>
+        </div>
+
+        <div class="grid-pkg">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+              <div>
+                <span class="tag tag-accent" id="pkgUserBadge">Maya Chen</span>
+                <span class="mono" style="font-size:0.72rem; color:var(--ink-muted); margin-left:0.35rem;" id="pkgStatsSummary"></span>
+              </div>
+              <div style="display:flex; gap:0.45rem; flex-wrap:wrap; font-size:0.7rem;" class="mono">
+                <span class="tag tag-pass">━━ Active Edge</span>
+                <span class="tag tag-fail">╌╌ Superseded Contradiction</span>
+                <span class="tag tag-soft">↶ SUPERSEDES Lineage</span>
+              </div>
+            </div>
+
+            <div class="pkg-svg-wrap" id="pkgSvgContainer"></div>
+
+            <div id="selectedNodeInspector" style="margin-top:0.95rem; border:2px solid var(--border); background:var(--bg-subtle); padding:0.85rem 1rem;"></div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:1.15rem;">
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-bottom:0.65rem; flex-wrap:wrap;">
+                <h3 style="font-size:1.06rem; font-weight:800;">⚡ Ingest New Work Session (<code>/api/sessions/ingest</code>)</h3>
+                <span class="tag tag-accent">Live Extractor</span>
+              </div>
+              <p style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:0.75rem;">
+                Drop a new meeting note or contradiction preset below to extract typed <code>[MEM-xx]</code> entities and watch old <code>OWNS</code> / <code>PREFERS_FORMAT</code> edges flip to <code>SUPERSEDED</code>.
+              </p>
+
+              <div class="control-label"><span>1-Click Contradiction &amp; Expansion Presets</span></div>
+              <div style="display:grid; grid-template-columns:1fr; gap:0.42rem; margin-bottom:0.8rem;">
+                <button type="button" class="btn btn-secondary" style="justify-content:space-between; text-align:left;" onclick="loadIngestPreset(0)">
+                  <span>🔀 Pivot Project → Global-OneClick-2026 &amp; SQL → DuckDB Parquet</span>
+                  <span class="mono" style="font-size:0.66rem;">2 Supersessions</span>
+                </button>
+                <button type="button" class="btn btn-secondary" style="justify-content:space-between; text-align:left;" onclick="loadIngestPreset(1)">
+                  <span>🤝 Add VP Stakeholder + New Latency SLA Commitment</span>
+                  <span class="mono" style="font-size:0.66rem;">+Person +Commit</span>
+                </button>
+                <button type="button" class="btn btn-secondary" style="justify-content:space-between; text-align:left;" onclick="loadIngestPreset(2)">
+                  <span>🦀 Staff SDE: Cutover Stack → Rust Tokio + KMS Blocker</span>
+                  <span class="mono" style="font-size:0.66rem;">Supersedes Stack</span>
+                </button>
+              </div>
+
+              <div style="margin-bottom:0.6rem;">
+                <div class="control-label"><label for="ingestTitleInput">Session Title</label></div>
+                <input type="text" id="ingestTitleInput" value="Session 08 · Cyber Week Project &amp; Warehouse Cutover" />
+              </div>
+
+              <div style="margin-bottom:0.75rem;">
+                <div class="control-label"><label for="ingestTranscriptInput">Work Session Transcript / Notes</label></div>
+                <textarea id="ingestTranscriptInput" rows="4">Switched project from Checkout-Latency-Q4 to Global-OneClick-2026. Migrated preferred SQL dialect from Athena Iceberg SQL to DuckDB Parquet SQL. Collaborating with Raj Malhotra (Principal TPM). Blocked by CloudFront Edge Token Signing.</textarea>
+              </div>
+
+              <button type="button" class="btn btn-accent" style="width:100%; justify-content:center;" id="ingestBtn" onclick="submitSessionIngest()">
+                ⚡ Consolidate Session into Personal Knowledge Graph
+              </button>
+              <div id="ingestFeedbackBanner" style="display:none; margin-top:0.75rem;"></div>
+            </div>
+
+            <div class="card">
+              <div class="control-label">
+                <span>Episodic Session Consolidation Timeline</span>
+                <span class="tag tag-soft" id="sessionCountBadge">7 Sessions</span>
+              </div>
+              <div id="sessionTimelineList" style="max-height:330px; overflow-y:auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- TAB 2: STATELESS LLM VS QUICKMEMORY PERSONALIZED COMPANION       -->
+      <!-- ================================================================ -->
+      <div id="panel-companion-studio" class="tab-panel" role="tabpanel">
+        <div class="click-guide-box">
+          <strong>👆 What to Click &amp; What Happens (Studio 02):</strong>
+          Pick a preset fresh-session prompt (or type your own without naming any project or SQL dialect) and click <strong>🚀 Run Side-by-Side Bedrock Nova Comparison</strong>. AWS Lambda executes <code>POST /api/companion/ask</code>, running 2-hop PKG retrieval in <code>~0.62 ms</code> and invoking <strong>two parallel live <code>us.amazon.nova-lite-v1:0</code> Converse calls</strong>: a cold-start Stateless LLM on the left vs. QuickMemory's <code>[MEM-xx]</code>-grounded Companion on the right—complete with clickable provenance pills and a list of suppressed stale Q3 contradictions below.
+        </div>
+        <div class="sim-header">
+          <div>
+            <h2 class="sim-title">Stateless Generic LLM vs. QuickMemory Personalized Companion (<code>/api/companion/ask</code>)</h2>
+            <p class="sim-desc">Send an identical fresh-session prompt to a stateless LLM vs. QuickMemory backed by 2-hop Personal Knowledge Graph retrieval + live <strong>Amazon Bedrock (<code>us.amazon.nova-lite-v1:0</code>)</strong>.</p>
+          </div>
+          <span class="tag tag-accent">Live Bedrock Converse API · Parallel Execution</span>
+        </div>
+
+        <div class="card" style="margin-bottom:1.2rem;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; align-items:start;">
+            <div>
+              <div class="control-label"><label for="companionPersonaSelect">Active User Persona</label></div>
+              <select id="companionPersonaSelect" onchange="changePersona(this.value)" style="margin-bottom:0.75rem;">
+                <option value="principal_pm">Maya Chen (Principal PM)</option>
+                <option value="staff_sde">Devon Brooks (Staff SDE)</option>
+              </select>
+
+              <div class="control-label"><span>Preset Fresh-Session Prompts</span></div>
+              <div style="display:flex; flex-direction:column; gap:0.42rem;">
+                <button type="button" class="btn btn-secondary" style="text-align:left;" onclick="loadCompanionPrompt(0)">📊 Draft Tuesday WBR + Latency SQL</button>
+                <button type="button" class="btn btn-secondary" style="text-align:left;" onclick="loadCompanionPrompt(1)">🚧 Unblock Critical Path &amp; Stakeholders</button>
+                <button type="button" class="btn btn-secondary" style="text-align:left;" onclick="loadCompanionPrompt(2)">⚡ Staff SDE: PRR &amp; Replication Skew Fix</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="control-label">
+                <label for="companionPromptInput">Fresh Session User Prompt (Zero In-Prompt Context)</label>
+                <span class="mono" style="font-size:0.7rem; color:var(--ink-muted);">No project name, SQL dialect, or format is mentioned</span>
+              </div>
+              <textarea id="companionPromptInput" rows="3" style="margin-bottom:0.7rem;">Draft my Tuesday WBR update and write the p99 checkout latency SQL query for leadership.</textarea>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                <span class="mono" style="font-size:0.72rem; color:var(--ink-muted);" id="companionStatusText">Ready — traverses 2-hop PKG &amp; calls Amazon Bedrock Nova.</span>
+                <button type="button" class="btn btn-accent" id="askCompanionBtn" onclick="runCompanionComparison()">
+                  🚀 Run Side-by-Side Bedrock Nova Comparison
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-equal" style="margin-bottom:1.25rem;">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.65rem;">
+              <div>
+                <span class="tag tag-warn">Stateless Baseline</span>
+                <h3 style="font-size:1.08rem; font-weight:800; margin-top:0.28rem;">Generic Amnesiac LLM (Session Cold-Start)</h3>
+              </div>
+              <span class="mono" style="font-size:0.7rem; color:var(--ink-muted);" id="statelessEngineMeta"></span>
+            </div>
+            <div class="response-card" id="statelessOutputBox"></div>
+            <div style="margin-top:0.75rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;" class="mono">
+              <span class="tag tag-fail">0 Preferences Applied</span>
+              <span class="tag tag-warn">6.9% Measured Benchmark Slot Recall</span>
+            </div>
+          </div>
+
+          <div class="card" style="border-color:var(--accent-main); border-width:2.5px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.65rem;">
+              <div>
+                <span class="tag tag-accent">QuickMemory PKG + Bedrock Nova ★</span>
+                <h3 style="font-size:1.08rem; font-weight:800; margin-top:0.28rem;">Personalized Companion (<code>[MEM-xx]</code> Grounded)</h3>
+              </div>
+              <span class="mono" style="font-size:0.7rem; color:var(--pass); font-weight:700;" id="personalizedEngineMeta"></span>
+            </div>
+            <div class="response-card" id="personalizedOutputBox"></div>
+            <div style="margin-top:0.75rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;" id="personalizedCitationsStrip"></div>
+          </div>
+        </div>
+
+        <div class="grid-equal">
+          <div class="card">
+            <div class="control-label">
+              <span>Retrieved 2-Hop PKG Subgraph &amp; Token Compression</span>
+              <span class="tag tag-pass" id="pkgCompressionBadge">-49.5% Input Tokens</span>
+            </div>
+            <div class="bar-group" id="companionTokenBars"></div>
+            <div class="code-header">
+              <span>Compact PKG Triple Envelope Sent to Bedrock Nova</span>
+              <span id="subgraphLatencyBadge">0.624 ms</span>
+            </div>
+            <pre class="code-box" style="max-height:220px;" id="assembledContextBox"></pre>
+          </div>
+
+          <div class="card">
+            <div class="control-label">
+              <span>Suppressed Stale Contradictions &amp; Tombstoned Memories</span>
+              <span class="tag tag-fail">0.0% Stale Contamination Gate</span>
+            </div>
+            <p style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:0.75rem;">
+              Full-history stuffing (`100.0%` stale exposure) and flat vector stores (`75.0%` stale exposure) leak these outdated facts. QuickMemory's <code>SUPERSEDED</code> &amp; <code>TOMBSTONED</code> filters withheld them before prompt assembly:
+            </p>
+            <div id="suppressedContradictionsBox"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- TAB 3: MEMORY DECAY, CONTRADICTION LEDGER & PIN/FORGET CONTROLS  -->
+      <!-- ================================================================ -->
+      <div id="panel-governance-studio" class="tab-panel" role="tabpanel">
+        <div class="click-guide-box">
+          <strong>👆 What to Click &amp; What Happens (Studio 03):</strong>
+          (1) Select any memory node in the <strong>60-Day Ebbinghaus Retention Curve Explorer</strong> to compare its access-reinforced retention curve (purple) against unreinforced decay (red dashed);
+          (2) Click <strong>📌 Pin</strong> or <strong>🗑️ Forget</strong> on any row in the Governance Console (`POST /api/memory/toggle`)—forgetting tombstones the entity (`0%` retention), prunes its active PKG edges in-place, and immediately prevents it from appearing in Studio 02's Bedrock Nova prompt envelope!
+        </div>
+        <div class="sim-header">
+          <div>
+            <h2 class="sim-title">Ebbinghaus Decay, Contradiction Resolution &amp; User Forget / Pin Controls</h2>
+            <p class="sim-desc">Inspect 60-day Ebbinghaus retention curves boosted by retrieval frequency, audit resolved temporal contradictions, or exercise user sovereignty via instant <code>Pin</code>, <code>Forget (Tombstone)</code>, and <code>Restore</code> API controls.</p>
+          </div>
+          <span class="tag tag-accent">POST /api/memory/toggle · DELETE /api/memory/forget</span>
+        </div>
+
+        <div class="grid-equal" style="margin-bottom:1.25rem;">
+          <div class="card">
+            <div class="control-label">
+              <span>60-Day Ebbinghaus Retention Curve Explorer</span>
+              <span class="mono" style="font-size:0.69rem; color:var(--ink-muted);">R(t,n) = exp(-λt / (1 + 0.48 ln(1+n)))</span>
+            </div>
+            <select id="decayNodeSelect" onchange="selectDecayNode(this.value)" style="margin-bottom:0.75rem;"></select>
+            <div id="ebbinghausSvgBox" style="border:2px solid var(--border); background:var(--bg-paper); padding:0.6rem;"></div>
+            <div id="decayFormulaExplain" style="margin-top:0.7rem; font-size:0.81rem; color:var(--ink-muted);"></div>
+          </div>
+
+          <div class="card">
+            <div class="control-label">
+              <span>Temporal Contradiction Supersession Ledger</span>
+              <span class="tag tag-pass" id="contradictionCountBadge">0.0% Stale Leak</span>
+            </div>
+            <p style="font-size:0.82rem; color:var(--ink-muted); margin-bottom:0.75rem;">
+              Every slot conflict across sessions is deterministically resolved by marking stale edges <code>SUPERSEDED</code> and linking <code>SUPERSEDES</code> provenance:
+            </p>
+            <div id="contradictionLedgerBox" style="max-height:340px; overflow-y:auto;"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.8rem;">
+            <div>
+              <h3 style="font-size:1.12rem; font-weight:800;">User Memory Governance &amp; Right-to-Be-Forgotten Console</h3>
+              <p style="font-size:0.82rem; color:var(--ink-muted);">Pin critical preferences (`100%` retention lock) or tombstone sensitive entities (immediately prunes incident PKG edges from `/api/companion/ask` — verified `6/6 = 100.0%` in benchmark probes).</p>
+            </div>
+            <span class="mono" style="font-size:0.72rem;" id="govActionStatus">Click Pin, Forget, or Restore on any entity below.</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID &amp; Type</th>
+                  <th>Entity &amp; Semantic Summary</th>
+                  <th>Provenance</th>
+                  <th>Status</th>
+                  <th>Retention</th>
+                  <th>Governance Actions</th>
+                </tr>
+              </thead>
+              <tbody id="governanceTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================ -->
+      <!-- TAB 4: MULTI-SESSION PERSONALIZATION BENCHMARK SUITE             -->
+      <!-- ================================================================ -->
+      <div id="panel-benchmarks" class="tab-panel" role="tabpanel">
+        <div class="click-guide-box">
+          <strong>👆 What to Click &amp; What Happens (Studio 04 · §06 Benchmarks):</strong>
+          Inspect the 4-architecture head-to-head table hydrated directly from <code>benchmarks/latest_results.json</code> (32 live <code>boto3</code> Bedrock Nova calls, 240 <code>time.perf_counter()</code> retrieval runs, and 6 tombstone probes), then scroll down to the <strong>Raw Per-Trial Bedrock Nova Telemetry</strong> ledger to audit exact <code>inputTokens</code>, <code>outputTokens</code>, matched ground-truth slots, and response previews for every individual evaluation case.
+        </div>
+        <div class="sim-header">
+          <div>
+            <h2 class="sim-title">Measured Multi-Session Personalization Benchmark Suite</h2>
+            <p class="sim-desc" id="benchSummaryDesc">Executed live via <code>benchmarks/run_benchmarks.py</code> against <code>boto3</code> <code>bedrock-runtime</code> (<code>us.amazon.nova-lite-v1:0</code>) across 8 fresh-session queries × 4 architectures (32 live Bedrock calls), 14 consolidated sessions, 240 <code>perf_counter()</code> retrieval timing runs, and 6 tombstone probes.</p>
+          </div>
+          <span class="tag tag-accent">benchmarks/latest_results.json · Zero Synthetic Numbers</span>
+        </div>
+
+        <div class="card" style="margin-bottom:1.25rem;">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Memory Architecture</th>
+                  <th>Preference &amp; Slot Recall</th>
+                  <th>Contradiction-Clean Accuracy</th>
+                  <th>Stale Context Contamination</th>
+                  <th>Avg Bedrock Input Tokens</th>
+                  <th>Retrieval Latency (p50 / p99)</th>
+                  <th>Avg Bedrock Latency</th>
+                  <th>User Forget Governance</th>
+                </tr>
+              </thead>
+              <tbody id="benchmarkTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-equal" style="margin-bottom:1.25rem;">
+          <div class="card">
+            <h3 style="font-size:1.05rem; font-weight:800; margin-bottom:0.55rem;">Preference Slot Recall &amp; Contradiction-Clean Rate (%)</h3>
+            <div class="bar-group" id="benchAccuracyBars"></div>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:1.05rem; font-weight:800; margin-bottom:0.55rem;">Measured Bedrock <code>usage.inputTokens</code> &amp; Reproducible CLI</h3>
+            <div class="bar-group" id="benchTokenBars"></div>
+            <div class="code-header" style="margin-top:0.85rem;">
+              <span>Re-Run Live Bedrock Benchmark &amp; Unit Tests Locally</span>
+              <span>Python 3.12 + boto3</span>
+            </div>
+            <pre class="code-box" style="max-height:140px;">git clone https://github.com/ritwikareddykancharla/quick-memory-graph.git
+cd quick-memory-graph
+PYTHONPATH=. python3 -m unittest discover -s tests -v
+AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" python3 benchmarks/run_benchmarks.py</pre>
+          </div>
+        </div>
+
+        <!-- Raw Per-Trial Bedrock Nova Telemetry Inspector -->
+        <div class="card">
+          <div class="control-label">
+            <span>Raw Per-Trial <code>us.amazon.nova-lite-v1:0</code> Benchmark Telemetry (<code>benchmarks/latest_results.json</code>)</span>
+            <span class="tag tag-soft" id="rawTrialsCountBadge">32 Live Bedrock Trials</span>
+          </div>
+          <div class="table-wrap" style="max-height:320px; overflow-y:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Case &amp; Architecture</th>
+                  <th>Input / Output Tok</th>
+                  <th>Bedrock ms</th>
+                  <th>Matched Ground-Truth Slots</th>
+                  <th>Stale Hits (Ctx / Resp)</th>
+                  <th>Live Nova Lite Output Preview</th>
+                </tr>
+              </thead>
+              <tbody id="rawTrialsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>
+        <strong>QuickMemory v1.0</strong> · Persistent User Memory, Personal Knowledge Graph &amp; Contextual Session Engine · 100% Serverless on AWS CloudFront + Private S3 (OAC) + Python 3.12 Lambda + Amazon Bedrock (<code>us.amazon.nova-lite-v1:0</code>).
+      </div>
+      <div class="mono" style="font-size:0.74rem;">
+        <a href="https://github.com/ritwikareddykancharla/quick-memory-graph" target="_blank" rel="noopener" style="color:var(--ink);">GitHub</a> ·
+        <a href="https://d2gltlwyzbnbxr.cloudfront.net" target="_blank" rel="noopener" style="color:var(--ink);">QuickSpaces</a> ·
+        <a href="https://d33vgp4hlabu23.cloudfront.net" target="_blank" rel="noopener" style="color:var(--ink);">ForgeRuntime</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const VALID_TABS = ["pkg-studio", "companion-studio", "governance-studio", "benchmarks"];
+      let activeTab = "pkg-studio";
+      let activeTheme = "light";
+
+      const INGEST_PRESETS = [
+        {
+          persona: "principal_pm",
+          title: "Session 08 · Cyber Week Project & Warehouse Cutover",
+          transcript:
+            "Switched project from Checkout-Latency-Q4 to Global-OneClick-2026. Migrated preferred SQL dialect from Athena Iceberg SQL to DuckDB Parquet SQL. Collaborating with Raj Malhotra (Principal TPM). Blocked by CloudFront Edge Token Signing."
+        },
+        {
+          persona: "principal_pm",
+          title: "Session 09 · VP Readout Alignment & EU Residency Gate",
+          transcript:
+            "Collaborating closely with Elena Vance (VP Payments). Target metric: Checkout Conversion Lift >= +1.8%. Committed to Thursday 14:00 PT OP1 Executive Signoff."
+        },
+        {
+          persona: "staff_sde",
+          title: "Session 08 · Rust Tokio Cutover & KMS Quorum Blocker",
+          transcript:
+            "Switched preferred runtime stack from Python 3.12 + Rust PyO3 to Rust Tokio + RoaringBitmap. Blocked by KMS Multi-Region Grant Quorum. Committed to sub-1.0ms p99 tail latency."
+        }
+      ];
+
+      const COMPANION_PRESETS = [
+        {
+          persona: "principal_pm",
+          prompt: "Draft my Tuesday WBR update and write the p99 checkout latency SQL query for leadership."
+        },
+        {
+          persona: "principal_pm",
+          prompt: "What is blocking our EU rollout right now, which SLA target is at risk, and who am I partnering with?"
+        },
+        {
+          persona: "staff_sde",
+          prompt: "Summarize our upcoming readiness review gate, applied science partner, and retrieval SLA."
+        }
+      ];
+
+      // Exact measured baseline snapshot matching benchmarks/latest_results.json (zero synthetic numbers)
+      const MEASURED_BENCHMARKS_SNAPSHOT = {
+        bedrock_model: "us.amazon.nova-lite-v1:0",
+        evaluated_queries: 8,
+        live_bedrock_calls: 32,
+        retrieval_timing_iterations: 240,
+        sessions_consolidated: 14,
+        headline_kpis: {
+          preference_recall_pct: 89.7,
+          stateless_recall_pct: 6.9,
+          flat_vector_recall_pct: 65.5,
+          contradiction_supersession_pct: 87.5,
+          stale_contamination_pct: 0.0,
+          prompt_token_delta_pct: -49.5,
+          token_compression_ratio: 1.98,
+          pkg_avg_input_tokens: 596,
+          full_history_avg_input_tokens: 1180,
+          p50_subgraph_latency_ms: 0.624,
+          p99_subgraph_latency_ms: 1.029,
+          forget_prune_pass_rate_pct: 100.0
+        },
+        comparison_rows: [
+          { architecture_key: "stateless", architecture: "1. Stateless Fresh Session (No Memory)", preference_recall_pct: 6.9, contradiction_accuracy_pct: 0.0, stale_hallucination_rate_pct: 0.0, avg_prompt_tokens: 45, avg_bedrock_latency_ms: 2133.6, p50_retrieval_ms: 0.004, p99_retrieval_ms: 0.010, user_forget_governance: "N/A (amnesiac session)" },
+          { architecture_key: "full_history", architecture: "2. Full Multi-Session Transcript Stuffing", preference_recall_pct: 86.2, contradiction_accuracy_pct: 0.0, stale_hallucination_rate_pct: 100.0, avg_prompt_tokens: 1180, avg_bedrock_latency_ms: 2661.6, p50_retrieval_ms: 0.004, p99_retrieval_ms: 0.012, user_forget_governance: "Manual raw log editing only" },
+          { architecture_key: "flat_vector", architecture: "3. Flat Vector-Only Memory (Top-3 Cosine Chunks)", preference_recall_pct: 65.5, contradiction_accuracy_pct: 25.0, stale_hallucination_rate_pct: 75.0, avg_prompt_tokens: 329, avg_bedrock_latency_ms: 2390.4, p50_retrieval_ms: 0.266, p99_retrieval_ms: 0.455, user_forget_governance: "Orphaned chunk embeddings" },
+          { architecture_key: "quick_memory_pkg", architecture: "4. QuickMemory (2-Hop PKG + Temporal Supersession ★)", preference_recall_pct: 89.7, contradiction_accuracy_pct: 87.5, stale_hallucination_rate_pct: 0.0, avg_prompt_tokens: 596, avg_bedrock_latency_ms: 2652.4, p50_retrieval_ms: 0.624, p99_retrieval_ms: 1.029, user_forget_governance: "Instant Pin / Tombstone (100.0% prune verified)" }
+        ],
+        raw_trials: []
+      };
+
+      const FALLBACK_PERSONAS = {
+        principal_pm: {
+          persona_id: "principal_pm",
+          user_name: "Maya Chen",
+          role_title: "Principal Product Manager — Checkout & FinOps",
+          org_unit: "Amazon Quick Enterprise",
+          user_node_id: "USER-00",
+          nodes: [
+            { memory_id: "USER-00", entity_type: "User", label: "Maya Chen", summary: "Principal PM driving Q4 checkout latency reduction and weekly executive WBR analytics.", status: "ACTIVE", age_days: 0, access_count: 25, pinned: true, forgotten: false, provenance_sessions: ["SESS-01"], evidence_quote: "Principal PM driving Q4 checkout latency reduction.", retention_score: 1.0, retention_pct: 100.0, retention_curve: [{day:0,retention:100},{day:7,retention:100},{day:14,retention:100},{day:30,retention:100},{day:60,retention:100}] },
+            { memory_id: "MEM-01", entity_type: "Project", label: "Payments-v1", summary: "Legacy Q3 payment settlement pipeline previously owned by Maya Chen.", slot_key: "primary_project", status: "SUPERSEDED", superseded_by: "MEM-05", age_days: 35, access_count: 2, pinned: false, forgotten: false, provenance_sessions: ["SESS-01"], evidence_quote: "Right now I am owning Payments-v1 across NA and EU merchant settlement batches.", retention_score: 0.356, retention_pct: 35.6, retention_curve: [{day:0,retention:100},{day:7,retention:81.4},{day:14,retention:66.2},{day:30,retention:41.3},{day:60,retention:17.1}] },
+            { memory_id: "MEM-02", entity_type: "Preference", label: "Redshift Warehouse SQL", summary: "Legacy Q3 preference for Amazon Redshift SQL warehouse syntax.", slot_key: "sql_dialect", status: "SUPERSEDED", superseded_by: "MEM-06", age_days: 35, access_count: 2, pinned: false, forgotten: false, provenance_sessions: ["SESS-01"], evidence_quote: "Please write all queries in Redshift Warehouse SQL.", retention_score: 0.356, retention_pct: 35.6, retention_curve: [{day:0,retention:100},{day:7,retention:81.4},{day:14,retention:66.2},{day:30,retention:41.3},{day:60,retention:17.1}] },
+            { memory_id: "MEM-03", entity_type: "Preference", label: "6-Page Narrative Memo", summary: "Initial Q3 preference for long-form 6-page prose narratives.", slot_key: "doc_format", status: "SUPERSEDED", superseded_by: "MEM-09", age_days: 35, access_count: 1, pinned: false, forgotten: false, provenance_sessions: ["SESS-01"], evidence_quote: "Format leadership updates as a 6-Page Narrative Memo.", retention_score: 0.309, retention_pct: 30.9, retention_curve: [{day:0,retention:100},{day:7,retention:79.0},{day:14,retention:62.5},{day:30,retention:36.5},{day:60,retention:13.3}] },
+            { memory_id: "MEM-04", entity_type: "Person", label: "Priya Nair (FinOps Lead)", summary: "Finance operations partner owning checkout cost-per-transaction attribution.", status: "ACTIVE", age_days: 35, access_count: 5, pinned: false, forgotten: false, provenance_sessions: ["SESS-01"], evidence_quote: "Partnering closely with Priya Nair (FinOps Lead) on interchange cost-per-order attribution.", retention_score: 0.429, retention_pct: 42.9, retention_curve: [{day:0,retention:100},{day:7,retention:84.4},{day:14,retention:71.3},{day:30,retention:48.4},{day:60,retention:23.4}] },
+            { memory_id: "MEM-05", entity_type: "Project", label: "Checkout-Latency-Q4", summary: "Q4 flagship program cutting global one-click checkout tail latency under 180ms.", slot_key: "primary_project", status: "ACTIVE", age_days: 11, access_count: 11, pinned: true, forgotten: false, provenance_sessions: ["SESS-04"], evidence_quote: "I formally handed off Payments-v1 and switched ownership to Checkout-Latency-Q4.", retention_score: 1.0, retention_pct: 100.0, retention_curve: [{day:0,retention:100},{day:7,retention:100},{day:14,retention:100},{day:30,retention:100},{day:60,retention:100}] },
+            { memory_id: "MEM-06", entity_type: "Preference", label: "Athena Iceberg SQL", summary: "Always write analytical SQL using AWS Athena / Trino Iceberg dialect (approx_percentile).", slot_key: "sql_dialect", status: "ACTIVE", age_days: 11, access_count: 9, pinned: true, forgotten: false, provenance_sessions: ["SESS-04"], evidence_quote: "Standardize on Athena Iceberg SQL instead of Redshift Warehouse SQL.", retention_score: 1.0, retention_pct: 100.0, retention_curve: [{day:0,retention:100},{day:7,retention:100},{day:14,retention:100},{day:30,retention:100},{day:60,retention:100}] },
+            { memory_id: "MEM-07", entity_type: "Metric", label: "p99 Checkout Latency <= 180ms", summary: "Hard Q4 SLA target: reduce global checkout p99 from 242ms down to <= 180ms.", status: "ACTIVE", age_days: 11, access_count: 8, pinned: false, forgotten: false, provenance_sessions: ["SESS-04"], evidence_quote: "Our north-star KPI for Checkout-Latency-Q4 is p99 Checkout Latency <= 180ms.", retention_score: 0.788, retention_pct: 78.8, retention_curve: [{day:0,retention:100},{day:7,retention:85.8},{day:14,retention:73.6},{day:30,retention:51.8},{day:60,retention:26.9}] },
+            { memory_id: "MEM-08", entity_type: "System", label: "LakeFormation Cross-Account Grants", summary: "IAM + AWS LakeFormation permission bottleneck blocking EU checkout Iceberg table joins.", slot_key: "active_blocker", status: "ACTIVE", age_days: 11, access_count: 6, pinned: false, forgotten: false, provenance_sessions: ["SESS-04"], evidence_quote: "Checkout-Latency-Q4 is currently blocked by LakeFormation Cross-Account Grants.", retention_score: 0.775, retention_pct: 77.5, retention_curve: [{day:0,retention:100},{day:7,retention:85.0},{day:14,retention:72.2},{day:30,retention:49.8},{day:60,retention:24.8}] },
+            { memory_id: "MEM-09", entity_type: "Preference", label: "3-Bullet BLUF + Weekly Delta Table", summary: "Format all status updates as a crisp 3-bullet BLUF followed by a compact WoW delta table.", slot_key: "doc_format", status: "ACTIVE", age_days: 2, access_count: 10, pinned: true, forgotten: false, provenance_sessions: ["SESS-07"], evidence_quote: "Leadership now requires 3-Bullet BLUF + Weekly Delta Table.", retention_score: 1.0, retention_pct: 100.0, retention_curve: [{day:0,retention:100},{day:7,retention:100},{day:14,retention:100},{day:30,retention:100},{day:60,retention:100}] },
+            { memory_id: "MEM-10", entity_type: "Person", label: "Devon Brooks (Staff SDE)", summary: "Partner Staff SDE leading checkout edge-cache warming and LakeFormation IAM unblocking.", status: "ACTIVE", age_days: 2, access_count: 7, pinned: false, forgotten: false, provenance_sessions: ["SESS-07"], evidence_quote: "Collaborating closely with Devon Brooks (Staff SDE) on edge cache pre-warming.", retention_score: 0.956, retention_pct: 95.6, retention_curve: [{day:0,retention:100},{day:7,retention:85.4},{day:14,retention:73.0},{day:30,retention:50.9},{day:60,retention:25.9}] },
+            { memory_id: "MEM-11", entity_type: "Commitment", label: "Tuesday 09:00 PT WBR Readout", summary: "Weekly VP WBR executive readout deadline every Tuesday at 09:00 PT.", status: "ACTIVE", age_days: 2, access_count: 8, pinned: false, forgotten: false, provenance_sessions: ["SESS-07"], evidence_quote: "Committed to Tuesday 09:00 PT WBR Readout.", retention_score: 0.957, retention_pct: 95.7, retention_curve: [{day:0,retention:100},{day:7,retention:85.8},{day:14,retention:73.6},{day:30,retention:51.8},{day:60,retention:26.9}] }
+          ],
+          all_edges: [
+            { edge_id: "EDGE-01", source_id: "USER-00", target_id: "MEM-01", relation: "OWNS", slot_key: "primary_project", status: "SUPERSEDED", session_id: "SESS-01", superseded_by_edge: "EDGE-05", superseded_in_session: "SESS-04" },
+            { edge_id: "EDGE-02", source_id: "USER-00", target_id: "MEM-02", relation: "PREFERS_FORMAT", slot_key: "sql_dialect", status: "SUPERSEDED", session_id: "SESS-01", superseded_by_edge: "EDGE-07", superseded_in_session: "SESS-04" },
+            { edge_id: "EDGE-03", source_id: "USER-00", target_id: "MEM-03", relation: "PREFERS_FORMAT", slot_key: "doc_format", status: "SUPERSEDED", session_id: "SESS-01", superseded_by_edge: "EDGE-11", superseded_in_session: "SESS-07" },
+            { edge_id: "EDGE-04", source_id: "USER-00", target_id: "MEM-04", relation: "COLLABORATES_WITH", status: "ACTIVE", session_id: "SESS-01" },
+            { edge_id: "EDGE-05", source_id: "USER-00", target_id: "MEM-05", relation: "OWNS", slot_key: "primary_project", status: "ACTIVE", session_id: "SESS-04" },
+            { edge_id: "EDGE-06", source_id: "MEM-05", target_id: "MEM-01", relation: "SUPERSEDES", slot_key: "primary_project", status: "ACTIVE", session_id: "SESS-04" },
+            { edge_id: "EDGE-07", source_id: "USER-00", target_id: "MEM-06", relation: "PREFERS_FORMAT", slot_key: "sql_dialect", status: "ACTIVE", session_id: "SESS-04" },
+            { edge_id: "EDGE-08", source_id: "MEM-06", target_id: "MEM-02", relation: "SUPERSEDES", slot_key: "sql_dialect", status: "ACTIVE", session_id: "SESS-04" },
+            { edge_id: "EDGE-09", source_id: "MEM-05", target_id: "MEM-07", relation: "TRACKS_METRIC", status: "ACTIVE", session_id: "SESS-04" },
+            { edge_id: "EDGE-10", source_id: "MEM-05", target_id: "MEM-08", relation: "BLOCKED_BY", slot_key: "active_blocker", status: "ACTIVE", session_id: "SESS-04" },
+            { edge_id: "EDGE-11", source_id: "USER-00", target_id: "MEM-09", relation: "PREFERS_FORMAT", slot_key: "doc_format", status: "ACTIVE", session_id: "SESS-07" },
+            { edge_id: "EDGE-12", source_id: "MEM-09", target_id: "MEM-03", relation: "SUPERSEDES", slot_key: "doc_format", status: "ACTIVE", session_id: "SESS-07" },
+            { edge_id: "EDGE-13", source_id: "USER-00", target_id: "MEM-10", relation: "COLLABORATES_WITH", status: "ACTIVE", session_id: "SESS-07" },
+            { edge_id: "EDGE-14", source_id: "USER-00", target_id: "MEM-11", relation: "COMMITTED_TO", status: "ACTIVE", session_id: "SESS-07" }
+          ],
+          sessions: [
+            { session_id: "SESS-01", title: "Session 01 · Q3 Settlement Kickoff & Redshift Reporting Setup", timestamp_label: "35 days ago", transcript: "Maya Chen: Owning Payments-v1 across NA/EU settlement batches; write Redshift Warehouse SQL and format leadership updates as a 6-Page Narrative Memo.", extracted_memory_ids: ["MEM-01", "MEM-02", "MEM-03", "MEM-04"], superseded_edge_ids: [] },
+            { session_id: "SESS-04", title: "Session 04 · Q4 Ownership Pivot to Checkout-Latency-Q4 & Athena Iceberg Cutover", timestamp_label: "11 days ago", transcript: "Maya Chen: Handed off Payments-v1 and switched ownership to Checkout-Latency-Q4. Standardize on Athena Iceberg SQL instead of Redshift Warehouse SQL. KPI: p99 Checkout Latency <= 180ms, blocked by LakeFormation Cross-Account Grants.", extracted_memory_ids: ["MEM-05", "MEM-06", "MEM-07", "MEM-08"], superseded_edge_ids: ["EDGE-01", "EDGE-02"] },
+            { session_id: "SESS-07", title: "Session 07 · VP WBR Readout Format Change & SDE Escalation", timestamp_label: "2 days ago", transcript: "Maya Chen: Leadership now requires 3-Bullet BLUF + Weekly Delta Table instead of 6-Page Narrative Memo. Collaborating with Devon Brooks (Staff SDE), committed to Tuesday 09:00 PT WBR Readout.", extracted_memory_ids: ["MEM-09", "MEM-10", "MEM-11"], superseded_edge_ids: ["EDGE-03"] }
+          ],
+          stats: { active_nodes: 9, superseded_nodes: 3, tombstoned_nodes: 0, active_edges: 11, superseded_edges: 3, sessions_consolidated: 7 }
+        }
+      };
+
+      const appState = {
+        personaId: "principal_pm",
+        showSuperseded: true,
+        selectedNodeId: "MEM-05",
+        decayNodeId: "MEM-07",
+        statePayload: null,
+        lastCompanionResult: null
+      };
+
+      function esc(val) {
+        return String(val == null ? "" : val)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      // Hash-based URL state & theme persistence (zero Web Storage)
+      function parseHashState() {
+        const raw = (window.location.hash || "").replace(/^#/, "");
+        if (!raw) return;
+        const parts = raw.split("&");
+        for (const p of parts) {
+          if (VALID_TABS.includes(p)) activeTab = p;
+          else if (p === "theme=dark" || p === "dark") activeTheme = "dark";
+          else if (p === "theme=light") activeTheme = "light";
+        }
+      }
+
+      function syncHashState() {
+        const hash = activeTheme === "dark" ? activeTab + "&theme=dark" : activeTab;
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, "", "#" + hash);
+        } else {
+          window.location.hash = hash;
+        }
+      }
+
+      function applyTheme(theme) {
+        activeTheme = theme;
+        document.documentElement.setAttribute("data-theme", theme);
+        document.getElementById("themeIcon").textContent = theme === "dark" ? "☀️" : "🌙";
+        document.getElementById("themeLabel").textContent = theme === "dark" ? "Light Mode" : "Dark Mode";
+        syncHashState();
+        renderPkgSvg();
+        renderEbbinghausSvg();
+      }
+
+      document.getElementById("themeToggleBtn").addEventListener("click", () => {
+        applyTheme(activeTheme === "dark" ? "light" : "dark");
+      });
+
+      window.switchTab = function (tabId) {
+        if (!VALID_TABS.includes(tabId)) return;
+        activeTab = tabId;
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          const match = btn.getAttribute("data-tab") === tabId;
+          btn.classList.toggle("active", match);
+          btn.setAttribute("aria-selected", match ? "true" : "false");
+        });
+        document.querySelectorAll(".tab-panel").forEach((panel) => {
+          panel.classList.toggle("active", panel.id === "panel-" + tabId);
+        });
+        syncHashState();
+      };
+
+      async function apiGet(path) {
+        const res = await fetch(path, { headers: { Accept: "application/json" } });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      }
+
+      async function apiPost(path, body) {
+        const res = await fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(body || {})
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "HTTP " + res.status);
+        return data;
+      }
+
+      async function probeHealth() {
+        try {
+          const h = await apiGet("/api/health");
+          if (h && h.status === "ok") {
+            const py = (h.python_version || "3.12").split(".").slice(0, 2).join(".");
+            const model = h.bedrock_model || "us.amazon.nova-lite-v1:0";
+            document.getElementById("runtimeModeText").textContent =
+              `AWS CloudFront + S3 (OAC) + Python ${py} + Bedrock (${model}) Live`;
+          }
+        } catch (_) {
+          document.getElementById("runtimeModeText").textContent =
+            "AWS CloudFront + S3 (OAC) + Python 3.12 + Bedrock (us.amazon.nova-lite-v1:0) Studio";
+        }
+      }
+
+      function getActivePersona() {
+        if (appState.statePayload && appState.statePayload.active_persona) {
+          return appState.statePayload.active_persona;
+        }
+        return FALLBACK_PERSONAS.principal_pm;
+      }
+
+      function getBenchmarks() {
+        const b = appState.statePayload && appState.statePayload.benchmarks;
+        if (b && b.comparison_rows && b.comparison_rows.length) return b;
+        return MEASURED_BENCHMARKS_SNAPSHOT;
+      }
+
+      function syncHeroKpisFromMeasuredBenchmarks() {
+        const b = getBenchmarks();
+        const k = b.headline_kpis;
+        if (!k) return;
+        document.getElementById("kpiRecallVal").textContent = `${k.preference_recall_pct}%`;
+        document.getElementById("kpiRecallSub").textContent =
+          `${b.live_bedrock_calls} live Bedrock calls · vs ${k.flat_vector_recall_pct}% vector & ${k.stateless_recall_pct}% stateless`;
+        document.getElementById("kpiStaleVal").textContent = `${k.stale_contamination_pct}%`;
+        document.getElementById("kpiStaleSub").textContent =
+          `${k.contradiction_supersession_pct}% contradiction-clean (vs 0.0% full history)`;
+        document.getElementById("kpiTokensVal").textContent = `${k.prompt_token_delta_pct}%`;
+        document.getElementById("kpiTokensSub").textContent =
+          `${k.pkg_avg_input_tokens} vs ${k.full_history_avg_input_tokens} measured Bedrock inputTokens (${k.token_compression_ratio}x)`;
+        document.getElementById("kpiLatencyVal").textContent = `${k.p99_subgraph_latency_ms} ms`;
+        document.getElementById("kpiLatencySub").textContent =
+          `p50 ${k.p50_subgraph_latency_ms} ms (${b.retrieval_timing_iterations} trials) · ${k.forget_prune_pass_rate_pct}% Forget prune`;
+      }
+
+      function getTypePalette(entityType, status, forgotten) {
+        if (forgotten || status === "TOMBSTONED") {
+          return { fill: activeTheme === "dark" ? "#27272A" : "#E4E4E7", stroke: "#71717A", badge: "#52525B", text: "#71717A" };
+        }
+        if (status === "SUPERSEDED") {
+          return { fill: activeTheme === "dark" ? "#3B1219" : "#FEE2E2", stroke: "#DC2626", badge: "#DC2626", text: activeTheme === "dark" ? "#FECACA" : "#7F1D1D" };
+        }
+        switch (entityType) {
+          case "User":
+            return { fill: "#7C3AED", stroke: "#18181B", badge: "#141413", text: "#FFFFFF" };
+          case "Project":
+            return { fill: activeTheme === "dark" ? "#2E1065" : "#EDE9FE", stroke: "#7C3AED", badge: "#7C3AED", text: activeTheme === "dark" ? "#F3E8FF" : "#141413" };
+          case "Preference":
+            return { fill: activeTheme === "dark" ? "#064E3B" : "#D1FAE5", stroke: "#059669", badge: "#059669", text: activeTheme === "dark" ? "#ECFDF5" : "#141413" };
+          case "Metric":
+            return { fill: activeTheme === "dark" ? "#1E293B" : "#DBEAFE", stroke: "#1D4ED8", badge: "#1D4ED8", text: activeTheme === "dark" ? "#EFF6FF" : "#141413" };
+          case "System":
+            return { fill: activeTheme === "dark" ? "#451A03" : "#FEF3C7", stroke: "#D97706", badge: "#D97706", text: activeTheme === "dark" ? "#FEF3C7" : "#141413" };
+          default:
+            return { fill: activeTheme === "dark" ? "#1F252B" : "#FFFFFF", stroke: "#18181B", badge: "#52514E", text: activeTheme === "dark" ? "#F4F4F5" : "#141413" };
+        }
+      }
+
+      function trunc(str, n) {
+        const s = String(str || "");
+        return s.length > n ? s.slice(0, n - 1) + "…" : s;
+      }
+
+      window.selectPkgNode = function (memId) {
+        appState.selectedNodeId = memId;
+        renderPkgSvg();
+        renderNodeInspector();
+      };
+
+      function renderPkgSvg() {
+        const pkg = getActivePersona();
+        const nodes = (pkg.nodes || []).filter((n) => appState.showSuperseded || n.status !== "SUPERSEDED");
+        const visibleIds = new Set(nodes.map((n) => n.memory_id));
+        const edges = (pkg.all_edges || []).filter((e) => {
+          if (!visibleIds.has(e.source_id) || !visibleIds.has(e.target_id)) return false;
+          if (!appState.showSuperseded && (e.status === "SUPERSEDED" || e.relation === "SUPERSEDES")) return false;
+          return true;
+        });
+
+        const coords = {};
+        coords[pkg.user_node_id] = { x: 460, y: 265, w: 178, h: 66 };
+
+        const leftTop = nodes.filter((n) => n.entity_type === "Project");
+        const leftBot = nodes.filter((n) => n.entity_type === "Metric" || n.entity_type === "System");
+        const rightTop = nodes.filter((n) => n.entity_type === "Preference");
+        const rightBot = nodes.filter((n) => n.entity_type === "Person" || n.entity_type === "Commitment");
+
+        function placeStack(arr, cx, startY, endY) {
+          if (!arr.length) return;
+          const span = endY - startY;
+          const step = arr.length === 1 ? 0 : span / (arr.length - 1);
+          arr.forEach((n, idx) => {
+            coords[n.memory_id] = {
+              x: cx,
+              y: arr.length === 1 ? (startY + endY) / 2 : startY + idx * step,
+              w: 224,
+              h: 50
+            };
+          });
+        }
+
+        const svgHeight = Math.max(540, Math.max(leftTop.length + leftBot.length, rightTop.length + rightBot.length) * 80 + 70);
+        coords[pkg.user_node_id].y = svgHeight / 2;
+
+        placeStack(leftTop, 145, 58, svgHeight * 0.45);
+        placeStack(leftBot, 145, svgHeight * 0.57, svgHeight - 52);
+        placeStack(rightTop, 775, 55, svgHeight * 0.50);
+        placeStack(rightBot, 775, svgHeight * 0.61, svgHeight - 52);
+
+        const edgeSvg = edges.map((e) => {
+          const a = coords[e.source_id];
+          const b = coords[e.target_id];
+          if (!a || !b) return "";
+
+          let stroke = activeTheme === "dark" ? "#A78BFA" : "#7C3AED";
+          let dash = "";
+          let width = 2.1;
+          if (e.status === "SUPERSEDED") {
+            stroke = "#DC2626";
+            dash = "6,5";
+            width = 1.8;
+          } else if (e.status === "PRUNED") {
+            stroke = "#71717A";
+            dash = "3,4";
+            width = 1.4;
+          } else if (e.relation === "SUPERSEDES") {
+            stroke = "#059669";
+            dash = "4,3";
+            width = 2.0;
+          } else if (e.relation === "BLOCKED_BY") {
+            stroke = "#D97706";
+          }
+
+          let pathD = "";
+          let lx = (a.x + b.x) / 2;
+          let ly = (a.y + b.y) / 2;
+          if (Math.abs(a.x - b.x) < 40) {
+            const curveOffset = a.x < 460 ? -52 : 52;
+            const sx = a.x + (a.x < 460 ? -a.w / 2 + 12 : a.w / 2 - 12);
+            const tx = b.x + (b.x < 460 ? -b.w / 2 + 12 : b.w / 2 - 12);
+            pathD = `M ${sx} ${a.y} Q ${sx + curveOffset} ${(a.y + b.y) / 2} ${tx} ${b.y}`;
+            lx = sx + curveOffset * 0.72;
+            ly = (a.y + b.y) / 2;
+          } else {
+            const sx = a.x < b.x ? a.x + a.w / 2 : a.x - a.w / 2;
+            const tx = a.x < b.x ? b.x - b.w / 2 : b.x + b.w / 2;
+            const midX = (sx + tx) / 2;
+            pathD = `M ${sx} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${tx} ${b.y}`;
+            lx = midX;
+            ly = (a.y + b.y) / 2;
+          }
+
+          const pillBg = activeTheme === "dark" ? "#161A1E" : "#FAF7F2";
+          const relLabel = e.status === "SUPERSEDED" ? `${e.relation} (OLD)` : e.relation;
+          const pw = relLabel.length * 5.7 + 12;
+
+          return `
+            <g>
+              <path d="${pathD}" fill="none" stroke="${stroke}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ""} />
+              <rect x="${lx - pw / 2}" y="${ly - 8}" width="${pw}" height="16" fill="${pillBg}" stroke="${stroke}" stroke-width="1.2" rx="2" />
+              <text x="${lx}" y="${ly + 3.2}" text-anchor="middle" fill="${stroke}" font-family="'Martian Mono', monospace" font-size="8.2" font-weight="700">${esc(relLabel)}</text>
+            </g>
+          `;
+        }).join("");
+
+        const nodeSvg = nodes.map((n) => {
+          const c = coords[n.memory_id];
+          if (!c) return "";
+          const pal = getTypePalette(n.entity_type, n.status, n.forgotten);
+          const isSel = appState.selectedNodeId === n.memory_id;
+          const x = c.x - c.w / 2;
+          const y = c.y - c.h / 2;
+          const shadowFill = activeTheme === "dark" ? "#000000" : "#18181B";
+          const statusSuffix = n.forgotten ? " [FORGOTTEN]" : n.status === "SUPERSEDED" ? " [OLD]" : n.pinned ? " 📌" : "";
+          const textDecor = n.forgotten || n.status === "SUPERSEDED" ? "line-through" : "none";
+
+          return `
+            <g class="pkg-node-group" onclick="selectPkgNode('${esc(n.memory_id)}')">
+              ${isSel ? `<rect x="${x - 4}" y="${y - 4}" width="${c.w + 8}" height="${c.h + 8}" fill="none" stroke="#7C3AED" stroke-width="2.5" stroke-dasharray="4,2"/>` : ""}
+              <rect x="${x + 3}" y="${y + 3}" width="${c.w}" height="${c.h}" fill="${shadowFill}" />
+              <rect class="node-main-rect" x="${x}" y="${y}" width="${c.w}" height="${c.h}" fill="${pal.fill}" stroke="${pal.stroke}" stroke-width="2" />
+              <rect x="${x}" y="${y}" width="${c.w}" height="16" fill="${pal.badge}" />
+              <text x="${x + 7}" y="${y + 11.5}" fill="#FFFFFF" font-family="'Martian Mono', monospace" font-size="8.5" font-weight="700">${esc(n.memory_id)} · ${esc(n.entity_type.toUpperCase())}${esc(statusSuffix)}</text>
+              <text x="${x + c.w - 6}" y="${y + 11.5}" text-anchor="end" fill="#FFFFFF" font-family="'Martian Mono', monospace" font-size="8.2" font-weight="700">${Math.round(n.retention_pct != null ? n.retention_pct : 100)}%</text>
+              <text x="${x + 8}" y="${y + 34}" fill="${pal.text}" font-family="'Schibsted Grotesk', sans-serif" font-size="11.5" font-weight="800" text-decoration="${textDecor}">${esc(trunc(n.label, 27))}</text>
+              ${n.entity_type === "User" ? `<text x="${x + 8}" y="${y + 51}" fill="#EDE9FE" font-family="'Martian Mono', monospace" font-size="8.5">2-Hop PKG Root Hub</text>` : ""}
+            </g>
+          `;
+        }).join("");
+
+        document.getElementById("pkgSvgContainer").innerHTML = `
+          <svg viewBox="0 0 920 ${svgHeight}" width="100%" height="auto" style="display:block; min-width:740px;">
+            <text x="145" y="24" text-anchor="middle" fill="var(--ink-muted)" font-family="'Martian Mono', monospace" font-size="10" font-weight="700">PROJECTS · METRICS · BLOCKERS (HOP 1–2)</text>
+            <text x="460" y="24" text-anchor="middle" fill="var(--ink-muted)" font-family="'Martian Mono', monospace" font-size="10" font-weight="700">USER IDENTITY HUB</text>
+            <text x="775" y="24" text-anchor="middle" fill="var(--ink-muted)" font-family="'Martian Mono', monospace" font-size="10" font-weight="700">PREFERENCES · STAKEHOLDERS · COMMITMENTS</text>
+            ${edgeSvg}
+            ${nodeSvg}
+          </svg>
+        `;
+      }
+
+      function renderNodeInspector() {
+        const pkg = getActivePersona();
+        const node = (pkg.nodes || []).find((n) => n.memory_id === appState.selectedNodeId) || pkg.nodes[0];
+        if (!node) return;
+        const stClass = node.forgotten ? "tag-fail" : node.status === "SUPERSEDED" ? "tag-warn" : "tag-pass";
+        const stLabel = node.forgotten ? "TOMBSTONED (FORGOTTEN)" : node.status;
+        const canGov = node.memory_id !== pkg.user_node_id;
+
+        document.getElementById("selectedNodeInspector").innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; flex-wrap:wrap;">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+                <span class="tag tag-accent">${esc(node.memory_id)}</span>
+                <span class="tag tag-soft">${esc(node.entity_type)}</span>
+                <span class="tag ${stClass}">${esc(stLabel)}</span>
+                ${node.pinned ? `<span class="tag tag-blue">📌 PINNED (100%)</span>` : ""}
+              </div>
+              <h4 style="font-size:1.05rem; font-weight:800; margin-top:0.4rem;">${esc(node.label)}</h4>
+              <p style="font-size:0.84rem; color:var(--ink-muted); margin-top:0.15rem;">${esc(node.summary)}</p>
+              <div class="mono" style="font-size:0.71rem; margin-top:0.45rem; color:var(--ink);">
+                Provenance: <strong>${esc((node.provenance_sessions || []).join(", "))}</strong> ·
+                Retention: <strong>${node.retention_pct}%</strong> (age=${node.age_days}d, accesses=${node.access_count})
+                ${node.superseded_by ? ` · Superseded by <strong>${esc(node.superseded_by)}</strong>` : ""}
+              </div>
+              <div class="mono" style="font-size:0.7rem; color:var(--ink-muted); margin-top:0.25rem;">
+                Quote: "${esc(node.evidence_quote)}"
+              </div>
+            </div>
+            ${canGov ? `
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary" onclick="governMemory('${esc(node.memory_id)}', 'pin')">${node.pinned ? "Unpin" : "📌 Pin"}</button>
+                ${node.forgotten
+                  ? `<button type="button" class="btn btn-pass" onclick="governMemory('${esc(node.memory_id)}', 'restore')">↺ Restore</button>`
+                  : `<button type="button" class="btn btn-danger" onclick="governMemory('${esc(node.memory_id)}', 'forget')">🗑️ Forget</button>`}
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }
+
+      function renderTimeline() {
+        const pkg = getActivePersona();
+        const sessions = (pkg.sessions || []).slice().reverse();
+        document.getElementById("sessionCountBadge").textContent = `${sessions.length} Sessions Consolidated`;
+        document.getElementById("sessionTimelineList").innerHTML = sessions.map((s) => `
+          <div class="session-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+              <strong style="font-size:0.83rem;">${esc(s.title)}</strong>
+              <span class="mono" style="font-size:0.67rem; color:var(--ink-muted);">${esc(s.session_id)} · ${esc(s.timestamp_label)}</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--ink-muted); margin:0.35rem 0;">${esc(s.transcript)}</p>
+            <div style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+              ${(s.extracted_memory_ids || []).map((m) => `<span class="cite-mem" onclick="selectPkgNode('${esc(m)}')">${esc(m)}</span>`).join("")}
+              ${(s.superseded_edge_ids || []).map((e) => `<span class="tag tag-fail">Superseded ${esc(e)}</span>`).join("")}
+            </div>
+          </div>
+        `).join("");
+      }
+
+      function renderGovernanceAndDecay() {
+        const pkg = getActivePersona();
+        const nonRoot = (pkg.nodes || []).filter((n) => n.memory_id !== pkg.user_node_id);
+
+        const sel = document.getElementById("decayNodeSelect");
+        if (!nonRoot.some((n) => n.memory_id === appState.decayNodeId) && nonRoot.length) {
+          appState.decayNodeId = nonRoot[0].memory_id;
+        }
+        sel.innerHTML = nonRoot.map((n) =>
+          `<option value="${esc(n.memory_id)}" ${n.memory_id === appState.decayNodeId ? "selected" : ""}>${esc(n.memory_id)} · ${esc(n.label)} (${n.retention_pct}% retention · ${n.access_count} accesses)</option>`
+        ).join("");
+        renderEbbinghausSvg();
+
+        const supEdges = (pkg.all_edges || []).filter((e) => e.relation === "SUPERSEDES");
+        const nodeMap = {};
+        (pkg.nodes || []).forEach((n) => { nodeMap[n.memory_id] = n; });
+        document.getElementById("contradictionCountBadge").textContent = `${supEdges.length} Contradictions Suppressed`;
+        document.getElementById("contradictionLedgerBox").innerHTML = supEdges.length ? supEdges.map((e) => {
+          const newer = nodeMap[e.source_id] || { label: e.source_id };
+          const older = nodeMap[e.target_id] || { label: e.target_id };
+          return `
+            <div class="session-card" style="border-left:4px solid var(--accent-main);">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:0.4rem;">
+                <span class="mono" style="font-size:0.7rem; font-weight:700;">Slot: ${esc(e.slot_key || "semantic_slot")}</span>
+                <span class="tag tag-pass">Resolved in ${esc(e.session_id)}</span>
+              </div>
+              <div style="margin-top:0.35rem; font-size:0.83rem;">
+                <span style="text-decoration:line-through; color:var(--fail); font-weight:700;">${esc(older.label)} (${esc(e.target_id)})</span>
+                <span class="mono"> → SUPERSEDED BY → </span>
+                <strong style="color:var(--pass);">${esc(newer.label)} (${esc(e.source_id)})</strong>
+              </div>
+            </div>
+          `;
+        }).join("") : `<div class="mono" style="font-size:0.76rem; color:var(--ink-muted);">No contradictions recorded yet.</div>`;
+
+        document.getElementById("governanceTableBody").innerHTML = nonRoot.map((n) => {
+          const badgeCls = n.forgotten ? "tag-fail" : n.status === "SUPERSEDED" ? "tag-warn" : "tag-pass";
+          const stText = n.forgotten ? "TOMBSTONED" : n.status;
+          return `
+            <tr>
+              <td class="mono">
+                <strong>${esc(n.memory_id)}</strong><br/>
+                <span class="tag tag-soft" style="margin-top:0.2rem;">${esc(n.entity_type)}</span>
+              </td>
+              <td>
+                <strong style="${n.forgotten ? "text-decoration:line-through; opacity:0.6;" : ""}">${esc(n.label)}</strong>
+                <div style="font-size:0.76rem; color:var(--ink-muted); margin-top:0.15rem;">${esc(n.summary)}</div>
+              </td>
+              <td class="mono" style="font-size:0.71rem;">
+                ${esc((n.provenance_sessions || []).join(", "))}<br/>
+                <span style="color:var(--ink-muted);">age=${n.age_days}d · hits=${n.access_count}</span>
+              </td>
+              <td><span class="tag ${badgeCls}">${esc(stText)}</span> ${n.pinned ? `<span class="tag tag-blue">📌 PINNED</span>` : ""}</td>
+              <td class="mono">
+                <strong>${n.retention_pct}%</strong>
+                <div class="bar-track" style="height:8px; width:90px; margin-top:0.25rem;">
+                  <div class="bar-fill" style="width:${n.retention_pct}%; background:${n.forgotten ? "var(--fail)" : "var(--accent-main)"};"></div>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+                  <button type="button" class="btn btn-secondary" style="padding:0.28rem 0.55rem; font-size:0.72rem;" onclick="governMemory('${esc(n.memory_id)}', 'pin')">${n.pinned ? "Unpin" : "📌 Pin"}</button>
+                  ${n.forgotten
+                    ? `<button type="button" class="btn btn-pass" style="padding:0.28rem 0.55rem; font-size:0.72rem;" onclick="governMemory('${esc(n.memory_id)}', 'restore')">↺ Restore</button>`
+                    : `<button type="button" class="btn btn-danger" style="padding:0.28rem 0.55rem; font-size:0.72rem;" onclick="governMemory('${esc(n.memory_id)}', 'forget')">🗑️ Forget</button>`}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      window.selectDecayNode = function (memId) {
+        appState.decayNodeId = memId;
+        renderEbbinghausSvg();
+      };
+
+      function renderEbbinghausSvg() {
+        const pkg = getActivePersona();
+        const node = (pkg.nodes || []).find((n) => n.memory_id === appState.decayNodeId) || pkg.nodes[1];
+        if (!node) return;
+
+        const pts = node.retention_curve || [
+          { day: 0, retention: 100 }, { day: 7, retention: 85 }, { day: 14, retention: 72 }, { day: 30, retention: 50 }, { day: 60, retention: 25 }
+        ];
+        const unboostedDays = [0, 3, 7, 14, 21, 30, 45, 60];
+        const unboostedPts = unboostedDays.map((d) => ({
+          day: d,
+          retention: Math.round(Math.exp(-0.045 * d) * 1000) / 10
+        }));
+
+        const W = 500, H = 200, padL = 44, padR = 20, padT = 18, padB = 30;
+        const xPos = (day) => padL + (day / 60) * (W - padL - padR);
+        const yPos = (ret) => padT + ((100 - ret) / 100) * (H - padT - padB);
+
+        const polyBoosted = pts.map((p) => `${xPos(p.day)},${yPos(p.retention)}`).join(" ");
+        const polyBase = unboostedPts.map((p) => `${xPos(p.day)},${yPos(p.retention)}`).join(" ");
+        const curX = xPos(Math.min(60, node.age_days || 1));
+        const curY = yPos(node.retention_pct);
+
+        document.getElementById("ebbinghausSvgBox").innerHTML = `
+          <svg viewBox="0 0 ${W} ${H}" width="100%" height="auto" style="display:block;">
+            <line x1="${padL}" y1="${yPos(100)}" x2="${W - padR}" y2="${yPos(100)}" stroke="var(--border)" stroke-opacity="0.2" stroke-dasharray="3,3"/>
+            <line x1="${padL}" y1="${yPos(50)}" x2="${W - padR}" y2="${yPos(50)}" stroke="var(--border)" stroke-opacity="0.2" stroke-dasharray="3,3"/>
+            <line x1="${padL}" y1="${yPos(0)}" x2="${W - padR}" y2="${yPos(0)}" stroke="var(--border)" stroke-width="1.5"/>
+            <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}" stroke="var(--border)" stroke-width="1.5"/>
+            <text x="8" y="${yPos(100) + 4}" fill="var(--ink-muted)" font-family="monospace" font-size="9.5">100%</text>
+            <text x="12" y="${yPos(50) + 4}" fill="var(--ink-muted)" font-family="monospace" font-size="9.5">50%</text>
+            <text x="18" y="${yPos(0) + 4}" fill="var(--ink-muted)" font-family="monospace" font-size="9.5">0%</text>
+            <text x="${xPos(0)}" y="${H - 8}" fill="var(--ink-muted)" font-family="monospace" font-size="9.5">Day 0</text>
+            <text x="${xPos(30) - 18}" y="${H - 8}" fill="var(--ink-muted)" font-family="monospace" font-size="9.5">Day 30</text>
+            <text x="${xPos(60) - 34}" y="${H - 8}" fill="var(--ink-muted)" font-family="monospace" font-size="9.5">Day 60</text>
+            <polyline fill="none" stroke="#DC2626" stroke-width="1.8" stroke-dasharray="5,4" points="${polyBase}"/>
+            <polyline fill="none" stroke="#7C3AED" stroke-width="3" points="${polyBoosted}"/>
+            <circle cx="${curX}" cy="${curY}" r="5.5" fill="#059669" stroke="#18181B" stroke-width="2"/>
+            <text x="${Math.min(W - 140, curX + 8)}" y="${Math.max(28, curY - 6)}" fill="var(--ink)" font-family="monospace" font-size="9.5" font-weight="700">Now (${node.age_days}d): ${node.retention_pct}%</text>
+          </svg>
+        `;
+        document.getElementById("decayFormulaExplain").innerHTML =
+          `<strong>Purple Curve:</strong> <code>${esc(node.label)}</code> (${node.access_count} retrievals${node.pinned ? ", 📌 Pinned=100%" : ""}${node.forgotten ? ", 🗑️ Tombstoned=0%" : ""}) · <strong>Red Dashed:</strong> Unreinforced single-mention decay.`;
+      }
+
+      function renderBenchmarksTab() {
+        const b = getBenchmarks();
+        const rows = b.comparison_rows || [];
+        const maxTok = Math.max(1, ...rows.map((r) => r.avg_prompt_tokens || 1));
+
+        document.getElementById("benchmarkTableBody").innerHTML = rows.map((r, idx) => {
+          const isOurs = idx === rows.length - 1;
+          return `
+            <tr style="${isOurs ? "background:var(--accent-soft); font-weight:600;" : ""}">
+              <td><strong>${esc(r.architecture)}</strong></td>
+              <td class="mono">${r.preference_recall_pct}%</td>
+              <td class="mono">${r.contradiction_accuracy_pct}%</td>
+              <td class="mono" style="color:${r.stale_hallucination_rate_pct === 0 ? "var(--pass)" : "var(--fail)"}; font-weight:700;">${r.stale_hallucination_rate_pct}%</td>
+              <td class="mono">${r.avg_prompt_tokens} tok</td>
+              <td class="mono">${r.p50_retrieval_ms} ms / ${r.p99_retrieval_ms} ms</td>
+              <td class="mono">${r.avg_bedrock_latency_ms} ms</td>
+              <td>${esc(r.user_forget_governance)}</td>
+            </tr>
+          `;
+        }).join("");
+
+        document.getElementById("benchAccuracyBars").innerHTML = rows.map((r, idx) => `
+          <div class="bar-row">
+            <div class="bar-meta">
+              <span>${esc(r.architecture)}</span>
+              <span>Recall ${r.preference_recall_pct}% · Clean ${r.contradiction_accuracy_pct}%</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${Math.max(4, r.preference_recall_pct)}%; background:${idx === 3 ? "var(--accent-main)" : idx === 0 ? "var(--ink-muted)" : "var(--warn)"};"></div>
+            </div>
+          </div>
+        `).join("");
+
+        document.getElementById("benchTokenBars").innerHTML = rows.slice(1).map((r, idx) => `
+          <div class="bar-row">
+            <div class="bar-meta">
+              <span>${esc(r.architecture)}</span>
+              <span>${r.avg_prompt_tokens} inputTokens · ${r.stale_hallucination_rate_pct}% stale exposure</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${Math.round((r.avg_prompt_tokens / maxTok) * 100)}%; background:${idx === 2 ? "var(--pass)" : "var(--fail)"};"></div>
+            </div>
+          </div>
+        `).join("");
+
+        const rawTrials = b.raw_trials || [];
+        document.getElementById("rawTrialsCountBadge").textContent =
+          rawTrials.length ? `${rawTrials.length} Live Bedrock Converse Trials` : "32 Measured Bedrock Trials (Load /api/state for full log)";
+        document.getElementById("rawTrialsTableBody").innerHTML = rawTrials.length
+          ? rawTrials.map((t) => `
+              <tr>
+                <td class="mono" style="font-size:0.7rem;">
+                  <strong>${esc(t.case_id)}</strong><br/>
+                  <span class="tag ${t.architecture_key === "quick_memory_pkg" ? "tag-accent" : "tag-soft"}">${esc(t.architecture_key)}</span>
+                </td>
+                <td class="mono" style="font-size:0.71rem;">${t.input_tokens} in / ${t.output_tokens} out</td>
+                <td class="mono" style="font-size:0.71rem;">${t.bedrock_latency_ms} ms</td>
+                <td class="mono" style="font-size:0.69rem;">${t.slot_hit_count}/${t.slot_total_count}: ${esc((t.matched_slots || []).join(", ") || "none")}</td>
+                <td class="mono" style="font-size:0.69rem; color:${t.stale_exposed_or_leaked ? "var(--fail)" : "var(--pass)"};">
+                  ctx:${(t.ctx_stale_hits || []).length} / resp:${(t.resp_stale_hits || []).length}
+                </td>
+                <td style="font-size:0.74rem; max-width:340px;">${esc(trunc(t.response_preview, 155))}</td>
+              </tr>
+            `).join("")
+          : `<tr><td colspan="6" class="mono" style="font-size:0.73rem; color:var(--ink-muted);">Hydrating raw per-trial Bedrock Nova telemetry from /api/state...</td></tr>`;
+      }
+
+      function formatRichText(raw) {
+        let html = esc(raw || "");
+        html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, _lang, code) => `<pre>${code.trim()}</pre>`);
+        html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+        html = html.replace(/\[(MEM-\d+)\]/g, `<span class="cite-mem" onclick="jumpToMemory('$1')">[$1]</span>`);
+        html = html.replace(/\[(EDGE-\d+)\]/g, `<span class="cite-edge">[$1]</span>`);
+        html = html.replace(/\n/g, "<br/>");
+        return html;
+      }
+
+      window.jumpToMemory = function (memId) {
+        appState.selectedNodeId = memId;
+        switchTab("pkg-studio");
+        renderPkgSvg();
+        renderNodeInspector();
+      };
+
+      function renderCompanionView(res) {
+        if (!res) return;
+        document.getElementById("statelessEngineMeta").textContent =
+          `${res.stateless_response.engine} · ${res.stateless_response.latency_ms} ms`;
+        document.getElementById("statelessOutputBox").innerHTML = formatRichText(res.stateless_response.text);
+
+        document.getElementById("personalizedEngineMeta").textContent =
+          `${res.personalized_response.engine} · ${res.personalized_response.latency_ms} ms`;
+        document.getElementById("personalizedOutputBox").innerHTML = formatRichText(res.personalized_response.text);
+
+        const mems = res.personalized_response.cited_memory_ids || [];
+        const edges = res.personalized_response.cited_edge_ids || [];
+        document.getElementById("personalizedCitationsStrip").innerHTML = `
+          <div>
+            ${mems.map((m) => `<span class="cite-mem" onclick="jumpToMemory('${esc(m)}')">${esc(m)}</span>`).join("")}
+            ${edges.map((e) => `<span class="cite-edge">${esc(e)}</span>`).join("")}
+          </div>
+          <span class="tag tag-pass">${res.personalized_response.preferences_applied} Active Preferences Enforced</span>
+        `;
+
+        const tr = res.subgraph_trace || {};
+        const redPct = tr.token_reduction_pct != null ? tr.token_reduction_pct : 49.5;
+        document.getElementById("pkgCompressionBadge").textContent = `-${redPct}% Context Tokens`;
+        document.getElementById("subgraphLatencyBadge").textContent =
+          `2-Hop Retrieval: ${tr.retrieval_latency_ms || 0.624} ms`;
+        document.getElementById("assembledContextBox").textContent = tr.assembled_context || "";
+
+        const pkgTok = tr.pkg_prompt_tokens || 240;
+        const fullTok = tr.full_history_tokens || 980;
+        document.getElementById("companionTokenBars").innerHTML = `
+          <div class="bar-row">
+            <div class="bar-meta"><span>Full 7-Session Raw Transcript Stuffing</span><span>${fullTok} words/tokens (100% stale exposure)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%; background:var(--fail);"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-meta"><span>QuickMemory 2-Hop Active PKG Triples</span><span>${pkgTok} words/tokens (-${redPct}%)</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.max(8, Math.min(100, Math.round((pkgTok / Math.max(1, fullTok)) * 100)))}%; background:var(--accent-main);"></div></div>
+          </div>
+        `;
+
+        const sup = tr.suppressed_contradictions || [];
+        const tomb = tr.tombstoned_excluded || [];
+        document.getElementById("suppressedContradictionsBox").innerHTML =
+          sup.map((s) => `
+            <div class="session-card" style="background:var(--fail-soft);">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong style="font-size:0.82rem; text-decoration:line-through;">${esc(s.stale_memory_id)} · ${esc(s.stale_label)}</strong>
+                <span class="tag tag-fail">WITHHELD (SUPERSEDED)</span>
+              </div>
+              <div class="mono" style="font-size:0.7rem; margin-top:0.25rem;">
+                Replaced by active <strong>${esc(s.superseded_by_id)} (${esc(s.superseded_by_label)})</strong>
+              </div>
+            </div>
+          `).join("") +
+          tomb.map((t) => `
+            <div class="session-card" style="background:var(--warn-soft);">
+              <strong style="font-size:0.82rem;">🗑️ ${esc(t)}</strong> — Excluded by User Right-to-Be-Forgotten Tombstone.
+            </div>
+          `).join("");
+      }
+
+      function syncAllViews() {
+        const pkg = getActivePersona();
+        document.getElementById("personaSelectTop").value = appState.personaId;
+        document.getElementById("companionPersonaSelect").value = appState.personaId;
+        document.getElementById("pkgUserBadge").textContent = `${pkg.user_name} · ${pkg.role_title}`;
+        document.getElementById("pkgStatsSummary").textContent =
+          `${pkg.stats.active_nodes} active nodes · ${pkg.stats.superseded_edges} superseded edges · ${pkg.stats.tombstoned_nodes} forgotten`;
+
+        syncHeroKpisFromMeasuredBenchmarks();
+        renderPkgSvg();
+        renderNodeInspector();
+        renderTimeline();
+        renderGovernanceAndDecay();
+        renderBenchmarksTab();
+      }
+
+      async function refreshState() {
+        try {
+          appState.statePayload = await apiGet(`/api/state?persona=${encodeURIComponent(appState.personaId)}`);
+        } catch (_) {
+          appState.statePayload = { active_persona: FALLBACK_PERSONAS.principal_pm, benchmarks: MEASURED_BENCHMARKS_SNAPSHOT };
+        }
+        const pkg = getActivePersona();
+        if (!pkg.nodes.some((n) => n.memory_id === appState.selectedNodeId)) {
+          const firstProj = pkg.nodes.find((n) => n.entity_type === "Project" && n.status === "ACTIVE");
+          appState.selectedNodeId = firstProj ? firstProj.memory_id : pkg.user_node_id;
+        }
+        syncAllViews();
+      }
+
+      window.changePersona = async function (personaId) {
+        appState.personaId = personaId;
+        await refreshState();
+        if (personaId === "staff_sde") {
+          document.getElementById("companionPromptInput").value = COMPANION_PRESETS[2].prompt;
+        } else {
+          document.getElementById("companionPromptInput").value = COMPANION_PRESETS[0].prompt;
+        }
+        await runCompanionComparison();
+      };
+
+      window.toggleSupersededEdges = function () {
+        appState.showSuperseded = !appState.showSuperseded;
+        document.getElementById("toggleSupersededBtn").textContent =
+          appState.showSuperseded ? "👁️ Showing Superseded Lineage" : "🙈 Hiding Superseded Lineage";
+        renderPkgSvg();
+      };
+
+      window.loadIngestPreset = async function (idx) {
+        const preset = INGEST_PRESETS[idx] || INGEST_PRESETS[0];
+        if (preset.persona !== appState.personaId) {
+          appState.personaId = preset.persona;
+          await refreshState();
+        }
+        document.getElementById("ingestTitleInput").value = preset.title;
+        document.getElementById("ingestTranscriptInput").value = preset.transcript;
+      };
+
+      window.submitSessionIngest = async function () {
+        const title = document.getElementById("ingestTitleInput").value.trim();
+        const transcript = document.getElementById("ingestTranscriptInput").value.trim();
+        if (!transcript) return;
+        const btn = document.getElementById("ingestBtn");
+        const fb = document.getElementById("ingestFeedbackBanner");
+        btn.disabled = true;
+        btn.textContent = "Consolidating Entities & Resolving Contradictions...";
+        try {
+          const out = await apiPost("/api/sessions/ingest", {
+            persona: appState.personaId,
+            session_title: title,
+            transcript
+          });
+          appState.statePayload.active_persona = out.updated_persona;
+          const newNodes = out.ingestion.extracted_nodes || [];
+          const supEdges = out.ingestion.superseded_edges || [];
+          if (newNodes.length) {
+            appState.selectedNodeId = newNodes[0].memory_id;
+          }
+          fb.style.display = "block";
+          fb.className = "verdict-banner verdict-allow";
+          fb.innerHTML = `
+            <div>
+              <strong>✅ Consolidated ${esc(out.ingestion.session.session_id)}</strong>:
+              Extracted <strong>${newNodes.length}</strong> entity node(s) (${newNodes.map((n) => esc(n.memory_id)).join(", ")})
+              and superseded <strong>${supEdges.length}</strong> conflicting prior edge(s)!
+            </div>
+          `;
+          syncAllViews();
+        } catch (err) {
+          fb.style.display = "block";
+          fb.className = "verdict-banner verdict-deny";
+          fb.innerHTML = `<div>Ingestion error: ${esc(err.message)}</div>`;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "⚡ Consolidate Session into Personal Knowledge Graph";
+        }
+      };
+
+      window.loadCompanionPrompt = async function (idx) {
+        const p = COMPANION_PRESETS[idx] || COMPANION_PRESETS[0];
+        if (p.persona !== appState.personaId) {
+          appState.personaId = p.persona;
+          await refreshState();
+        }
+        document.getElementById("companionPromptInput").value = p.prompt;
+        await runCompanionComparison();
+      };
+
+      window.runCompanionComparison = async function () {
+        const prompt = document.getElementById("companionPromptInput").value.trim();
+        if (!prompt) return;
+        const btn = document.getElementById("askCompanionBtn");
+        const statusEl = document.getElementById("companionStatusText");
+        btn.disabled = true;
+        statusEl.textContent = "Traversing 2-hop PKG & invoking Amazon Bedrock (us.amazon.nova-lite-v1:0)...";
+        try {
+          const res = await apiPost("/api/companion/ask", {
+            persona: appState.personaId,
+            prompt
+          });
+          appState.lastCompanionResult = res;
+          renderCompanionView(res);
+          statusEl.textContent = `✅ Completed via ${res.personalized_response.engine} · ${res.personalized_response.cited_memory_ids.length} [MEM-xx] citations verified.`;
+          refreshState();
+        } catch (err) {
+          statusEl.textContent = "Offline studio fallback rendered (" + err.message + ")";
+        } finally {
+          btn.disabled = false;
+        }
+      };
+
+      window.governMemory = async function (memoryId, action) {
+        const statusEl = document.getElementById("govActionStatus");
+        statusEl.textContent = `Applying ${action.toUpperCase()} on ${memoryId}...`;
+        try {
+          const out = await apiPost("/api/memory/toggle", {
+            persona: appState.personaId,
+            memory_id: memoryId,
+            action
+          });
+          appState.statePayload.active_persona = out.updated_persona;
+          statusEl.textContent = `✅ ${memoryId} (${out.memory.label}) → ${action.toUpperCase()} applied (${out.affected_edge_ids.length} edge(s) updated).`;
+          syncAllViews();
+        } catch (err) {
+          statusEl.textContent = "Governance error: " + err.message;
+        }
+      };
+
+      window.resetEngineLive = async function () {
+        try {
+          const out = await apiPost("/api/reset", { persona: appState.personaId });
+          appState.statePayload = out;
+        } catch (_) {
+          appState.statePayload = { active_persona: FALLBACK_PERSONAS.principal_pm, benchmarks: MEASURED_BENCHMARKS_SNAPSHOT };
+        }
+        document.getElementById("ingestFeedbackBanner").style.display = "none";
+        syncAllViews();
+      };
+
+      // Interactive §02 System Architecture Node Inspector, Zoom & SVG Export
+      const ARCH_NODE_DETAILS = {
+        "edge-browser": {
+          plane: "Plane ① · AWS Edge Delivery",
+          title: "User Browser (4-Tab PKG Studio, Multi-Plane Diagram & Sticky TOC)",
+          module: "web/index.html (Self-Contained Neo-Brutalist Single-Page Studio)",
+          summary: "Renders the 6-section engineering walkthrough, interactive Personal Knowledge Graph SVG, side-by-side Bedrock Nova comparison, Ebbinghaus decay explorer, and 32-trial benchmark ledger with zero external JS frameworks and stateless persistence via location.hash.",
+          metric: "0 External JS Deps · location.hash Theme & Tab Sync"
+        },
+        "edge-cloudfront": {
+          plane: "Plane ① · AWS Edge Delivery",
+          title: "Amazon CloudFront Global Edge Distribution (E1I3BMCLY8AF1W)",
+          module: "infra/deploy_cloudfront.sh · HTTPS TLS 1.3 + SigV4 Origin Access Control",
+          summary: "Terminates HTTPS at the AWS edge (https://d1eslmpwuei23h.cloudfront.net), serves static assets from the private S3 bucket via Origin Access Control (OAC), and forwards /api/* dynamic requests to the serverless Python 3.12 Lambda Function URL with CachingDisabled.",
+          metric: "Distribution E1I3BMCLY8AF1W · HTTP/2 + HTTP/3"
+        },
+        "edge-s3": {
+          plane: "Plane ① · AWS Edge Delivery",
+          title: "Private Amazon S3 Bucket with Origin Access Control (OAC)",
+          module: "s3://quickmemory-web-796330847946-us-west-2/index.html",
+          summary: "Stores web/index.html and architecture.svg with all four S3 BlockPublicAccess flags enabled—only CloudFront distribution E1I3BMCLY8AF1W can read objects via IAM service-principal AWS:SourceArn condition.",
+          metric: "0 Public S3 ACLs · $0 Idle Compute Cost"
+        },
+        "edge-lambda": {
+          plane: "Plane ① · AWS Edge Delivery",
+          title: "AWS Lambda Serverless API Origin (Python 3.12)",
+          module: "quick_memory/server.py :: lambda_handler & route_api_request",
+          summary: "Serves GET /api/health, GET /api/state, POST /api/sessions/ingest, POST /api/companion/ask, POST /api/memory/toggle, DELETE /api/memory/forget, and POST /api/reset with zero EC2 or RDS instances.",
+          metric: "Python 3.12 · 512 MB · 0 Idle Servers"
+        },
+        "pkg-extractor": {
+          plane: "Plane ② · Episodic-to-Semantic Consolidation",
+          title: "Clause-Level Episodic Entity & Directed Relation Extractor",
+          module: "quick_memory/graph_engine.py :: PersonaKnowledgeGraph.ingest_live_transcript",
+          summary: "Parses raw multi-session work notes into typed Person, Project, Metric, System, Preference, and Commitment nodes linked by OWNS, PREFERS_FORMAT, BLOCKED_BY, TRACKS_METRIC, COLLABORATES_WITH, and COMMITTED_TO edges.",
+          metric: "14 Consolidated Sessions · 6 Entity Types · 7 Edge Types"
+        },
+        "pkg-supersedes": {
+          plane: "Plane ② · Episodic-to-Semantic Consolidation",
+          title: "Deterministic Temporal Contradiction Supersession Gate",
+          module: "quick_memory/graph_engine.py :: upsert_entity_with_relation",
+          summary: "Detects functional slot conflicts on (source_id, relation, slot_key) or explicit contradiction markers (e.g., Payments-v1 → Checkout-Latency-Q4, Redshift → Athena Iceberg SQL), marks prior edges SUPERSEDED, and emits explicit SUPERSEDES lineage.",
+          metric: "0.0% Stale Context Contamination · 87.5% Contradiction-Clean"
+        },
+        "pkg-ebbinghaus": {
+          plane: "Plane ② · Episodic-to-Semantic Consolidation",
+          title: "Frequency-Reinforced Ebbinghaus Retention Engine",
+          module: "quick_memory/graph_engine.py :: compute_ebbinghaus_retention",
+          summary: "Computes R(t, n) = exp(-λt / (1 + 0.48 ln(1 + n))) so core habits reinforced across sessions resist decay over a 60-day window while one-off stale mentions attenuate; Pinned nodes clamp at 100.0%.",
+          metric: "Continuous 60-Day Decay Curve · Pinned = 100.0%"
+        },
+        "pkg-retriever": {
+          plane: "Plane ③ · Contextual Session Assembler",
+          title: "6-Stage Hybrid BM25 + Trigram + 2-Hop PKG Context Packer",
+          module: "quick_memory/graph_engine.py :: retrieve_2hop_context",
+          summary: "Combines BM25 IDF + character 3-gram cosine similarity weighted by Ebbinghaus retention, drops SUPERSEDED/TOMBSTONED nodes, traverses 2-hop active edges to pull attached KPIs and blockers, and serializes compact triples.",
+          metric: "0.624 ms p50 · 1.029 ms p99 (240 runs) · -49.5% Input Tokens"
+        },
+        "pkg-governance": {
+          plane: "Plane ④ · User Memory Governance",
+          title: "User Sovereignty Console — Pin, Tombstone Forget & Restore",
+          module: "quick_memory/graph_engine.py :: toggle_memory_governance",
+          summary: "Executes O(deg(v)) in-place tombstoning (status='TOMBSTONED', incident active edges marked 'PRUNED') so forgotten people, blockers, or notes are immediately excluded from 2-hop retrieval without full corpus re-indexing.",
+          metric: "100.0% Tombstone Prune Pass Rate (6/6 Probes Verified)"
+        },
+        "bedrock-companion": {
+          plane: "Plane ⑤ · Synthesis & Evaluation",
+          title: "Amazon Bedrock Nova Personalized Companion",
+          module: "quick_memory/graph_engine.py :: ask_companion (boto3 bedrock-runtime)",
+          summary: "Runs parallel ThreadPoolExecutor converse() calls against us.amazon.nova-lite-v1:0 in us-west-2 to compare a cold-start Stateless LLM side-by-side against QuickMemory's [MEM-xx] & [EDGE-xx] provenance-cited companion.",
+          metric: "Live us.amazon.nova-lite-v1:0 · 596 vs 1,180 Input Tokens"
+        },
+        "eval-plane": {
+          plane: "Plane ⑤ · Synthesis & Evaluation",
+          title: "4-Architecture Live Bedrock Benchmark Harness",
+          module: "benchmarks/run_benchmarks.py → benchmarks/latest_results.json",
+          summary: "Evaluates Stateless Sessions, Full-History Transcript Stuffing, Flat Vector-Only Top-3 Chunks, and QuickMemory 2-Hop PKG across 8 fresh-session queries (32 live Bedrock calls) + 240 perf_counter() timing runs.",
+          metric: "89.7% Slot Recall (+24.2pt vs Vector) · 10/10 Unit Tests"
+        }
+      };
+
+      function selectArchNode(nodeId) {
+        const info = ARCH_NODE_DETAILS[nodeId] || ARCH_NODE_DETAILS["pkg-supersedes"];
+        document.querySelectorAll("#quickMemoryArchSvg .ex-node").forEach((el) => {
+          el.classList.toggle("selected", el.getAttribute("data-arch-node") === nodeId);
+        });
+        document.querySelectorAll("#archNodePills [data-arch-btn]").forEach((btn) => {
+          btn.classList.toggle("active", btn.getAttribute("data-arch-btn") === nodeId);
+        });
+        const detailBox = document.getElementById("archInspectorDetail");
+        if (detailBox) {
+          detailBox.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.45rem;">
+              <div>
+                <span class="tag tag-accent" style="margin-bottom:0.35rem;">${esc(info.plane)}</span>
+                <h3 style="font-size:1.06rem; font-weight:800;">${esc(info.title)}</h3>
+              </div>
+              <span class="tag tag-pass">${esc(info.metric)}</span>
+            </div>
+            <div class="mono" style="font-size:0.73rem; color:var(--accent-main); margin-bottom:0.45rem;">Module / Resource: <code>${esc(info.module)}</code></div>
+            <p style="font-size:0.9rem; color:var(--ink-muted); line-height:1.65;">${esc(info.summary)}</p>
+          `;
+        }
+      }
+
+      document.querySelectorAll("#quickMemoryArchSvg .ex-node").forEach((el) => {
+        el.addEventListener("click", () => selectArchNode(el.getAttribute("data-arch-node")));
+        el.addEventListener("keydown", (ev) => {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            selectArchNode(el.getAttribute("data-arch-node"));
+          }
+        });
+      });
+      document.querySelectorAll("#archNodePills [data-arch-btn]").forEach((btn) => {
+        btn.addEventListener("click", () => selectArchNode(btn.getAttribute("data-arch-btn")));
+      });
+
+      const archSvgEl = document.getElementById("quickMemoryArchSvg");
+      const archViewportEl = document.getElementById("archViewport");
+      const zoom100Btn = document.getElementById("zoom100Btn");
+      const zoom125Btn = document.getElementById("zoom125Btn");
+      const zoomResetBtn = document.getElementById("zoomResetBtn");
+      const archZoomLabel = document.getElementById("archZoomLabel");
+
+      function setArchZoom(mode) {
+        if (!archSvgEl) return;
+        const is125 = mode === "125";
+        archSvgEl.classList.toggle("zoom-125", is125);
+        if (archZoomLabel) archZoomLabel.textContent = is125 ? "Zoom: 125%" : "Zoom: 100%";
+        if (zoom100Btn) zoom100Btn.className = is125 ? "btn btn-secondary" : "btn btn-accent";
+        if (zoom125Btn) zoom125Btn.className = is125 ? "btn btn-accent" : "btn btn-secondary";
+        if (mode === "reset" && archViewportEl) {
+          archViewportEl.scrollTo({ left: 0, behavior: "smooth" });
+          selectArchNode("pkg-supersedes");
+        }
+      }
+      if (zoom100Btn) zoom100Btn.addEventListener("click", () => setArchZoom("100"));
+      if (zoom125Btn) zoom125Btn.addEventListener("click", () => setArchZoom("125"));
+      if (zoomResetBtn) zoomResetBtn.addEventListener("click", () => setArchZoom("reset"));
+
+      const dlArchBtn = document.getElementById("downloadArchSvgBtn");
+      if (dlArchBtn && archSvgEl) {
+        dlArchBtn.addEventListener("click", () => {
+          const xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + archSvgEl.outerHTML;
+          const blob = new Blob([xml], { type: "image/svg+xml;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "quickmemory-architecture.svg";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      parseHashState();
+      selectArchNode("pkg-supersedes");
+      appState.statePayload = { active_persona: FALLBACK_PERSONAS.principal_pm, benchmarks: MEASURED_BENCHMARKS_SNAPSHOT };
+      applyTheme(activeTheme);
+      switchTab(activeTab);
+      syncAllViews();
+      probeHealth();
+      refreshState().then(() => {
+        runCompanionComparison();
+      });
+    })();
+  </script>
+</body>
+</html>

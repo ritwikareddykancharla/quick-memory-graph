@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="quickMemoryArchSvg" class="arch-svg" viewBox="0 0 1220 756" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QuickMemory System Architecture Diagram">
+          <defs>
+  <style>
+    .ex-hand { font-family: 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', cursive, sans-serif; }
+    .ex-mono { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; }
+  </style>
+
+            <pattern id="exDotGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill="#D4D4D8" />
+            </pattern>
+          </defs>
+
+          <!-- Crisp Whiteboard Base -->
+          <rect x="0" y="0" width="1220" height="756" fill="#FFFFFF" />
+          <rect x="0" y="0" width="1220" height="756" fill="url(#exDotGrid)" opacity="0.65" />
+
+          <!-- ============================================================= -->
+          <!-- PLANE 1: AWS EDGE DELIVERY                                    -->
+          <!-- ============================================================= -->
+          <path d="M 22,18 Q 600,14 1196,19 Q 1201,94 1195,168 Q 610,172 24,167 Q 19,92 22,18 Z" fill="#FAFAFA" stroke="#71717A" stroke-width="1.6" stroke-dasharray="8 6" />
+          <text x="36" y="40" class="ex-hand" font-size="21" font-weight="700" fill="#7C3AED">① AWS Edge Delivery Plane (100% Serverless · 0 EC2 · 0 RDS · 0 Idle GPU)</text>
+
+          <!-- Node 1: User Browser -->
+          <g class="ex-node" data-arch-node="edge-browser" tabindex="0">
+            <path d="M 38,56 Q 136,53 234,57 Q 238,98 233,140 Q 135,143 39,139 Q 35,97 38,56 Z" fill="#DBEAFE" />
+            <path class="ex-stroke-main" d="M 38,56 Q 136,53 234,57 Q 238,98 233,140 Q 135,143 39,139 Q 35,97 38,56 Z" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linejoin="round" />
+            <path d="M 40,58 Q 138,56 232,59 Q 235,99 231,138 Q 134,140 41,137 Q 37,96 40,58 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="136" y="84" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">User Browser</text>
+            <text x="136" y="106" text-anchor="middle" class="ex-mono" font-size="10.2" font-weight="600" fill="#1E3A8A">4-Tab PKG Studio &amp; TOC</text>
+            <text x="136" y="124" text-anchor="middle" class="ex-mono" font-size="9.6" fill="#3F3F46">location.hash · Stateless UI</text>
+          </g>
+
+          <!-- Arrow: Browser -> CloudFront -->
+          <path d="M 237,98 Q 268,94 298,98" fill="none" stroke="#18181B" stroke-width="2.1" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 289,92 L 300,98 L 289,104" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="268" y="87" text-anchor="middle" class="ex-hand" font-size="16" font-weight="700" fill="#18181B">HTTPS</text>
+
+          <!-- Node 2: Amazon CloudFront -->
+          <g class="ex-node" data-arch-node="edge-cloudfront" tabindex="0">
+            <path d="M 304,56 Q 430,52 556,57 Q 560,98 555,140 Q 428,144 305,139 Q 301,97 304,56 Z" fill="#EDE9FE" />
+            <path class="ex-stroke-main" d="M 304,56 Q 430,52 556,57 Q 560,98 555,140 Q 428,144 305,139 Q 301,97 304,56 Z" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linejoin="round" />
+            <path d="M 306,59 Q 431,55 554,59 Q 557,99 553,138 Q 429,141 307,137 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="430" y="84" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">Amazon CloudFront (HTTPS)</text>
+            <text x="430" y="106" text-anchor="middle" class="ex-mono" font-size="10.2" font-weight="600" fill="#5B21B6">TLS 1.3 · E1I3BMCLY8AF1W</text>
+            <text x="430" y="124" text-anchor="middle" class="ex-mono" font-size="9.6" fill="#3F3F46">Routes /* static &amp; /api/*</text>
+          </g>
+
+          <!-- Branch Arrows from CloudFront to S3 and Lambda -->
+          <path d="M 559,80 Q 596,68 634,68" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 625,62 L 636,68 L 625,74" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="596" y="61" text-anchor="middle" class="ex-hand" font-size="15" font-weight="700" fill="#065F46">OAC GET</text>
+
+          <path d="M 559,116 Q 596,128 634,128" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 625,122 L 636,128 L 625,134" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="596" y="145" text-anchor="middle" class="ex-hand" font-size="15" font-weight="700" fill="#5B21B6">/api/*</text>
+
+          <!-- Node 3a: Private S3 Bucket (OAC) -->
+          <g class="ex-node" data-arch-node="edge-s3" tabindex="0">
+            <path d="M 640,40 Q 775,37 910,41 Q 913,67 909,92 Q 774,95 641,91 Q 637,66 640,40 Z" fill="#DCFCE7" />
+            <path class="ex-stroke-main" d="M 640,40 Q 775,37 910,41 Q 913,67 909,92 Q 774,95 641,91 Q 637,66 640,40 Z" fill="none" stroke="#18181B" stroke-width="2" />
+            <path d="M 642,42 Q 776,40 908,43 Q 910,67 907,90 Q 773,92 643,89 Z" fill="none" stroke="#18181B" stroke-width="1" opacity="0.6" />
+            <text x="775" y="63" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">Private S3 Bucket (OAC)</text>
+            <text x="775" y="81" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#065F46">quickmemory-web · BlockPublicAccess</text>
+          </g>
+
+          <!-- Node 3b: AWS Lambda (Python 3.12) -->
+          <g class="ex-node" data-arch-node="edge-lambda" tabindex="0">
+            <path d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="#FFE8D6" />
+            <path class="ex-stroke-main" d="M 640,102 Q 775,99 910,103 Q 913,130 909,156 Q 774,159 641,155 Q 637,129 640,102 Z" fill="none" stroke="#18181B" stroke-width="2" />
+            <path d="M 642,104 Q 776,102 908,105 Q 910,130 907,154 Q 773,156 643,153 Z" fill="none" stroke="#18181B" stroke-width="1" opacity="0.6" />
+            <text x="775" y="125" text-anchor="middle" class="ex-hand" font-size="20" font-weight="700" fill="#18181B">AWS Lambda (Python 3.12)</text>
+            <text x="775" y="144" text-anchor="middle" class="ex-mono" font-size="9.4" fill="#9A3412">quick_memory/server.py · /api/*</text>
+          </g>
+
+          <!-- Tilted Sticky-Note Callout -->
+          <g transform="rotate(-1.6 1055 96)">
+            <path d="M 934,40 L 1180,40 L 1180,136 L 1162,152 L 934,152 Z" fill="#FEF3C7" stroke="#18181B" stroke-width="2" />
+            <path d="M 1162,152 L 1162,136 L 1180,136" fill="#FDE68A" stroke="#18181B" stroke-width="1.6" />
+            <text x="948" y="66" class="ex-hand" font-size="19" font-weight="700" fill="#92400E">📌 Sticky Note: Live Telemetry</text>
+            <text x="948" y="89" class="ex-hand" font-size="17" font-weight="600" fill="#18181B">• 32 Live Bedrock Nova Calls</text>
+            <text x="948" y="110" class="ex-hand" font-size="17" font-weight="600" fill="#18181B">• 0.624 ms p50 · 1.029 ms p99</text>
+            <text x="948" y="132" class="ex-hand" font-size="17" font-weight="700" fill="#5B21B6">• -49.5% Input Tokens (1.98x)</text>
+          </g>
+
+          <!-- Dashed Arrow: Lambda -> Plane 2 Consolidation -->
+          <path d="M 775,157 Q 765,180 612,196" fill="none" stroke="#18181B" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 621,190 L 610,197 L 622,202" fill="none" stroke="#18181B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="765" y="185" class="ex-hand" font-size="16" font-weight="700" fill="#18181B">Session Ingest &amp; Ask Dispatch</text>
+
+          <!-- ============================================================= -->
+          <!-- PLANE 2: EPISODIC-TO-SEMANTIC CONSOLIDATION & RETENTION       -->
+          <!-- ============================================================= -->
+          <path d="M 22,198 Q 610,194 1196,199 Q 1200,270 1195,340 Q 608,344 24,339 Q 19,268 22,198 Z" fill="#F8FAFC" stroke="#1E40AF" stroke-width="1.6" stroke-dasharray="8 6" />
+          <text x="36" y="221" class="ex-hand" font-size="21" font-weight="700" fill="#1D4ED8">② Episodic-to-Semantic Consolidation Plane (14 Multi-Session Logs → Typed Entities, SUPERSEDES &amp; Ebbinghaus)</text>
+
+          <!-- Consolidation 1: Entity & Relation Extractor -->
+          <g class="ex-node" data-arch-node="pkg-extractor" tabindex="0">
+            <path d="M 42,235 Q 218,231 394,236 Q 398,281 393,326 Q 216,330 43,325 Q 39,280 42,235 Z" fill="#DBEAFE" />
+            <path class="ex-stroke-main" d="M 42,235 Q 218,231 394,236 Q 398,281 393,326 Q 216,330 43,325 Q 39,280 42,235 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <path d="M 45,238 Q 219,235 391,239 Q 394,282 390,323 Q 217,327 46,322 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="218" y="263" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">Episodic Entity Extractor</text>
+            <text x="218" y="285" text-anchor="middle" class="ex-mono" font-size="9.8" font-weight="600" fill="#1E3A8A">ingest_live_transcript()</text>
+            <text x="218" y="304" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#3F3F46">Person · Project · Metric · System · Pref</text>
+          </g>
+
+          <!-- Consolidation 2: Temporal Contradiction Supersession -->
+          <g class="ex-node selected" data-arch-node="pkg-supersedes" tabindex="0">
+            <path d="M 432,235 Q 610,231 788,236 Q 792,281 787,326 Q 609,330 433,325 Q 429,280 432,235 Z" fill="#FEE2E2" />
+            <path class="ex-stroke-main" d="M 432,235 Q 610,231 788,236 Q 792,281 787,326 Q 609,330 433,325 Q 429,280 432,235 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <path d="M 435,238 Q 611,235 785,239 Q 788,282 784,323 Q 608,327 436,322 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="610" y="263" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#991B1B">Temporal Contradiction Gate</text>
+            <text x="610" y="285" text-anchor="middle" class="ex-mono" font-size="9.8" font-weight="600" fill="#991B1B">slot_key Conflict → SUPERSEDED</text>
+            <text x="610" y="304" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#7F1D1D">Redshift → Athena Iceberg · 0.0% Stale</text>
+          </g>
+
+          <!-- Consolidation 3: Ebbinghaus Retention Engine -->
+          <g class="ex-node" data-arch-node="pkg-ebbinghaus" tabindex="0">
+            <path d="M 824,235 Q 1001,231 1178,236 Q 1182,281 1177,326 Q 1000,330 825,325 Q 821,280 824,235 Z" fill="#EDE9FE" />
+            <path class="ex-stroke-main" d="M 824,235 Q 1001,231 1178,236 Q 1182,281 1177,326 Q 1000,330 825,325 Q 821,280 824,235 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <path d="M 827,238 Q 1002,235 1175,239 Q 1178,282 1174,323 Q 999,327 828,322 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="1001" y="263" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#18181B">Ebbinghaus Retention Curve</text>
+            <text x="1001" y="285" text-anchor="middle" class="ex-mono" font-size="9.6" font-weight="600" fill="#5B21B6">exp(-λt / (1 + 0.48 ln(1+n)))</text>
+            <text x="1001" y="304" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#3F3F46">Access Reinforcement · Pin = 100%</text>
+          </g>
+
+          <!-- Vertical Dashed Arrows: Consolidation -> 6-Stage Contextual Session Pipeline -->
+          <path d="M 218,328 Q 230,356 260,382" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 251,378 L 262,383 L 258,371" fill="none" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="242" y="364" class="ex-hand" font-size="15.5" font-weight="700" fill="#1E40AF">Typed Adjacency</text>
+
+          <path d="M 610,328 Q 610,356 610,382" fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 604,373 L 610,384 L 616,373" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="622" y="364" class="ex-hand" font-size="15.5" font-weight="700" fill="#991B1B">Active-Only Filter</text>
+
+          <path d="M 1001,328 Q 975,356 942,382" fill="none" stroke="#7C3AED" stroke-width="2" stroke-dasharray="6 4" stroke-linecap="round" />
+          <path d="M 946,371 L 940,383 L 952,379" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="985" y="364" class="ex-hand" font-size="15.5" font-weight="700" fill="#5B21B6">Retention Weights</text>
+
+          <!-- ============================================================= -->
+          <!-- PLANE 3: 6-STAGE HYBRID 2-HOP CONTEXTUAL SESSION ASSEMBLER     -->
+          <!-- ============================================================= -->
+          <g class="ex-node" data-arch-node="pkg-retriever" tabindex="0">
+            <path d="M 22,384 Q 610,380 1196,385 Q 1200,458 1195,532 Q 608,536 24,531 Q 19,457 22,384 Z" fill="#F0FDF4" />
+            <path class="ex-stroke-main" d="M 22,384 Q 610,380 1196,385 Q 1200,458 1195,532 Q 608,536 24,531 Q 19,457 22,384 Z" fill="none" stroke="#18181B" stroke-width="2.1" />
+            <text x="36" y="408" class="ex-hand" font-size="21" font-weight="700" fill="#065F46">③ Contextual Session Assembler — 6-Stage Hybrid BM25 + 2-Hop PKG Pipeline (0.624 ms p50 · 1.029 ms p99 · -49.5% Tokens)</text>
+
+            <!-- Stage 1 -->
+            <path d="M 40,425 Q 128,422 216,426 Q 219,468 215,510 Q 127,513 41,509 Q 38,467 40,425 Z" fill="#DCFCE7" stroke="#18181B" stroke-width="1.9" />
+            <text x="128" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#18181B">01 · FRESH_PROMPT</text>
+            <text x="128" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#065F46">Zero In-Prompt</text>
+            <text x="128" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">Project / SQL Hints</text>
+
+            <path d="M 218,468 L 236,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 230,463 L 238,468 L 230,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 2 -->
+            <path d="M 240,425 Q 328,422 416,426 Q 419,468 415,510 Q 327,513 241,509 Q 238,467 240,425 Z" fill="#DCFCE7" stroke="#18181B" stroke-width="1.9" />
+            <text x="328" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#18181B">02 · BM25 + TRIGRAM</text>
+            <text x="328" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#065F46">Lexical + 3-Gram</text>
+            <text x="328" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">× Retention R(t,n)</text>
+
+            <path d="M 418,468 L 436,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 430,463 L 438,468 L 430,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 3 -->
+            <path d="M 440,425 Q 528,422 616,426 Q 619,468 615,510 Q 527,513 441,509 Q 438,467 440,425 Z" fill="#FEE2E2" stroke="#18181B" stroke-width="1.9" />
+            <text x="528" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#991B1B">03 · PRUNE_STALE</text>
+            <text x="528" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#991B1B">Drop SUPERSEDED</text>
+            <text x="528" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#7F1D1D">&amp; TOMBSTONED</text>
+
+            <path d="M 618,468 L 636,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 630,463 L 638,468 L 630,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 4 -->
+            <path d="M 640,425 Q 728,422 816,426 Q 819,468 815,510 Q 727,513 641,509 Q 638,467 640,425 Z" fill="#DCFCE7" stroke="#18181B" stroke-width="1.9" />
+            <text x="728" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#18181B">04 · HOP2_EXPAND</text>
+            <text x="728" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#065F46">Project → KPI</text>
+            <text x="728" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">&amp; System Blockers</text>
+
+            <path d="M 818,468 L 836,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 830,463 L 838,468 L 830,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 5 -->
+            <path d="M 840,425 Q 928,422 1016,426 Q 1019,468 1015,510 Q 927,513 841,509 Q 838,467 840,425 Z" fill="#EDE9FE" stroke="#18181B" stroke-width="1.9" />
+            <text x="928" y="451" text-anchor="middle" class="ex-hand" font-size="17" font-weight="700" fill="#5B21B6">05 · PINNED_PREFS</text>
+            <text x="928" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#5B21B6">SQL + Doc Format</text>
+            <text x="928" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">Always Attached</text>
+
+            <path d="M 1018,468 L 1036,468" stroke="#18181B" stroke-width="2" />
+            <path d="M 1030,463 L 1038,468 L 1030,473" fill="none" stroke="#18181B" stroke-width="2" />
+
+            <!-- Stage 6 -->
+            <path d="M 1040,425 Q 1110,422 1180,426 Q 1183,468 1179,510 Q 1109,513 1041,509 Q 1038,467 1040,425 Z" fill="#FEF3C7" stroke="#18181B" stroke-width="1.9" />
+            <text x="1110" y="451" text-anchor="middle" class="ex-hand" font-size="16.5" font-weight="700" fill="#18181B">06 · TRIPLE_PACK</text>
+            <text x="1110" y="473" text-anchor="middle" class="ex-mono" font-size="8.6" fill="#92400E">596 vs 1,180 tok</text>
+            <text x="1110" y="492" text-anchor="middle" class="ex-mono" font-size="8.4" fill="#3F3F46">[MEM-xx] [EDGE-xx]</text>
+          </g>
+
+          <!-- Dashed Arrows from Plane 3 to Plane 4 & Plane 5 -->
+          <path d="M 528,532 Q 340,558 220,584" fill="none" stroke="#DC2626" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 228,577 L 218,585 L 230,589" fill="none" stroke="#DC2626" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="355" y="560" class="ex-hand" font-size="16" font-weight="700" fill="#DC2626">Pin / Tombstone Edge Prune</text>
+
+          <path d="M 928,532 Q 740,556 618,584" fill="none" stroke="#7C3AED" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 625,575 L 616,585 L 629,586" fill="none" stroke="#7C3AED" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="772" y="560" class="ex-hand" font-size="16" font-weight="700" fill="#7C3AED">Compact Active PKG Envelope</text>
+
+          <path d="M 1110,532 Q 1055,556 1010,584" fill="none" stroke="#B45309" stroke-width="2.1" stroke-dasharray="7 5" stroke-linecap="round" />
+          <path d="M 1016,574 L 1008,585 L 1021,585" fill="none" stroke="#B45309" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="1095" y="560" class="ex-hand" font-size="16" font-weight="700" fill="#92400E">4-Baseline Telemetry</text>
+
+          <!-- ============================================================= -->
+          <!-- PLANE 4 & 5: GOVERNANCE GATE + BEDROCK NOVA + BENCHMARK SUITE -->
+          <!-- ============================================================= -->
+          <!-- Node 4: User Memory Governance & Right-to-Forget -->
+          <g class="ex-node" data-arch-node="pkg-governance" tabindex="0">
+            <path d="M 32,588 Q 214,583 396,589 Q 401,660 395,730 Q 212,735 34,729 Q 29,658 32,588 Z" fill="#FEE2E2" />
+            <path class="ex-stroke-main" d="M 32,588 Q 214,583 396,589 Q 401,660 395,730 Q 212,735 34,729 Q 29,658 32,588 Z" fill="none" stroke="#18181B" stroke-width="2.2" />
+            <path d="M 35,591 Q 215,587 393,592 Q 397,660 392,727 Q 213,731 37,726 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="214" y="618" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#991B1B">④ User Governance &amp; Tombstone</text>
+            <text x="214" y="643" text-anchor="middle" class="ex-mono" font-size="9.6" font-weight="700" fill="#18181B">/api/memory/toggle · /api/memory/forget</text>
+            <text x="214" y="666" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#7F1D1D">O(deg(v)) In-Place Active Edge Prune</text>
+            <rect x="58" y="684" width="312" height="28" fill="#FFFFFF" stroke="#18181B" stroke-width="1.6" />
+            <text x="214" y="702" text-anchor="middle" class="ex-mono" font-size="9.4" font-weight="700" fill="#DC2626">🗑️ 100.0% Tombstone Prune (6/6 Probes)</text>
+          </g>
+
+          <!-- Node 5a: Amazon Bedrock Nova Personalized Companion -->
+          <g class="ex-node" data-arch-node="bedrock-companion" tabindex="0">
+            <path d="M 428,588 Q 610,583 792,589 Q 797,660 791,730 Q 608,735 430,729 Q 425,658 428,588 Z" fill="#EDE9FE" />
+            <path class="ex-stroke-main" d="M 428,588 Q 610,583 792,589 Q 797,660 791,730 Q 608,735 430,729 Q 425,658 428,588 Z" fill="none" stroke="#18181B" stroke-width="2.2" />
+            <path d="M 431,591 Q 611,587 789,592 Q 793,660 788,727 Q 609,731 433,726 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="610" y="618" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#5B21B6">⑤ Amazon Bedrock Companion</text>
+            <text x="610" y="643" text-anchor="middle" class="ex-mono" font-size="9.8" font-weight="700" fill="#18181B">us.amazon.nova-lite-v1:0</text>
+            <text x="610" y="666" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#4C1D95">Parallel Stateless vs. PKG Converse</text>
+            <rect x="454" y="684" width="312" height="28" fill="#FFFFFF" stroke="#18181B" stroke-width="1.6" />
+            <text x="610" y="702" text-anchor="middle" class="ex-mono" font-size="9.4" font-weight="700" fill="#6D28D9">⚡ Live /api/companion/ask · [MEM-xx]</text>
+          </g>
+
+          <!-- Dashed Arrow: Bedrock -> Benchmark Suite -->
+          <path d="M 795,660 L 821,660" fill="none" stroke="#18181B" stroke-width="2" stroke-dasharray="5 4" />
+          <path d="M 814,654 L 823,660 L 814,666" fill="none" stroke="#18181B" stroke-width="2" />
+
+          <!-- Node 5b: Multi-Session Benchmark Harness -->
+          <g class="ex-node" data-arch-node="eval-plane" tabindex="0">
+            <path d="M 826,588 Q 1010,583 1194,589 Q 1199,660 1193,730 Q 1008,735 828,729 Q 823,658 826,588 Z" fill="#FEF3C7" />
+            <path class="ex-stroke-main" d="M 826,588 Q 1010,583 1194,589 Q 1199,660 1193,730 Q 1008,735 828,729 Q 823,658 826,588 Z" fill="none" stroke="#18181B" stroke-width="2.2" />
+            <path d="M 829,591 Q 1011,587 1191,592 Q 1195,660 1190,727 Q 1009,731 831,726 Z" fill="none" stroke="#18181B" stroke-width="1.1" opacity="0.65" />
+            <text x="1010" y="618" text-anchor="middle" class="ex-hand" font-size="22" font-weight="700" fill="#92400E">⑤ 4-Architecture Eval Harness</text>
+            <text x="1010" y="643" text-anchor="middle" class="ex-mono" font-size="9.6" font-weight="700" fill="#18181B">benchmarks/run_benchmarks.py</text>
+            <text x="1010" y="666" text-anchor="middle" class="ex-mono" font-size="9.2" fill="#78350F">Stateless · Stuffing · Vector · 2-Hop PKG</text>
+            <rect x="850" y="684" width="320" height="28" fill="#DCFCE7" stroke="#18181B" stroke-width="1.6" />
+            <text x="1010" y="702" text-anchor="middle" class="ex-mono" font-size="9.3" font-weight="700" fill="#065F46">✓ 89.7% Recall · 87.5% Contradiction-Clean</text>
+          </g>
+        </svg>

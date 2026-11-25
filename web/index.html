@@ -2386,7 +2386,7 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
         }).join("");
 
         document.getElementById("pkgSvgContainer").innerHTML = `
-          <svg viewBox="0 0 920 ${svgHeight}" width="100%" height="auto" style="display:block; min-width:740px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 ${svgHeight}" width="100%" height="auto" style="display:block; min-width:740px;">
             <text x="145" y="24" text-anchor="middle" fill="var(--ink-muted)" font-family="'Martian Mono', monospace" font-size="10" font-weight="700">PROJECTS · METRICS · BLOCKERS (HOP 1–2)</text>
             <text x="460" y="24" text-anchor="middle" fill="var(--ink-muted)" font-family="'Martian Mono', monospace" font-size="10" font-weight="700">USER IDENTITY HUB</text>
             <text x="775" y="24" text-anchor="middle" fill="var(--ink-muted)" font-family="'Martian Mono', monospace" font-size="10" font-weight="700">PREFERENCES · STAKEHOLDERS · COMMITMENTS</text>
@@ -2556,7 +2556,7 @@ AWS_PROFILE=portfolio PYTHONPATH=. uv run --with boto3 --with "botocore[crt]" py
         const curY = yPos(node.retention_pct);
 
         document.getElementById("ebbinghausSvgBox").innerHTML = `
-          <svg viewBox="0 0 ${W} ${H}" width="100%" height="auto" style="display:block;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" height="auto" style="display:block;">
             <line x1="${padL}" y1="${yPos(100)}" x2="${W - padR}" y2="${yPos(100)}" stroke="var(--border)" stroke-opacity="0.2" stroke-dasharray="3,3"/>
             <line x1="${padL}" y1="${yPos(50)}" x2="${W - padR}" y2="${yPos(50)}" stroke="var(--border)" stroke-opacity="0.2" stroke-dasharray="3,3"/>
             <line x1="${padL}" y1="${yPos(0)}" x2="${W - padR}" y2="${yPos(0)}" stroke="var(--border)" stroke-width="1.5"/>
